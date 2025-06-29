@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "@y-sweet/sdk": "^0.8.2",
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  }
+
+}

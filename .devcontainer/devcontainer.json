@@ -13,8 +13,7 @@
 				"ms-vscode.makefile-tools",
 				"vitest.explorer",
 				"github.vscode-github-actions",
-				"bradlc.vscode-tailwindcss",
-				"denoland.vscode-deno"
+				"bradlc.vscode-tailwindcss"
 			]
 		}
 	}
