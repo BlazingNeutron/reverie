@@ -4,14 +4,15 @@ import * as Y from 'yjs'
 import { QuillBinding } from 'y-quill'
 import Quill from 'quill'
 import QuillCursors from 'quill-cursors'
-import { createYjsProvider } from '@y-sweet/client'
+import { createClient } from '@supabase/supabase-js'
+import { SupabaseProvider } from './y-supabase-provider.js'
 
 Quill.register('modules/cursors', QuillCursors)
-const roomname = `codemirror-demo-${new Date().toLocaleDateString('en-CA')}`
 
 window.addEventListener('load', () => {
+  const supabase = createClient("http://localhost:8000", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE");
   const ydoc = new Y.Doc()
-  const provider = createYjsProvider(ydoc, roomname, 'http://localhost:9090/y-sweet-auth')
+  const supaProvider = new SupabaseProvider('my-shared-doc-id', ydoc, supabase);
   const ytext = ydoc.getText('quill')
   const editorContainer = document.createElement('div')
   editorContainer.setAttribute('id', 'editor')
@@ -33,7 +34,7 @@ window.addEventListener('load', () => {
     theme: 'snow' // or 'bubble'
   })
 
-  const binding = new QuillBinding(ytext, editor, provider.awareness)
+  const binding = new QuillBinding(ytext, editor, supaProvider.awareness)
 
   /*
   // Define user name and user name
@@ -44,17 +45,17 @@ window.addEventListener('load', () => {
   })
   */
 
-  const connectBtn = document.getElementById('y-connect-btn')
-  connectBtn.addEventListener('click', () => {
-    if (provider.shouldConnect) {
-      provider.disconnect()
-      connectBtn.textContent = 'Connect'
-    } else {
-      provider.connect()
-      connectBtn.textContent = 'Disconnect'
-    }
-  })
+  // const connectBtn = document.getElementById('y-connect-btn')
+  // connectBtn.addEventListener('click', () => {
+  //   if (provider.shouldConnect) {
+  //     provider.disconnect()
+  //     connectBtn.textContent = 'Connect'
+  //   } else {
+  //     provider.connect()
+  //     connectBtn.textContent = 'Disconnect'
+  //   }
+  // })
 
   // @ts-ignore
-  window.example = { provider, ydoc, ytext, binding, Y }
+  window.example = { supaProvider, ydoc, ytext, binding, Y }
 })
