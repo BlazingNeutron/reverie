@@ -1,6 +1,5 @@
 include:
   - docker-compose.supabase.yml
-  - ysweet/docker-compose.ysweet.yml
 
 services:
   app:

@@ -3,7 +3,7 @@ Note taking app for all of your dreamy, thoughtful, deep thinking and shared ide
 
 # Development
 
-It is recommended to use the devcontainers.  On the host machine add an entry to /etc/hosts: `127.0.0.1  y-sweet`
+It is recommended to use the devcontainers. 
 
 Start the frontend and backend servers with
 `npm start`
