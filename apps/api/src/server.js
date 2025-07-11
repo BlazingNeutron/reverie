@@ -1,6 +1,6 @@
 import express from 'express'
 import cors from 'cors'
-import { getOrCreateDocAndToken } from '@y-sweet/sdk'
+// import { getOrCreateDocAndToken } from '@y-sweet/sdk'
 
 const app = express()
 app.use(cors())
@@ -34,8 +34,8 @@ app.post('/y-sweet-auth', async (req, res) => {
 
   // -------- DO AN AUTH CHECK HERE TO SEE IF THE USER CAN ACCESS THIS DOC --------
 
-  const clientToken = await getOrCreateDocAndToken(CONNECTION_STRING, docId)
-  res.send(clientToken)
+  // const clientToken = await getOrCreateDocAndToken(CONNECTION_STRING, docId)
+  res.send({token:"fakeToken"})
 })
 
 app.listen(PORT, () => {

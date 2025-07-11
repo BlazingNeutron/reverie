@@ -1,0 +1,18 @@
+{
+  "name": "@repo/api",
+  "version": "0.0.1",
+  "description": "Note taking app for all of your dreamy, thoughtful, deep thinking and shared ideas.",
+  "scripts": {
+    "start": "node src/server.js",
+    "build": "tsup",
+    "dev": "node src/server.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.0"
+  }
+}

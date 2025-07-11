@@ -1,4 +1,5 @@
 import { applyUpdate } from 'yjs';
+import { Buffer } from 'buffer';
 
 export class SupabaseProvider {
   doc;

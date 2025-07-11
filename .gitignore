@@ -137,3 +137,6 @@ dist
 
 # local ysweet data
 .devcontainer/ysweet/data/*
+
+# turbo
+.turbo
