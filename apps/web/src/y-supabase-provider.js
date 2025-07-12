@@ -55,11 +55,11 @@ export class SupabaseProvider {
       .insert([{ doc_id: this.docId, update: base64Update, user_permission: this.user.id }]);
 
     // // Optionally broadcast to other clients via Realtime
-    // await this.supabase.channel(`yjs-${this.docId}`).send({
-    //   type: 'broadcast',
-    //   event: 'y-update',
-    //   payload: { update: base64Update },
-    // });
+    await this.supabase.channel(`yjs-${this.docId}`).send({
+      type: 'broadcast',
+      event: 'y-update',
+      payload: { update: base64Update },
+    });
     
     // write document contents to search table
     await this.supabase.from('doc_index').upsert({

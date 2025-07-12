@@ -57,5 +57,5 @@ window.addEventListener('load', () => {
   // })
 
   // @ts-ignore
-  window.example = { supaProvider, ydoc, ytext, binding, Y }
+  //window.example = { provider, ydoc, ytext, binding, Y }
 })
