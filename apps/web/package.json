@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "db:reset": "supabase db reset --db-url $SUPABASE_DB_URL",
+    "db:reset": "export $(cat .env | grep \"^[^#;]\" |xargs) && supabase db reset --yes --db-url $SUPABASE_DB_URL",
     "db:migrate": "supabase migration new migration_name"
   },
   "devDependencies": {
