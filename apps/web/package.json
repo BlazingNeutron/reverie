@@ -1,12 +1,14 @@
 {
-  "name": "@project/reverie-notes-web-app",
+  "name": "@repo/reverie-notes-web-app",
   "version": "0.0.1",
   "description": "Note taking app for all of your dreamy, thoughtful, deep thinking and shared ideas.",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "db:reset": "supabase db reset --db-url $SUPABASE_DB_URL",
+    "db:migrate": "supabase migration new migration_name"
   },
   "devDependencies": {
     "@types/react": "^19.1.8",

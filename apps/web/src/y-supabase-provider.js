@@ -52,7 +52,7 @@ export class SupabaseProvider {
 
     await this.supabase
       .from('yjs_updates')
-      .insert([{ doc_id: this.docId, update: base64Update, user_permission: this.user.id }]);
+      .insert([{ doc_id: this.docId, update: base64Update, user_id: this.user.id }]);
 
     // // Optionally broadcast to other clients via Realtime
     await this.supabase.channel(`yjs-${this.docId}`).send({
@@ -65,7 +65,8 @@ export class SupabaseProvider {
     await this.supabase.from('doc_index').upsert({
       doc_id: this.docId,
       title: 'Example Note',
-      content: this.doc.getText('quill').toString() // plain text version
+      content: this.doc.getText('quill').toString(),
+      user_id: this.user.id
     });
 
     // Supabase text search
@@ -109,7 +110,7 @@ export class SupabaseProvider {
       .from('yjs_updates')
       .select('update')
       .eq('doc_id', this.docId)
-      .eq('user_permission', this.user.id)
+      .eq('user_id', this.user.id)
       .order('created_at', { ascending: true });
 
     if (data) {
