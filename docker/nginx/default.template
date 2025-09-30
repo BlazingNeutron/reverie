@@ -45,7 +45,7 @@ server
 
     location /realtime/v1/websocket {
         rewrite ^/realtime/v1/websocket(.*)$ /socket/websocket$1 break;
-        proxy_pass http://realtime-prod.supabase-realtime:4000;
+        proxy_pass http://realtime:4000;
 
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
@@ -62,7 +62,7 @@ server
 
     location /realtime/v1/api {
         rewrite ^/realtime/v1/api(.*)$ /api$1 break;
-        proxy_pass http://realtime-prod.supabase-realtime:4000;
+        proxy_pass http://realtime:4000;
 
         proxy_http_version 1.1;
         proxy_set_header Host "realtime.supabase-realtime";
