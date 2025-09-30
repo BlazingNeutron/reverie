@@ -18,6 +18,5 @@
 	,"features": {
 		"ghcr.io/devcontainers-extra/features/supabase-cli": "latest"
 	}
-	,"forwardPorts": [54322, 54320]
 	,"postCreateCommand": "npm i turbo -g && npm i"
 }

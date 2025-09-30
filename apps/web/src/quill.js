@@ -11,9 +11,6 @@ Quill.register('modules/cursors', QuillCursors)
 
 window.addEventListener('load', () => {
   let baseUrl = window.origin;
-  if (baseUrl.indexOf("localhost:5173") >= 0) {
-    baseUrl = "http://localhost:8000"
-  }
   const supabase = createClient(baseUrl, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE");
   const ydoc = new Y.Doc()
   const supaProvider = new SupabaseProvider('my-shared-doc-id', ydoc, supabase);
