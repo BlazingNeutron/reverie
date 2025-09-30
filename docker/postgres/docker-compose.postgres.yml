@@ -116,6 +116,7 @@ services:
       # GOTRUE_HOOK_SEND_EMAIL_SECRETS: "v1,whsec_VGhpcyBpcyBhbiBleGFtcGxlIG9mIGEgc2hvcnRlciBCYXNlNjQgc3RyaW5n"
 
   realtime:
+    # This container name looks inconsistent but is correct because realtime constructs tenant id by parsing the subdomain
     container_name: realtime-prod.supabase-realtime
     image: supabase/realtime:v2.34.47
     restart: unless-stopped
@@ -134,7 +135,7 @@ services:
           "/dev/null",
           "-H",
           "Authorization: Bearer ${ANON_KEY}",
-          "http://localhost:4000/api/tenants/realtime-dev/health"
+          "http://localhost:4000/api/tenants/realtime/health"
         ]
       timeout: 5s
       interval: 5s
@@ -155,6 +156,7 @@ services:
       RLIMIT_NOFILE: "10000"
       APP_NAME: realtime
       SEED_SELF_HOST: true
+      SELF_HOST_TENANT_NAME: realtime
       RUN_JANITOR: true
 
   # # kong:
