@@ -95,27 +95,9 @@ services:
 
       GOTRUE_EXTERNAL_PHONE_ENABLED: ${ENABLE_PHONE_SIGNUP}
       GOTRUE_SMS_AUTOCONFIRM: ${ENABLE_PHONE_AUTOCONFIRM}
-      # Uncomment to enable custom access token hook. Please see: https://supabase.com/docs/guides/auth/auth-hooks for full list of hooks and additional details about custom_access_token_hook
-
-      # GOTRUE_HOOK_CUSTOM_ACCESS_TOKEN_ENABLED: "true"
-      # GOTRUE_HOOK_CUSTOM_ACCESS_TOKEN_URI: "pg-functions://postgres/public/custom_access_token_hook"
-      # GOTRUE_HOOK_CUSTOM_ACCESS_TOKEN_SECRETS: "<standard-base64-secret>"
-
-      # GOTRUE_HOOK_MFA_VERIFICATION_ATTEMPT_ENABLED: "true"
-      # GOTRUE_HOOK_MFA_VERIFICATION_ATTEMPT_URI: "pg-functions://postgres/public/mfa_verification_attempt"
-
-      # GOTRUE_HOOK_PASSWORD_VERIFICATION_ATTEMPT_ENABLED: "true"
-      # GOTRUE_HOOK_PASSWORD_VERIFICATION_ATTEMPT_URI: "pg-functions://postgres/public/password_verification_attempt"
-
-      # GOTRUE_HOOK_SEND_SMS_ENABLED: "false"
-      # GOTRUE_HOOK_SEND_SMS_URI: "pg-functions://postgres/public/custom_access_token_hook"
-      # GOTRUE_HOOK_SEND_SMS_SECRETS: "v1,whsec_VGhpcyBpcyBhbiBleGFtcGxlIG9mIGEgc2hvcnRlciBCYXNlNjQgc3RyaW5n"
-
-      # GOTRUE_HOOK_SEND_EMAIL_ENABLED: "false"
-      # GOTRUE_HOOK_SEND_EMAIL_URI: "http://host.docker.internal:54321/functions/v1/email_sender"
-      # GOTRUE_HOOK_SEND_EMAIL_SECRETS: "v1,whsec_VGhpcyBpcyBhbiBleGFtcGxlIG9mIGEgc2hvcnRlciBCYXNlNjQgc3RyaW5n"
 
   realtime:
+    container_name: realtime-reverie.supabase-realtime
     # This container name looks inconsistent but is correct because realtime constructs tenant id by parsing the subdomain
     image: supabase/realtime:v2.34.47
     restart: unless-stopped
@@ -134,7 +116,7 @@ services:
           "/dev/null",
           "-H",
           "Authorization: Bearer ${ANON_KEY}",
-          "http://localhost:4000/api/tenants/realtime/health"
+          "http://localhost:4000/api/tenants/realtime-reverie/health"
         ]
       timeout: 5s
       interval: 5s
@@ -153,54 +135,10 @@ services:
       ERL_AFLAGS: -proto_dist inet_tcp
       DNS_NODES: "''"
       RLIMIT_NOFILE: "10000"
-      APP_NAME: realtime
+      APP_NAME: realtime-reverie
       SEED_SELF_HOST: true
-      SELF_HOST_TENANT_NAME: realtime
+      SELF_HOST_TENANT_NAME: realtime-reverie
       RUN_JANITOR: true
-
-  # # kong:
-  #   image: kong:2.8.1
-  #   restart: unless-stopped
-  #   volumes:
-  #     # https://github.com/supabase/supabase/issues/12661
-  #     - ../../.devcontainer/volumes/api/kong.yml:/home/kong/temp.yml:ro,z
-  #   ports:
-  #     - 8001:8000/tcp
-  #   depends_on:
-  #     db:
-  #       # Disable this if you are using an external Postgres database
-  #       condition: service_healthy
-  #   environment:
-  #     KONG_DATABASE: "off"
-  #     KONG_DECLARATIVE_CONFIG: /home/kong/kong.yml
-  #     # https://github.com/supabase/cli/issues/14
-  #     KONG_DNS_ORDER: LAST,A,CNAME
-  #     KONG_PLUGINS: request-transformer,cors,key-auth,acl,basic-auth
-  #     KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
-  #     KONG_NGINX_PROXY_PROXY_BUFFERS: 64 160k
-  #     SUPABASE_ANON_KEY: ${ANON_KEY}
-  #     SUPABASE_SERVICE_KEY: ${SERVICE_ROLE_KEY}
-  #     DASHBOARD_USERNAME: ${DASHBOARD_USERNAME}
-  #     DASHBOARD_PASSWORD: ${DASHBOARD_PASSWORD}
-  #   # https://unix.stackexchange.com/a/294837
-  #   entrypoint: bash -c 'eval "echo \"$$(cat ~/temp.yml)\"" > ~/kong.yml && /docker-entrypoint.sh kong docker-start'
-
-  # storage:
-  #   image: supabase/storage-api:v0.48.4
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - db
-  #   environment:
-  #     STORAGE_DB_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}
-  #     ANON_KEY: ${ANON_KEY}
-  #     SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
-  #     FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT}
-  #     STORAGE_BACKEND: local
-  #     STORAGE_LOCAL_ROOT: /var/lib/supabase/storage
-  #   volumes:
-  #     - ./volumes/storage:/var/lib/supabase/storage
-  #   ports:
-  #     - "${STORAGE_PORT}:8000"
 
   rest:
     image: postgrest/postgrest:v12.2.12
@@ -238,71 +176,3 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_HOST: db
       POSTGRES_PORT: 5432
-
-  # functions:
-  #   image: supabase/edge-runtime:v1.67.4
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./volumes/functions:/home/deno/functions:Z
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #   environment:
-  #     JWT_SECRET: ${JWT_SECRET}
-  #     SUPABASE_URL: http://kong:8000
-  #     SUPABASE_ANON_KEY: ${ANON_KEY}
-  #     SUPABASE_SERVICE_ROLE_KEY: ${SERVICE_ROLE_KEY}
-  #     SUPABASE_DB_URL: postgresql://postgres:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
-  #     # TODO: Allow configuring VERIFY_JWT per function. This PR might help: https://github.com/supabase/cli/pull/786
-  #     VERIFY_JWT: "${FUNCTIONS_VERIFY_JWT}"
-  #   command:
-  #     [
-  #       "start",
-  #       "--main-service",
-  #       "/home/deno/functions/main"
-  #     ]
-
-  # analytics:
-  #   image: supabase/logflare:1.14.2
-  #   restart: unless-stopped
-  #   # Uncomment to use Big Query backend for analytics
-  #   # volumes:
-  #   #   - type: bind
-  #   #     source: ${PWD}/gcloud.json
-  #   #     target: /opt/app/rel/logflare/bin/gcloud.json
-  #   #     read_only: true
-  #   healthcheck:
-  #     test:
-  #       [
-  #         "CMD",
-  #         "curl",
-  #         "http://localhost:4000/health"
-  #       ]
-  #     timeout: 5s
-  #     interval: 5s
-  #     retries: 10
-  #   depends_on:
-  #     db:
-  #       # Disable this if you are using an external Postgres database
-  #       condition: service_healthy
-  #   environment:
-  #     LOGFLARE_NODE_HOST: 127.0.0.1
-  #     DB_USERNAME: supabase_admin
-  #     DB_DATABASE: _supabase
-  #     DB_HOSTNAME: ${POSTGRES_HOST}
-  #     DB_PORT: ${POSTGRES_PORT}
-  #     DB_PASSWORD: ${POSTGRES_PASSWORD}
-  #     DB_SCHEMA: _analytics
-  #     LOGFLARE_PUBLIC_ACCESS_TOKEN: ${LOGFLARE_PUBLIC_ACCESS_TOKEN}
-  #     LOGFLARE_PRIVATE_ACCESS_TOKEN: ${LOGFLARE_PRIVATE_ACCESS_TOKEN}
-  #     LOGFLARE_SINGLE_TENANT: true
-  #     LOGFLARE_SUPABASE_MODE: true
-  #     LOGFLARE_MIN_CLUSTER_SIZE: 1
-
-  #     # Comment variables to use Big Query backend for analytics
-  #     POSTGRES_BACKEND_URL: postgresql://supabase_admin:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/_supabase
-  #     POSTGRES_BACKEND_SCHEMA: _analytics
-  #     LOGFLARE_FEATURE_FLAG_OVERRIDE: multibackend=true
-  #     # Uncomment to use Big Query backend for analytics
-  #     # GOOGLE_PROJECT_ID: ${GOOGLE_PROJECT_ID}
-  #     # GOOGLE_PROJECT_NUMBER: ${GOOGLE_PROJECT_NUMBER}
