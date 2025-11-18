@@ -3,32 +3,24 @@
   "version": "0.0.1",
   "description": "Note taking app for all of your dreamy, thoughtful, deep thinking and shared ideas.",
   "scripts": {
-    "start:backend": "npm start --prefix packages/backend",
-    "start:frontend": "npm start --prefix packages/frontend",
-    "start:dev": "concurrently \"npm run dev:backend\" \"npm run start:frontend\"",
-    "start": "concurrently \"npm run dev:backend\" \"npm run start:frontend\"",
-    "dev": "concurrently \"npm run dev:backend\" \"npm run start:frontend\"",
-    "dev:backend": "npm run dev --prefix packages/backend",
-    "build:backend": "npm run build --prefix packages/backend",
-    "build:frontend": "npm run build --prefix packages/frontend",
-    "build": "npm run build:backend && npm run build:frontend",
-    "test:backend": "npm test --prefix packages/backend",
-    "test:frontend": "npm test --prefix packages/frontend",
-    "test": "npm run test --workspaces",
-    "test:coverage": "npm run test:coverage --prefix packages/backend && npm run test:coverage --prefix packages/frontend",
-    "test:updateSnapshots": "npm run test --prefix packages/frontend -- -u",
-    "install:backend": "npm install --prefix packages/backend",
-    "install:frontend": "npm install --prefix packages/frontend",
-    "install": "npm run install:backend && npm run install:frontend",
-    "docker:build": "docker compose build",
-    "docker:up": "docker compose up -d",
-    "docker:down": "docker compose down"
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "test:coverage": "turbo run test:coverage",
+    "test:updateSnapshots": "turbo run test:updateSnapshots",
+    "db:reset": "turbo run db:reset",
+    "db:migrate": "turbo run db:migrate"
   },
   "dependencies": {
     "concurrently": "^9.2.0"
   },
   "workspaces": [
+    "apps/*",
     "packages/*"
   ],
-  "type": "module"
+  "type": "module",
+  "packageManager": "npm@11.4.2",
+  "devDependencies": {
+    "turbo": "^2.5.4"
+  }
 }

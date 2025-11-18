@@ -1,0 +1,9 @@
+services:
+  reverie-web:
+    image: ghcr.io/blazingneutron/reverie-web
+    restart: always
+    build:
+      context:  ../../apps/web
+      dockerfile: Dockerfile
+    env_file:
+      - ../.env
