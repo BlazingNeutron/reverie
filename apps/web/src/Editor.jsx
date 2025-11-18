@@ -3,8 +3,9 @@ import * as Y from 'yjs'
 import { QuillBinding } from 'y-quill'
 import Quill from 'quill'
 import QuillCursors from 'quill-cursors'
-import { createClient } from '@supabase/supabase-js'
+// import { createClient } from '@supabase/supabase-js'
 import { SupabaseProvider } from './y-supabase-provider.js'
+import { supabase } from './lib/supabase/client'
 
 // Editor is an uncontrolled React component
 const Editor = forwardRef(
@@ -24,8 +25,8 @@ const Editor = forwardRef(
     }, [ref, readOnly]);
 
     useEffect(() => {
-      let baseUrl = window.origin;
-      const supabase = createClient(baseUrl, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE");
+      Quill.register('modules/cursors', QuillCursors);
+      
       const ydoc = new Y.Doc()
       const supaProvider = new SupabaseProvider('my-shared-doc-id', ydoc, supabase);
       const ytext = ydoc.getText('quill')
