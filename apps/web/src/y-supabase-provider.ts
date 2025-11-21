@@ -1,15 +1,16 @@
-import { applyUpdate } from 'yjs';
+import { applyUpdate, Doc } from 'yjs';
 import { Buffer } from 'buffer';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 export class SupabaseProvider {
   doc;
   docId;
   supabase;
-  awareness;
-  user;
-  session;
+  awareness : any;
+  user : any;
+  session : any;
 
-  constructor(docId, doc, supabase) {
+  constructor(docId : string, doc : Doc, supabase : SupabaseClient) {
     this.docId = docId;
     this.doc = doc;
     this.supabase = supabase;
@@ -30,7 +31,7 @@ export class SupabaseProvider {
     this.session = session;
 
     // Send local updates to Supabase
-    this.doc.on('update', async (update) => {
+    this.doc.on('update', async (update : any) => {
       await this.sendUpdate(update);
     });
 
@@ -38,7 +39,7 @@ export class SupabaseProvider {
     await this.loadInitialUpdates();
   }
 
-  async sendUpdate(update) {
+  async sendUpdate(update : string) {
     const {
       data: { session },
     } = await this.supabase.auth.getSession();
@@ -89,7 +90,7 @@ export class SupabaseProvider {
 
     this.supabase
       .channel(`yjs-${this.docId}`)
-      .on('broadcast', { event: 'y-update' }, (payload) => {
+      .on('broadcast', { event: 'y-update' }, (payload : {payload:{update:string}}) => {
         const update = Buffer.from(payload.payload.update, 'base64');
         applyUpdate(this.doc, update);
       })
@@ -114,7 +115,7 @@ export class SupabaseProvider {
       .order('created_at', { ascending: true });
 
     if (data) {
-      data.forEach((row) => {
+      data.forEach((row : any) => {
         const update = Buffer.from(row.update, 'base64');
         applyUpdate(this.doc, update);
       });

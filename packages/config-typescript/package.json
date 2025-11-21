@@ -1,9 +1,14 @@
 {
-  "name": "@repo/typescript-config",
-  "version": "0.0.0",
-  "license": "MIT",
-  "private": true,
-  "publishConfig": {
-    "access": "public"
+  "name": "config-typescript",
+  "version": "1.0.0",
+  "description": "Configuration package for TypeScript in the monorepo",
+  "main": "base.json",
+  "scripts": {
+    "build": "tsc -p .",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "eslint": "^9.39.1"
   }
 }
