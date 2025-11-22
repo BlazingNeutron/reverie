@@ -9,6 +9,7 @@ import { supabase } from './lib/supabase/client.js';
 export const loader = async ({}: LoaderFunctionArgs) => {
 
   const { data, error } = await supabase.auth.getUser()
+  console.log(data)
   if (error || !data?.user) {
     return redirect('/login')
   }
@@ -17,7 +18,8 @@ export const loader = async ({}: LoaderFunctionArgs) => {
 }
 
 function App() {
-  useLoaderData<typeof loader>()
+  
+  const data = useLoaderData<typeof loader>()
   const quillRef = useRef<Quill | null>(null);
 
   return (

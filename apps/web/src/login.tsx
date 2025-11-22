@@ -33,17 +33,16 @@ export default function Login() {
   const loading = fetcher.state === 'submitting'
 
   return (
-    <div className="flex min-h-svh max-w-md items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen flex items-center justify-center p-6">
+      <div className="w-full max-w-sm mx-auto items-center justify-centert">
         <div className="flex flex-col gap-6">
-          <Card className=''>
-            
-              <Text className="text-2xl">Login</Text>
-              {/* <CardDescription>Enter your email below to login to your account</CardDescription> */}
+          <Card>
+              <Text className="text-lg">Login</Text>
+              
               <fetcher.Form method="post">
                 <div className="flex flex-col gap-6">
                   <div className="grid gap-2">
-                    <Label.Root htmlFor="email">Email</Label.Root>
+                    <Label.Root className="text-sm" htmlFor="email">Email</Label.Root>
                     <TextField.Root
                       id="email"
                       name="email"
@@ -54,7 +53,7 @@ export default function Login() {
                   </div>
                   <div className="grid gap-2">
                     <div className="flex items-center">
-                      <Label.Root className='text-md' htmlFor="password">Password</Label.Root>
+                      <Label.Root className='text-sm' htmlFor="password">Password</Label.Root>
                       <Link
                         to="/forgot-password"
                         className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
