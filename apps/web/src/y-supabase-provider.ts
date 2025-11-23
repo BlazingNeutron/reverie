@@ -1,6 +1,8 @@
 import { applyUpdate, Doc } from 'yjs';
 import { Buffer } from 'buffer';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import { type SupabaseClient } from '@supabase/supabase-js';
+import { type LoaderFunctionArgs, redirect } from 'react-router';
+import { createClient } from './lib/supabase/server';
 
 export class SupabaseProvider {
   doc;
@@ -21,13 +23,15 @@ export class SupabaseProvider {
   async init() {
     await this.subscribeToUpdates();
 
-    // login using supabase
-    const { data, error } = await this.supabase.auth.signInWithPassword({
-      email: 'test@example.com',
-      password: 'test',
-    })
-    const { session, user } = data
-    this.user = user;
+    const {
+      data: { session },
+    } = await this.supabase.auth.getSession();
+
+    if (!session) {
+      // console.log("Not logged in!")
+      return redirect('/login')
+    }
+    this.user = session.user;
     this.session = session;
 
     // Send local updates to Supabase
@@ -45,8 +49,8 @@ export class SupabaseProvider {
     } = await this.supabase.auth.getSession();
 
     if (!session) {
-      console.log("Not logged in!")
-      return
+      // console.log("Not logged in!")
+      return redirect('/login')
     }
 
     const base64Update = Buffer.from(update).toString('base64');
@@ -84,8 +88,8 @@ export class SupabaseProvider {
     } = await this.supabase.auth.getSession();
 
     if (!session) {
-      console.log("Not logged in!")
-      return
+      // console.log("Not logged in!")
+      return redirect('/login')
     }
 
     this.supabase
@@ -103,8 +107,8 @@ export class SupabaseProvider {
     } = await this.supabase.auth.getSession();
 
     if (!session) {
-      console.log("Not logged in!")
-      return
+      // console.log("Not logged in!")
+      return redirect('/login')
     }
 
     const { data, error } = await this.supabase

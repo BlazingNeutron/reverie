@@ -6,12 +6,13 @@ import QuillCursors from 'quill-cursors'
 import { SupabaseProvider } from './y-supabase-provider.js'
 import { supabase } from './lib/supabase/client.js'
 
+Quill.register('modules/cursors', QuillCursors);
+
 // Editor is an uncontrolled React component
 const Editor = forwardRef(({}, ref : any) => {
     const containerRef = useRef(null);
    
     useEffect(() => {
-      Quill.register('modules/cursors', QuillCursors);
       
       const ydoc = new Y.Doc()
       const supaProvider = new SupabaseProvider('my-shared-doc-id', ydoc, supabase);
