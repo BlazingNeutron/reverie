@@ -3,12 +3,8 @@ import Editor from '../components/Editor';
 import Quill from 'quill'
 import "@radix-ui/themes/styles.css";
 import { Box, Flex } from '@radix-ui/themes';
-import { useAuth } from '../lib/contexts/auth-context';
-
 
 function App() {
-  const auth = useAuth();
-  console.log(auth.user);
   const quillRef = useRef<Quill | null>(null);
 
   return (
