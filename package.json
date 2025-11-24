@@ -21,6 +21,11 @@
   "type": "module",
   "packageManager": "npm@11.4.2",
   "devDependencies": {
-    "turbo": "^2.5.4"
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "jsdom": "^27.2.0",
+    "turbo": "^2.5.4",
+    "vitest": "^4.0.13"
   }
 }

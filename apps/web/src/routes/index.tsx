@@ -8,11 +8,11 @@ import { useAuth } from '../lib/contexts/auth-context.js';
 
 function App() {
   const auth = useAuth();
-  console.log(auth.token);
+  console.log(auth.user);
   const quillRef = useRef<Quill | null>(null);
 
   return (
-    
+
     <Flex gap="3">
 
       <Box width="10%">

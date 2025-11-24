@@ -8,7 +8,10 @@
     "build": "vite build",
     "preview": "vite preview",
     "db:reset": "export $(cat .env | grep \"^[^#;]\" |xargs) && supabase db reset --yes --db-url $SUPABASE_DB_URL",
-    "db:migrate": "supabase migration new migration_name"
+    "db:migrate": "supabase migration new migration_name",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:watch": "vitest --watch"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.17",

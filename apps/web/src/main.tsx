@@ -5,8 +5,8 @@ import RootLayout from './layout';
 import { createBrowserRouter, Navigate, RouterProvider, useLocation } from 'react-router';
 import App from './routes/index';
 import Login from './routes/login';
-import { useAuth } from './lib/contexts/auth-context';
-import { AuthProvider } from './lib/contexts/auth-provider';
+import AuthProvider, { useAuth, AuthContext } from './lib/contexts/auth-context.tsx';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
@@ -16,10 +16,10 @@ type ProtectedRouteProps = {
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   console.log("Protected Route")
-  const { token } = useAuth();
+  const auth = useAuth();  
   const location = useLocation();
 
-  if (!token) {
+  if (!auth.session) {
     return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
@@ -29,11 +29,18 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <AuthProvider><ProtectedRoute><App /></ProtectedRoute></AuthProvider>,
+    element: 
+      <AuthProvider>
+        <ProtectedRoute>
+          <App />
+        </ProtectedRoute>
+      </AuthProvider>,
   },
   {
     path: "/login",
-    element: <AuthProvider><Login /></AuthProvider>
+    element: <AuthProvider>
+        <Login />
+      </AuthProvider>
   }   
 ]);
 
