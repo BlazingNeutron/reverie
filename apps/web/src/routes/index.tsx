@@ -1,9 +1,9 @@
 import { useRef } from 'react'
-import Editor from '../Editor.js';
+import Editor from '../components/Editor';
 import Quill from 'quill'
 import "@radix-ui/themes/styles.css";
 import { Box, Flex } from '@radix-ui/themes';
-import { useAuth } from '../lib/contexts/auth-context.js';
+import { useAuth } from '../lib/contexts/auth-context';
 
 
 function App() {

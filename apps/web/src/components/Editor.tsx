@@ -3,8 +3,8 @@ import * as Y from 'yjs'
 import { QuillBinding } from 'y-quill'
 import Quill from 'quill'
 import QuillCursors from 'quill-cursors'
-import { SupabaseProvider } from './y-supabase-provider.js'
-import { supabase } from './lib/supabase/client.js'
+import { SupabaseProvider } from '../lib/supabase/y-supabase-provider'
+import { supabase } from '../lib/supabase/client'
 
 Quill.register('modules/cursors', QuillCursors);
 

@@ -1,53 +1,43 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import '../styles/globals.css';
-import RootLayout from './layout';
-import { createBrowserRouter, Navigate, RouterProvider, useLocation } from 'react-router';
+import { createBrowserRouter, Navigate, Outlet, RouterProvider } from 'react-router';
 import App from './routes/index';
 import Login from './routes/login';
-import AuthProvider, { useAuth, AuthContext } from './lib/contexts/auth-context.tsx';
+import AuthProvider, { useAuth } from './lib/contexts/auth-context.tsx';
+import ThemeProvider from './components/theme-provider.tsx';
 
-
-const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
-
-type ProtectedRouteProps = {
-  children: React.ReactNode;
-};
-
-const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  console.log("Protected Route")
-  const auth = useAuth();  
-  const location = useLocation();
-
-  if (!auth.session) {
-    return <Navigate to="/login" replace state={{ from: location }} />;
-  }
-
-  return children;
+const ProtectedRoute = () => {
+  const { session, loading } = useAuth();  
+  if (loading) return null; // or a spinner
+  if (!session) return <Navigate to="/login" replace />;
+  return <Outlet />;
 };
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: 
+    path: '/',
+    element: (
       <AuthProvider>
-        <ProtectedRoute>
-          <App />
-        </ProtectedRoute>
-      </AuthProvider>,
-  },
-  {
-    path: "/login",
-    element: <AuthProvider>
-        <Login />
+        <ThemeProvider>
+          <Outlet />
+        </ThemeProvider>
       </AuthProvider>
-  }   
+    ),
+    children: [
+      {
+        element: <ProtectedRoute />,
+        children: [
+          { index: true, element: <App /> },
+        ],
+      },
+      { path: 'login', element: <Login /> },
+    ],
+  },
 ]);
 
-root.render(
+ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RootLayout>
-      <RouterProvider router={router} />
-    </RootLayout>
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
