@@ -4,7 +4,7 @@ import '../styles/globals.css';
 import { createBrowserRouter, Navigate, Outlet, RouterProvider } from 'react-router';
 import App from './routes/index';
 import Login from './routes/login';
-import AuthProvider, { useAuth } from './lib/contexts/auth-context.tsx';
+import AuthProvider, { useAuth } from './lib/auth/auth-context.tsx';
 import ThemeProvider from './components/theme-provider.tsx';
 
 const ProtectedRoute = () => {

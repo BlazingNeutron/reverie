@@ -2,7 +2,7 @@
 import { Link } from 'react-router'
 import { Button, Card, Text, TextField } from '@radix-ui/themes'
 import { Label } from "radix-ui"
-import { useAuth } from '../lib/contexts/auth-context'
+import { useAuth } from '../lib/auth/auth-context'
 import { useState, type FormEvent } from 'react'
 
 export default function Login() {
