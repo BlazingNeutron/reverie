@@ -1,7 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 
 interface ImportMetaEnv {
-  VITE_SUPABASE_URL: string;
   VITE_SUPABASE_PUBLISHABLE_KEY: string;
 }
 
@@ -11,7 +10,6 @@ declare global {
   }
 }
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
-
-export const supabase = createClient(supabaseUrl, supabasePublishableKey)
+const baseUrl = `${window.location.protocol}//${window.location.host}`;
+export const supabase = createClient(baseUrl, supabasePublishableKey)
