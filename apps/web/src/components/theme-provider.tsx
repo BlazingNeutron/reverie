@@ -35,21 +35,21 @@ export default function ThemeProvider({ children }:{children:ReactElement}) {
     root.style.cssText = theme.join(";");
   };
 
-  const toggle = () => {
-    console.log("Toggle Method Called");
+  // const toggle = () => {
+  //   console.log("Toggle Method Called");
 
-    // A smooth transition on theme switch
-    const body : HTMLElement | any = document.getElementsByTagName("body")[0];
-    body.style.cssText = "transition: background .5s ease";
+  //   // A smooth transition on theme switch
+  //   const body : HTMLElement | any = document.getElementsByTagName("body")[0];
+  //   body.style.cssText = "transition: background .5s ease";
 
-    setDark(!dark);
-  };
+  //   setDark(!dark);
+  // };
 
   return (
     <ThemeContext.Provider
       value={{
         dark,
-        toggle
+        toggle: () => setDark(!dark)
       }}
     >
         <Theme appearance={dark ? "dark" : "light"}>

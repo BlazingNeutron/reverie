@@ -7,7 +7,7 @@ import Login from './routes/login';
 import AuthProvider, { useAuth } from './lib/auth/auth-context.tsx';
 import ThemeProvider from './components/theme-provider.tsx';
 
-const ProtectedRoute = () => {
+export const ProtectedRoute = () => {
   const { session, loading } = useAuth();  
   if (loading) return null; // or a spinner
   if (!session) return <Navigate to="/login" replace />;
