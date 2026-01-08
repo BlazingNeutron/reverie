@@ -19,8 +19,6 @@ export class SupabaseProvider {
   }
 
   async init() {
-    await this.subscribeToUpdates();
-
     const {
       data: { session },
     } = await this.supabase.auth.getSession();
@@ -39,6 +37,7 @@ export class SupabaseProvider {
 
     // Optionally load initial state from DB
     await this.loadInitialUpdates();
+    await this.subscribeToUpdates();
   }
 
   async sendUpdate(update : string) {
@@ -122,5 +121,28 @@ export class SupabaseProvider {
         applyUpdate(this.doc, update);
       });
     }
+  }
+
+  async findUserDocs() {
+    const {
+      data: { session },
+    } = await this.supabase.auth.getSession();
+    
+    if (!session) {
+      console.log("Not logged in!")
+      return []
+    }
+    const { data, error } = await this.supabase
+      .from('doc_index')
+      .select('*')
+      .eq('user_id', this.user.id)
+      .order('title', { ascending: false });
+
+    if (error) {
+      console.error("Error fetching user docs:", error);
+      return [];
+    }
+    
+    return data || [];
   }
 }

@@ -3,6 +3,7 @@ import Editor from '../components/Editor';
 import Quill from 'quill'
 import "@radix-ui/themes/styles.css";
 import { Box, Flex } from '@radix-ui/themes';
+import DocList from '../components/doc-list';
 
 function App() {
   const quillRef = useRef<Quill | null>(null);
@@ -12,7 +13,7 @@ function App() {
     <Flex gap="3">
 
       <Box width="10%">
-        <ul><li>Default</li></ul>
+        <DocList />
       </Box>
       <Box width="90%">
         <Editor

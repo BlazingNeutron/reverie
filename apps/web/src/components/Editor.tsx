@@ -8,7 +8,6 @@ import { supabase } from '../lib/supabase/client'
 
 Quill.register('modules/cursors', QuillCursors);
 
-// Editor is an uncontrolled React component
 const Editor = forwardRef(({}, ref : any) => {
     const containerRef = useRef(null);
    
