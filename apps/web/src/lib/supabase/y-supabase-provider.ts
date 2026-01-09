@@ -3,16 +3,16 @@ import { Buffer } from 'buffer';
 import { type SupabaseClient } from '@supabase/supabase-js';
 
 export class SupabaseProvider {
-  doc;
-  docId;
+  doc : Doc | any;
+  docId : string | any;
   supabase;
   awareness : any;
   user : any;
   session : any;
 
-  constructor(docId : string, doc : Doc, supabase : SupabaseClient) {
-    this.docId = docId;
-    this.doc = doc;
+  constructor(supabase : SupabaseClient) {
+    // this.docId = docId;
+    // this.doc = doc;
     this.supabase = supabase;
 
     this.init();
@@ -29,15 +29,21 @@ export class SupabaseProvider {
     }
     this.user = session.user;
     this.session = session;
+  }
 
+  async setDoc(docId : string, doc : Doc) {
+    this.docId = docId;
+    this.doc = doc;
     // Send local updates to Supabase
-    this.doc.on('update', async (update : any) => {
-      await this.sendUpdate(update);
-    });
+    if (this.doc){
+      this.doc.on('update', async (update : any) => {
+        await this.sendUpdate(update);
+      });
 
-    // Optionally load initial state from DB
-    await this.loadInitialUpdates();
-    await this.subscribeToUpdates();
+      // Optionally load initial state from DB
+      await this.loadInitialUpdates();
+      await this.subscribeToUpdates();
+    }
   }
 
   async sendUpdate(update : string) {

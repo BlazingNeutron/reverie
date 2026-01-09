@@ -78,10 +78,10 @@ describe('SupabaseProvider (basic)', () => {
     const doc = new yjs.Doc();
     doc.getText('quill').insert(0, 'abc');
     const mockSupabase = createMockSupabase();
-    const provider = new SupabaseProvider('doc-1', doc, mockSupabase as any);
-
+    const provider = new SupabaseProvider(mockSupabase as any);
+    await provider.setDoc('doc-1', doc);
     await provider.init();
-
+    
     expect(provider.user).toBeTruthy();
     expect(provider.user.id).toBe('test-user');
     expect(mockSupabase.calls.channels).toContain('yjs-doc-1');
@@ -91,9 +91,10 @@ describe('SupabaseProvider (basic)', () => {
     const doc = new yjs.Doc();
     doc.getText('quill').insert(0, 'abc');
     const mockSupabase = createMockSupabase();
-    const provider = new SupabaseProvider('doc-1', doc, mockSupabase as any);
+    const provider = new SupabaseProvider(mockSupabase as any);
 
     await provider.init();
+    await provider.setDoc('doc-1', doc);
 
     const sample = new Uint8Array([1, 2, 3]);
     await provider.sendUpdate(sample as any);
@@ -106,7 +107,7 @@ describe('SupabaseProvider (basic)', () => {
     const doc = new yjs.Doc();
     doc.getText('quill').insert(0, 'abc');
     const mockSupabase = createMockSupabase();
-    const provider = new SupabaseProvider('doc-1', doc, mockSupabase as any);
+    const provider = new SupabaseProvider(mockSupabase as any);
 
     await provider.init();
     // call subscribeToUpdates directly (init also calls it but we call the method to be explicit)
@@ -133,7 +134,7 @@ describe('SupabaseProvider (basic)', () => {
     const doc = new yjs.Doc();
     doc.getText('quill').insert(0, 'abc');
     const mockSupabase = createMockSupabase();
-    const provider = new SupabaseProvider('doc-1', doc, mockSupabase as any);
+    const provider = new SupabaseProvider(mockSupabase as any);
 
     await provider.init();
     // Override the `from` handler for this test to return a pre-seeded update
@@ -164,7 +165,7 @@ describe('SupabaseProvider (basic)', () => {
   it('select all documents for user', async () => {
     const doc = new yjs.Doc();
     const mockSupabase = createMockSupabase();
-    const provider = new SupabaseProvider('doc-1', doc, mockSupabase as any);
+    const provider = new SupabaseProvider(mockSupabase as any);
 
     await provider.init();
 

@@ -14,7 +14,8 @@ const Editor = forwardRef(({}, ref : any) => {
     useEffect(() => {
       
       const ydoc = new Y.Doc()
-      const supaProvider = new SupabaseProvider('my-shared-doc-id', ydoc, supabase);
+      const supaProvider = new SupabaseProvider(supabase);
+      supaProvider.setDoc('my-shared-doc-id', ydoc);
       const ytext = ydoc.getText('quill')
 
       if (!containerRef || !containerRef.current) return;

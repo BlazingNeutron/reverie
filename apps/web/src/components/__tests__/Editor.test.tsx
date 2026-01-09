@@ -38,6 +38,9 @@ vi.mock('../../lib/supabase/y-supabase-provider', () => ({
     constructor() {
       // noop
     }
+    setDoc = (docId: string, ydoc: any) => {
+      // noop
+    }
   },
 }));
 
