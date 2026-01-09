@@ -69,7 +69,7 @@ function createMockSupabase() {
       calls.channels.push(name);
       return channelObj;
     },
-    from: () => fromObj,
+    from: (...args: any[]) => fromObj,
   };
 }
 
@@ -163,7 +163,6 @@ describe('SupabaseProvider (basic)', () => {
   });
 
   it('select all documents for user', async () => {
-    const doc = new yjs.Doc();
     const mockSupabase = createMockSupabase();
     const provider = new SupabaseProvider(mockSupabase as any);
 

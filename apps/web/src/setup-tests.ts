@@ -1,5 +1,8 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
+import '@testing-library/jest-dom'
+
+// TODO later with store context vi.mock('zustand') 
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,

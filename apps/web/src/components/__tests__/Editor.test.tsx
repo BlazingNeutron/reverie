@@ -62,4 +62,25 @@ describe('Editor component', () => {
     const { QuillBinding } = await import('y-quill');
     expect((QuillBinding as any).mock.calls.length).toBeGreaterThan(0);
   });
+
+  it('switching currentDocId re-initializes editor', async () => {
+    const ref = createRef<any>();
+    // set currentDocId to something else
+    const useDocStore = (await import('../../lib/state')).useDocStore;
+
+    useDocStore.getState().setCurrentDocId('doc-id');
+    const { container, rerender } = render(<Editor ref={ref} />);
+    const firstContainer = container.firstChild;
+    const firstContainerHtml = firstContainer?.innerHTML;
+    
+    // set currentDocId to something else
+    useDocStore.getState().setCurrentDocId('another-doc-id');
+
+    // Rerender with different doc id
+    rerender(<Editor ref={ref} />);
+    
+    const secondContainer = container.firstChild;
+    const secondContainerHtml = secondContainer?.innerHTML;
+    expect(firstContainerHtml).not.toBe(secondContainerHtml);
+  });
 });

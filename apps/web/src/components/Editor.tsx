@@ -4,18 +4,19 @@ import { QuillBinding } from 'y-quill'
 import Quill from 'quill'
 import QuillCursors from 'quill-cursors'
 import { SupabaseProvider } from '../lib/supabase/y-supabase-provider'
-import { supabase } from '../lib/supabase/client'
+import { supabase } from '../lib/supabase/client';
+import { useDocStore } from '../lib/state';
 
 Quill.register('modules/cursors', QuillCursors);
 
 const Editor = forwardRef(({}, ref : any) => {
     const containerRef = useRef(null);
-   
+    const currentDocId : string | any= useDocStore((s) => s.currentDocId);
     useEffect(() => {
       
       const ydoc = new Y.Doc()
       const supaProvider = new SupabaseProvider(supabase);
-      supaProvider.setDoc('my-shared-doc-id', ydoc);
+      supaProvider.setDoc(currentDocId, ydoc);
       const ytext = ydoc.getText('quill')
 
       if (!containerRef || !containerRef.current) return;
@@ -46,9 +47,9 @@ const Editor = forwardRef(({}, ref : any) => {
         ref.current = null;
         container.innerHTML = '';
       };
-    }, [ref]);
+    }, [ref, currentDocId]);
 
-    return <div ref={containerRef}></div>;
+    return <div>{currentDocId} <div ref={containerRef}></div></div>;
   },
 );
 
