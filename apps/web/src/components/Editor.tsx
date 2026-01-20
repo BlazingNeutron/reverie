@@ -6,6 +6,7 @@ import QuillCursors from 'quill-cursors'
 import { SupabaseProvider } from '../lib/supabase/y-supabase-provider'
 import { supabase } from '../lib/supabase/client';
 import { useDocStore } from '../lib/state';
+import 'quill/dist/quill.snow.css';
 
 Quill.register('modules/cursors', QuillCursors);
 
@@ -31,7 +32,8 @@ const Editor = forwardRef(({}, ref : any) => {
           toolbar: [
             [{ header: [1, 2, false] }],
             ['bold', 'italic', 'underline'],
-            ['image', 'code-block']
+            ['image', 'code-block'],
+            [{ "list": "check" }]
           ],
           history: {
             userOnly: true
@@ -49,7 +51,7 @@ const Editor = forwardRef(({}, ref : any) => {
       };
     }, [ref, currentDocId]);
 
-    return <div>{currentDocId} <div ref={containerRef}></div></div>;
+    return <div ref={containerRef} className='mt-10'></div>;
   },
 );
 

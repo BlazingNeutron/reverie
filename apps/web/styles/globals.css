@@ -123,3 +123,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Quill checklist fix: hide numeric counter when checklist UI is used */
+.ql-editor li[data-list=checked]::before,
+.ql-editor li[data-list=unchecked]::before {
+  display: none !important;
+}
+
+.ql-editor li[data-list=checked] {
+  text-decoration: line-through;
+}
+
