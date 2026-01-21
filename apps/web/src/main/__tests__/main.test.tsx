@@ -37,7 +37,7 @@ describe('main.tsx routing', () => {
 
   it('the base url redirects to /login when no session', async () => {
     const rr = await import('react-router');
-    const ac = await import('../../lib/auth/auth-context.tsx');
+    const ac = await import('../../lib/auth/authContext.tsx');
 
     // Mock useAuth to return no session and not loading
     vi.spyOn(ac, 'useAuth').mockReturnValue({ session: null, loading: false, user: null, signIn: vi.fn(), signOut: vi.fn() });
@@ -56,7 +56,7 @@ describe('main.tsx routing', () => {
   });
 
   it('the ProtectedRoute shows nothing when loading', async () => {
-    const ac = await import('../../lib/auth/auth-context.tsx');
+    const ac = await import('../../lib/auth/authContext.tsx');
 
     // Mock useAuth to return loading true
     vi.spyOn(ac, 'useAuth').mockReturnValue({ session: null, loading: true, user: null, signIn: vi.fn(), signOut: vi.fn() });
@@ -72,7 +72,7 @@ describe('main.tsx routing', () => {
 
   it('the base url returns outlet when session exists', async () => {
     const rr = await import('react-router');
-    const ac = await import('../../lib/auth/auth-context.tsx');
+    const ac = await import('../../lib/auth/authContext.tsx');
 
     // Mock useAuth to return a session and not loading
     vi.spyOn(ac, 'useAuth').mockReturnValue({ session: { user: {

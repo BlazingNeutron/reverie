@@ -1,16 +1,16 @@
 import * as Tooltip from "@radix-ui/react-tooltip";
-import { useDocStore } from '../lib/stores/doc-store';
+import { useDocStore } from '../lib/stores/documentStore';
 
 export function DocumentItem({
   doc,
-  sidebarOpen,
+  open,
   isActive,
 }: {
   doc: {
     doc_id: string,
     title: string
   };
-  sidebarOpen: boolean;
+  open: boolean;
   isActive: boolean;
 }) {
   const setCurrentDocId = useDocStore((state: any) => state.setCurrentDocId);
@@ -23,7 +23,7 @@ export function DocumentItem({
     ${isActive ? "bg-gray-800" : "hover:bg-gray-800"}
   `;
 
-  if (!sidebarOpen) {
+  if (!open) {
     return (
       <Tooltip.Root>
         <Tooltip.Trigger asChild onClick={handleDocChange(doc.doc_id)}>

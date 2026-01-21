@@ -1,10 +1,9 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 // Mock useAuth from the auth context so we can assert signIn was called
 const signInMock = vi.fn().mockResolvedValue({ error: null });
-vi.mock('../../lib/auth/auth-context', () => ({
+vi.mock('../../lib/auth/authContext', () => ({
   useAuth: () => ({
     signIn: signInMock,
   }),

@@ -1,6 +1,6 @@
 import { render, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { useDocStore } from '../../lib/stores/doc-store';
+import { useDocStore } from '../../lib/stores/documentStore';
 import { DocumentsSection } from '../DocumentsSection';
 
 // Mock yjs Doc
@@ -24,7 +24,7 @@ let mockFindUserDocs = async () => {
         ];
     };
 // // Mock SupabaseProvider so Editor does not perform network work
-vi.mock('../../lib/supabase/y-supabase-provider', () => ({
+vi.mock('../../lib/supabase/ySupabaseProvider', () => ({
   SupabaseProvider: class {
     awareness = {};
     constructor() {

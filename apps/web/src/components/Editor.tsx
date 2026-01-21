@@ -3,9 +3,9 @@ import * as Y from 'yjs'
 import { QuillBinding } from 'y-quill'
 import Quill from 'quill'
 import QuillCursors from 'quill-cursors'
-import { SupabaseProvider } from '../lib/supabase/y-supabase-provider'
+import { SupabaseProvider } from '../lib/supabase/ySupabaseProvider'
 import { supabase } from '../lib/supabase/client';
-import { useDocStore } from '../lib/stores/doc-store';
+import { useDocStore } from '../lib/stores/documentStore';
 import 'quill/dist/quill.snow.css';
 
 Quill.register('modules/cursors', QuillCursors);

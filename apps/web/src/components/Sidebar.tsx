@@ -20,7 +20,7 @@ export function Sidebar() {
         <SidebarHeader open={open} />
 
         <nav className="flex-1 overflow-y-auto">
-          <NewDocument />
+          <NewDocument open={open} />
           <DocumentsSection open={open} />
         </nav>
       </aside>

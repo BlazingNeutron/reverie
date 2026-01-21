@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { SupabaseProvider } from '../lib/supabase/y-supabase-provider';
+import { SupabaseProvider } from '../lib/supabase/ySupabaseProvider';
 import { supabase } from '../lib/supabase/client';
-import { useDocStore } from '../lib/stores/doc-store';
+import { useDocStore } from '../lib/stores/documentStore';
 import { Accordion } from 'radix-ui';
 import { DocumentItem } from './DocumentItem';
 
@@ -37,8 +37,12 @@ export function DocumentsSection({ open }: { open: boolean }) {
     <Accordion.Root type="single" collapsible defaultValue="docs">
       <Accordion.Item value="docs">
         <Accordion.Header>
-          <Accordion.Trigger asChild className="flex w-full items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-800">
-            Documents
+          <Accordion.Trigger asChild>
+            <div className="relative flex py-5 items-center cursor-pointer">
+              <div className="grow border-t border-gray-400"></div>
+              <span className="shrink mx-4 text-gray-400">Documents</span>
+              <div className="grow border-t border-gray-400"></div>
+            </div>
           </Accordion.Trigger>
         </Accordion.Header>
 
@@ -47,7 +51,7 @@ export function DocumentsSection({ open }: { open: boolean }) {
             <DocumentItem
               key={doc.doc_id}
               doc={doc}
-              sidebarOpen={open}
+              open={open}
               isActive={doc.doc_id == currentDocId}
             />
           ))}
