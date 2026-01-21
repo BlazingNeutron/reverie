@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 
-interface DocState {
+export type DocStore = {
     currentDocId: string | null;
     setCurrentDocId: (id: string) => void;
 }
 
-export const useDocStore = create<DocState>((set) => ({
+export const useDocStore = create<DocStore>((set) => ({
     currentDocId: null,
     setCurrentDocId: (id: string) => set({ currentDocId: id }),
 }));

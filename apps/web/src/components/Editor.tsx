@@ -5,7 +5,7 @@ import Quill from 'quill'
 import QuillCursors from 'quill-cursors'
 import { SupabaseProvider } from '../lib/supabase/y-supabase-provider'
 import { supabase } from '../lib/supabase/client';
-import { useDocStore } from '../lib/state';
+import { useDocStore } from '../lib/stores/doc-store';
 import 'quill/dist/quill.snow.css';
 
 Quill.register('modules/cursors', QuillCursors);
@@ -51,7 +51,7 @@ const Editor = forwardRef(({}, ref : any) => {
       };
     }, [ref, currentDocId]);
 
-    return <div ref={containerRef} className='mt-10'></div>;
+    return (<div><div className='hidden'>{currentDocId}</div><div ref={containerRef} className='mt-10'></div></div>);
   },
 );
 

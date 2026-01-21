@@ -1,6 +1,7 @@
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { useState } from "react";
 import { DocumentsSection } from "./DocumentsSection";
+import { NewDocument } from "./NewDocument";
 
 export function Sidebar() {
   const [open, setOpen] = useState(true);
@@ -19,6 +20,7 @@ export function Sidebar() {
         <SidebarHeader open={open} />
 
         <nav className="flex-1 overflow-y-auto">
+          <NewDocument />
           <DocumentsSection open={open} />
         </nav>
       </aside>

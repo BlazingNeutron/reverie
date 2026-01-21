@@ -1,5 +1,5 @@
 import * as Tooltip from "@radix-ui/react-tooltip";
-import { useDocStore } from '../lib/state';
+import { useDocStore } from '../lib/stores/doc-store';
 
 export function DocumentItem({
   doc,
@@ -29,7 +29,7 @@ export function DocumentItem({
         <Tooltip.Trigger asChild onClick={handleDocChange(doc.doc_id)}>
           <button className={`${baseStyles} flex h-10 items-center justify-center`}>
             📄
-            <StatusDot count={isActive} />
+            <StatusDot isActive={isActive} />
           </button>
         </Tooltip.Trigger>
 
@@ -60,8 +60,8 @@ export function DocumentItem({
   );
 }
 
-function StatusDot({ count }: { count: boolean }) {
-  if (!count) return null;
+function StatusDot({ isActive }: { isActive: boolean }) {
+  if (!isActive) return null;
 
   return (
     <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-green-400" />

@@ -66,7 +66,7 @@ describe('Editor component', () => {
   it('switching currentDocId re-initializes editor', async () => {
     const ref = createRef<any>();
     // set currentDocId to something else
-    const useDocStore = (await import('../../lib/state')).useDocStore;
+    const useDocStore = (await import('../../lib/stores/doc-store')).useDocStore;
 
     useDocStore.getState().setCurrentDocId('doc-id');
     const { container, rerender } = render(<Editor ref={ref} />);

@@ -31,9 +31,11 @@ export class SupabaseProvider {
     this.session = session;
   }
 
-  async setDoc(docId : string, doc : Doc) {
+  async setDoc(docId : string, doc : Doc) : Promise<any> {
     this.docId = docId;
     this.doc = doc;
+    const document = await this.supabase.from('doc_index').select('doc_id, title, content, user_id').eq('doc_id', docId);
+
     // Send local updates to Supabase
     if (this.doc){
       this.doc.on('update', async (update : any) => {
@@ -44,6 +46,7 @@ export class SupabaseProvider {
       await this.loadInitialUpdates();
       await this.subscribeToUpdates();
     }
+    return document;
   }
 
   async sendUpdate(update : string) {
@@ -72,7 +75,7 @@ export class SupabaseProvider {
     // write document contents to search table
     await this.supabase.from('doc_index').upsert({
       doc_id: this.docId,
-      title: 'Example Note',
+      title: this.doc.title,
       content: this.doc.getText('quill').toString(),
       user_id: this.user.id
     });
@@ -129,7 +132,7 @@ export class SupabaseProvider {
     }
   }
 
-  async findUserDocs() {
+  async findUserDocs() : Promise<any> {
     const {
       data: { session },
     } = await this.supabase.auth.getSession();

@@ -5,7 +5,7 @@ import { createBrowserRouter, Navigate, Outlet, RouterProvider } from 'react-rou
 import App from './routes/index';
 import Login from './routes/login';
 import AuthProvider, { useAuth } from './lib/auth/auth-context.tsx';
-import ThemeProvider from './components/theme-provider.tsx';
+import ThemeProvider from './components/ThemeProvider.tsx';
 
 export const ProtectedRoute = () => {
   const { session, loading } = useAuth();  

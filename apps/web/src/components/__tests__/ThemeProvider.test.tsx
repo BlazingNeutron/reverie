@@ -41,7 +41,7 @@ vi.mock('../../lib/supabase/y-supabase-provider', () => ({
   },
 }));
 
-import ThemeProvider from '../theme-provider';
+import ThemeProvider from '../ThemeProvider';
 
 describe('ThemeProvider component', () => {
   it('Verify Light Theme is selected', async () => {

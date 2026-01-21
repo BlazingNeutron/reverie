@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { SupabaseProvider } from '../lib/supabase/y-supabase-provider';
 import { supabase } from '../lib/supabase/client';
-import { useDocStore } from '../lib/state';
+import { useDocStore } from '../lib/stores/doc-store';
 import { Accordion } from 'radix-ui';
 import { DocumentItem } from './DocumentItem';
 
