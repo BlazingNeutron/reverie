@@ -23,7 +23,7 @@ vi.mock('yjs', () => {
 });
 
 import * as yjs from 'yjs';
-import { SupabaseProvider } from '../y-supabase-provider';
+import { SupabaseProvider } from '../ySupabaseProvider';
 
 function createMockSupabase() {
   const calls: any = { channels: [], inserts: [], upserts: [], sends: [] };

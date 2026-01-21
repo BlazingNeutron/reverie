@@ -1,7 +1,7 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { MemoryRouter } from 'react-router';
-import AuthProvider, { useAuth } from '../auth-context';
+import AuthProvider, { useAuth } from '../authContext';
 import { useEffect } from 'react';
 
 // Mock the supabase client used by AuthProvider

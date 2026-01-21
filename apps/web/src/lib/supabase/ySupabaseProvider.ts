@@ -154,4 +154,23 @@ export class SupabaseProvider {
     
     return data || [];
   }
+
+  async createDocument(title : string) : Promise<any> {
+    const {
+      data: { session },
+    } = await this.supabase.auth.getSession();
+    
+    if (!session) {
+      console.log("Not logged in!")
+      return null;
+    }
+
+    const { data, error } = await this.supabase
+      .from('doc_index').insert({"title": title}).select();
+
+    const newDoc = new Doc();
+    this.setDoc(data?.doc_id, newDoc);
+
+    return data?.doc_id;
+  }
 }
