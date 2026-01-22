@@ -11,7 +11,7 @@ vi.mock('../../../lib/supabase/client', () => {
     supabase: {
       auth: {
         getSession: () => mockGetSession(),
-        onAuthStateChange: vi.fn().mockImplementation((cb: any) => ({ data: { subscription: { unsubscribe: vi.fn() } } })),
+        onAuthStateChange: vi.fn().mockImplementation(() => ({ data: { subscription: { unsubscribe: vi.fn() } } })),
         signInWithPassword: (email: string, password: string) => mockSignInWithPassword(email, password),
         signOut: () => mockSignOut(),
       },
@@ -96,9 +96,12 @@ describe('AuthProvider', () => {
         </MemoryRouter>
       );
     });
-
+    expect.hasAssertions();
     await waitFor(() => expect(mockSignInWithPassword).toHaveBeenCalled());
-    expect(mockSignInWithPassword.mock.calls[0][0]).toEqual({ email: '<EMAIL>', password: 'password' });
+    if (mockSignInWithPassword && mockSignInWithPassword.mock && mockSignInWithPassword.mock.calls &&
+        mockSignInWithPassword.mock.calls[0]) {
+      expect(mockSignInWithPassword.mock.calls[0][0]).toEqual({ email: '<EMAIL>', password: 'password' });
+    }
   });
 
   it('signOut calls supabase auth signOut', async () => {
