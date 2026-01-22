@@ -3,6 +3,8 @@ import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { useDocStore } from '../../lib/stores/documentStore';
 import { NewDocument } from '../NewDocument';
 import { act } from 'react';
+import userEvent from '@testing-library/user-event'
+import { fireEvent, waitFor } from '@testing-library/react';
 
 // Mock yjs Doc
 vi.mock('yjs', () => {
@@ -77,5 +79,58 @@ describe('New Document component', () => {
     
     expect(container.querySelectorAll('input').length).toBe(1);
     expect(container.querySelectorAll('button').length).toBe(2);
+  });
+
+  it('Clicking New Document button then ESC does cancel', async () => {
+    
+    await act(async () => {
+      ReactDOMClient.createRoot(container).render(<NewDocument open={true} />);
+    });
+    
+    await act(async () => {
+      const newDocumentButton = container.querySelector('button');
+      if (newDocumentButton) {
+          newDocumentButton.click();
+      }
+    });
+    expect(container.querySelectorAll('input').length).toBe(1);
+    await act(async () => {
+      const titleInput = container.querySelector('input');
+      titleInput.focus();
+      expect(titleInput).toHaveFocus();
+      fireEvent.keyDown(titleInput, {key: 'Escape', code: 'Escape'})
+    });
+    
+    expect(container.querySelectorAll('input').length).toBe(0);
+  });
+
+  it('Clicking New Document button then Enter saves a new document', async () => {
+    
+    await act(async () => {
+      ReactDOMClient.createRoot(container).render(<NewDocument open={true} />);
+    });
+    
+    await act(async () => {
+      const newDocumentButton = container.querySelector('button');
+      if (newDocumentButton) {
+          newDocumentButton.click();
+      }
+    });
+    expect(container.querySelectorAll('input').length).toBe(1);
+    const titleInput = container.querySelector('input');
+    await act(async () => {
+      titleInput.focus();
+      userEvent.type(titleInput, 'foo')
+    });
+    
+    await waitFor(() => {
+      expect(titleInput.value).toBe('foo');
+    });
+    
+    await act(async () => {
+      fireEvent.keyDown(titleInput, {key: 'Enter', code: 'Enter'});
+    });
+    
+    expect(container.querySelectorAll('input').length).toBe(0);
   });
 });
