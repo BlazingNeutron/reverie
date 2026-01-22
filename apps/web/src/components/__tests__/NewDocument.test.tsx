@@ -34,6 +34,7 @@ vi.mock('../../lib/supabase/ySupabaseProvider', () => ({
       // noop
     }
     findUserDocs = async () => mockFindUserDocs()
+    createDocument = vi.fn().mockReturnValue("new-doc-id")
   },
 }));
 

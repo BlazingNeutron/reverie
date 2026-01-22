@@ -51,9 +51,9 @@ const Editor = forwardRef(({}, ref : any) => {
       };
     }, [ref, currentDocId]);
 
-    return (<div>
+    return (<div className='m-10 h-10/12'>
       <div className='hidden'>{currentDocId}</div>
-      <div ref={containerRef} className='mt-10'></div>
+      <div ref={containerRef} className='h-full'></div>
     </div>);
   },
 );

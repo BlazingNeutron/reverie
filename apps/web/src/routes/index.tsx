@@ -11,10 +11,8 @@ function App() {
   return (
     <Flex gap="3">
       <Sidebar />
-      <Box width="90%">
-        <Editor
-          ref={quillRef}
-        />
+      <Box className='w-full h-screen'>
+        <Editor ref={quillRef}/>
       </Box>
     </Flex>
   )
