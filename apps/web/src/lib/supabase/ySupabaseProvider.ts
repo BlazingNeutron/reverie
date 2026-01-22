@@ -11,30 +11,39 @@ export class SupabaseProvider {
   session : any;
 
   constructor(supabase : SupabaseClient) {
-    // this.docId = docId;
-    // this.doc = doc;
     this.supabase = supabase;
-
     this.init();
   }
 
-  async init() {
+  async ensureSession() {
     const {
       data: { session },
     } = await this.supabase.auth.getSession();
 
-    if (!session) {
-      // console.log("Not logged in!")
-      return
-    }
+    if (!session) return null;
+
     this.user = session.user;
     this.session = session;
+    return session;
+  }
+
+  async init() {
+    await this.ensureSession();
   }
 
   async setDoc(docId : string, doc : Doc) : Promise<any> {
+    if (!await this.ensureSession()) return;
+
+    //TODO unsubscribe from previous docId
+    if (!docId) {
+      return;
+    }
+    
     this.docId = docId;
     this.doc = doc;
-    const document = await this.supabase.from('documents').select('doc_id, title, content, user_id').eq('doc_id', docId);
+    const document = await this.supabase.from('documents')
+      .select('doc_id, title, content, user_id')
+      .eq('doc_id', docId);
 
     // Send local updates to Supabase
     if (this.doc && this.doc.on){
@@ -50,14 +59,7 @@ export class SupabaseProvider {
   }
 
   async sendUpdate(update : string) {
-    const {
-      data: { session },
-    } = await this.supabase.auth.getSession();
-
-    if (!session) {
-      // console.log("Not logged in!")
-      return
-    }
+    if (!await this.ensureSession()) return;
 
     const base64Update = Buffer.from(update).toString('base64');
 
@@ -80,23 +82,16 @@ export class SupabaseProvider {
       user_id: this.user.id
     });
 
-    // Supabase text search
-    const searchResults = await this.supabase
-      .from('documents')
-      .select('*')
-      .textSearch('tsv', `'Test Search'`, { type: 'plain' });
+    // // Supabase text search
+    // const searchResults = await this.supabase
+    //   .from('documents')
+    //   .select('*')
+    //   .textSearch('tsv', `'Test Search'`, { type: 'plain' });
     
   }
 
   async subscribeToUpdates() {
-    const {
-      data: { session },
-    } = await this.supabase.auth.getSession();
-
-    if (!session) {
-      // console.log("Not logged in!")
-      return
-    }
+    if (!await this.ensureSession()) return;
 
     this.supabase
       .channel(`yjs-${this.docId}`)
@@ -108,16 +103,9 @@ export class SupabaseProvider {
   }
 
   async loadInitialUpdates() {
-    const {
-      data: { session },
-    } = await this.supabase.auth.getSession();
+    if (!await this.ensureSession()) return;
 
-    if (!session) {
-      // console.log("Not logged in!")
-      return
-    }
-
-    const { data, error } = await this.supabase
+    const { data } = await this.supabase
       .from('yjs_updates')
       .select('update')
       .eq('doc_id', this.docId)
@@ -133,14 +121,7 @@ export class SupabaseProvider {
   }
 
   async findUserDocs() : Promise<any> {
-    const {
-      data: { session },
-    } = await this.supabase.auth.getSession();
-    
-    if (!session) {
-      // console.log("Not logged in!")
-      return []
-    }
+    if (!await this.ensureSession()) return [];
     const { data, error } = await this.supabase
       .from('documents')
       .select('*')
@@ -156,21 +137,16 @@ export class SupabaseProvider {
   }
 
   async createDocument(title : string) : Promise<any> {
-    const {
-      data: { session },
-    } = await this.supabase.auth.getSession();
-    
-    if (!session) {
-      // console.log("Not logged in!")
-      return null;
+    if (!await this.ensureSession()) return null;
+
+    const { data } = await this.supabase
+      .from('documents')
+      .insert({"title": title})
+      .select('doc_id, title');
+
+    if (data && data.length > 0 && data[0]) {
+      return data[0].doc_id;
     }
-
-    const { data, error } = await this.supabase
-      .from('documents').insert({"title": title}).select();
-
-    const newDoc = new Doc();
-    this.setDoc(data?.doc_id, newDoc);
-
-    return data?.doc_id;
+    return null;
   }
 }
