@@ -3,6 +3,7 @@ import { vi } from 'vitest';
 import '@testing-library/jest-dom'
 
 // TODO later with store context vi.mock('zustand') 
+globalThis.IS_REACT_ACT_ENVIRONMENT = true
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,

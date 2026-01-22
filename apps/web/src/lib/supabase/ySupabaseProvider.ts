@@ -24,7 +24,7 @@ export class SupabaseProvider {
     } = await this.supabase.auth.getSession();
 
     if (!session) {
-      console.log("Not logged in!")
+      // console.log("Not logged in!")
       return
     }
     this.user = session.user;
@@ -34,10 +34,10 @@ export class SupabaseProvider {
   async setDoc(docId : string, doc : Doc) : Promise<any> {
     this.docId = docId;
     this.doc = doc;
-    const document = await this.supabase.from('doc_index').select('doc_id, title, content, user_id').eq('doc_id', docId);
+    const document = await this.supabase.from('documents').select('doc_id, title, content, user_id').eq('doc_id', docId);
 
     // Send local updates to Supabase
-    if (this.doc){
+    if (this.doc && this.doc.on){
       this.doc.on('update', async (update : any) => {
         await this.sendUpdate(update);
       });
@@ -55,7 +55,7 @@ export class SupabaseProvider {
     } = await this.supabase.auth.getSession();
 
     if (!session) {
-      console.log("Not logged in!")
+      // console.log("Not logged in!")
       return
     }
 
@@ -73,7 +73,7 @@ export class SupabaseProvider {
     });
     
     // write document contents to search table
-    await this.supabase.from('doc_index').upsert({
+    await this.supabase.from('documents').upsert({
       doc_id: this.docId,
       title: this.doc.title,
       content: this.doc.getText('quill').toString(),
@@ -82,10 +82,10 @@ export class SupabaseProvider {
 
     // Supabase text search
     const searchResults = await this.supabase
-      .from('doc_index')
+      .from('documents')
       .select('*')
       .textSearch('tsv', `'Test Search'`, { type: 'plain' });
-    console.log(searchResults);
+    
   }
 
   async subscribeToUpdates() {
@@ -94,7 +94,7 @@ export class SupabaseProvider {
     } = await this.supabase.auth.getSession();
 
     if (!session) {
-      console.log("Not logged in!")
+      // console.log("Not logged in!")
       return
     }
 
@@ -113,7 +113,7 @@ export class SupabaseProvider {
     } = await this.supabase.auth.getSession();
 
     if (!session) {
-      console.log("Not logged in!")
+      // console.log("Not logged in!")
       return
     }
 
@@ -138,11 +138,11 @@ export class SupabaseProvider {
     } = await this.supabase.auth.getSession();
     
     if (!session) {
-      console.log("Not logged in!")
+      // console.log("Not logged in!")
       return []
     }
     const { data, error } = await this.supabase
-      .from('doc_index')
+      .from('documents')
       .select('*')
       .eq('user_id', this.user.id)
       .order('title', { ascending: false });
@@ -161,12 +161,12 @@ export class SupabaseProvider {
     } = await this.supabase.auth.getSession();
     
     if (!session) {
-      console.log("Not logged in!")
+      // console.log("Not logged in!")
       return null;
     }
 
     const { data, error } = await this.supabase
-      .from('doc_index').insert({"title": title}).select();
+      .from('documents').insert({"title": title}).select();
 
     const newDoc = new Doc();
     this.setDoc(data?.doc_id, newDoc);

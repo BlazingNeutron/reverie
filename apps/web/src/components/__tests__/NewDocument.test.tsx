@@ -1,7 +1,8 @@
-import { render, waitFor } from '@testing-library/react';
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import ReactDOMClient from 'react-dom/client';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { useDocStore } from '../../lib/stores/documentStore';
 import { NewDocument } from '../NewDocument';
+import { act } from 'react';
 
 // Mock yjs Doc
 vi.mock('yjs', () => {
@@ -35,36 +36,46 @@ vi.mock('../../lib/supabase/y-supabase-provider', () => ({
 }));
 
 describe('New Document component', () => {
+  let container : any;
+
   beforeEach(() => {
     useDocStore.setState({ currentDocId: null });
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  afterEach(() => {
+    document.body.removeChild(container);
+    container = null;
   });
   
   it('New Document does not render when closed', async () => {
-    const { container } = render(<NewDocument open={false} />);
-    await waitFor(() => {
-      expect(container.querySelectorAll('div').length).toBe(1);
+    await act(async () => {
+      ReactDOMClient.createRoot(container).render(<NewDocument open={false} />);
     });
+    expect(container.querySelectorAll('div').length).toBe(1);
   });
 
   it('New Document renders when open', async () => {
-    const { container } = render(<NewDocument open={true} />);
-    await waitFor(() => {
-      expect(container.querySelectorAll('button').length).toBe(1);
+    await act(async () => {
+      ReactDOMClient.createRoot(container).render(<NewDocument open={true} />);
     });
+    expect(container.querySelectorAll('button').length).toBe(1);
   });
 
   it('Clicking New Document button reveals textbox, cancel and create buttons', async () => {
-    const { container } = render(<NewDocument open={true} />);
-    await waitFor(() => {
-      expect(container.querySelectorAll('button').length).toBe(1);
+    await act(async () => {
+      ReactDOMClient.createRoot(container).render(<NewDocument open={true} />);
     });
-    const newDocumentButton = container.querySelector('button');
-    if (newDocumentButton) {
-        newDocumentButton.click();
-    }
-    await waitFor(() => {
-      expect(container.querySelectorAll('input').length).toBe(1);
+    
+    await act(async () => {
+      const newDocumentButton = container.querySelector('button');
+      if (newDocumentButton) {
+          newDocumentButton.click();
+      }
     });
+    
+    expect(container.querySelectorAll('input').length).toBe(1);
     expect(container.querySelectorAll('button').length).toBe(2);
   });
 });

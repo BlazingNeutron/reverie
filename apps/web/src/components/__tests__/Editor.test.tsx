@@ -1,12 +1,14 @@
-import React, { createRef } from 'react';
-import { render, waitFor } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { createRef, act } from 'react';
+import { waitFor } from '@testing-library/react';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import ReactDOMClient from 'react-dom/client';
+import Editor from '../Editor';
 
 // Mock yjs Doc
 vi.mock('yjs', () => {
   return {
     Doc: class {
-      getText(name: string) {
+      getText() {
         return {
           insert: () => {},
           toString: () => 'mock',
@@ -38,46 +40,52 @@ vi.mock('../../lib/supabase/y-supabase-provider', () => ({
     constructor() {
       // noop
     }
-    setDoc = (docId: string, ydoc: any) => {
+    setDoc = () => {
       // noop
     }
   },
 }));
 
-import Editor from '../Editor';
-
 describe('Editor component', () => {
+  let container : any;
+
+  beforeEach(() => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+  });
+
+  afterEach(() => {
+    document.body.removeChild(container);
+    container = null;
+  });
+
   it('initializes Quill and QuillBinding', async () => {
-    const ref = createRef<any>();
-
-    const { container } = render(<Editor ref={ref} />);
-
-    // wait for useEffect to run and QuillBinding to be called
-    await waitFor(async () => {
-      const { QuillBinding } = await import('y-quill');
-      if ((QuillBinding as any).mock.calls.length === 0) throw new Error('binding not called yet');
+    await act(async () => {
+      const ref = createRef<any>();
+      ReactDOMClient.createRoot(container).render(<Editor ref={ref} />);
     });
 
-    // QuillBinding should have been called with a ytext, quill instance and awareness
-    const { QuillBinding } = await import('y-quill');
-    expect((QuillBinding as any).mock.calls.length).toBeGreaterThan(0);
+    await waitFor(async () => {
+      const { QuillBinding } = await import('y-quill');
+      expect((QuillBinding as any).mock.calls.length).toBeGreaterThan(0);
+    });
   });
 
   it('switching currentDocId re-initializes editor', async () => {
-    const ref = createRef<any>();
     // set currentDocId to something else
     const useDocStore = (await import('../../lib/stores/documentStore')).useDocStore;
-
-    useDocStore.getState().setCurrentDocId('doc-id');
-    const { container, rerender } = render(<Editor ref={ref} />);
+    await act(async () => {
+      useDocStore.getState().setCurrentDocId('doc-id');
+      const ref = createRef<any>();
+      ReactDOMClient.createRoot(container).render(<Editor ref={ref} />);
+    });
     const firstContainer = container.firstChild;
     const firstContainerHtml = firstContainer?.innerHTML;
     
     // set currentDocId to something else
-    useDocStore.getState().setCurrentDocId('another-doc-id');
-
-    // Rerender with different doc id
-    rerender(<Editor ref={ref} />);
+    await act(async () => {
+      useDocStore.getState().setCurrentDocId('another-doc-id');
+    });
     
     const secondContainer = container.firstChild;
     const secondContainerHtml = secondContainer?.innerHTML;

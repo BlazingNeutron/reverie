@@ -61,7 +61,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const res = await supabase.auth.signInWithPassword({ email, password });
         if (res.error) return { error: res.error };
         const origin = location.state?.from?.pathname || "/";
-        navigate(origin);
+        if (origin !== location.pathname) {
+            navigate(origin);
+        }
 
         return { error: null };
     };
