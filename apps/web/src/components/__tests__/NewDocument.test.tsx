@@ -26,8 +26,8 @@ let mockFindUserDocs = async () => {
             { doc_id: 'doc2', title: 'Document 2' },
         ];
     };
-// // Mock SupabaseProvider so Editor does not perform network work
-vi.mock('../../lib/supabase/y-supabase-provider', () => ({
+// // Mock SupabaseProvider so it does not perform network work
+vi.mock('../../lib/supabase/ySupabaseProvider', () => ({
   SupabaseProvider: class {
     awareness = {};
     constructor() {

@@ -1,27 +1,33 @@
 import { useEffect, useRef, useState } from "react";
 import { Button, TextField } from "@radix-ui/themes";
+import { SupabaseProvider } from "../lib/supabase/ySupabaseProvider";
+import { supabase } from "../lib/supabase/client";
+import { useDocStore } from "../lib/stores/documentStore";
 
 export function NewDocument({open} : {open : boolean}) {
     const [editing, setEditing] = useState(false);
-    const [name, setName] = useState("");
+    const [title, setTitle] = useState("");
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
+    const setCurrentDocId = useDocStore((state: any) => state.setCurrentDocId);
 
     useEffect(() => {
         if (editing) inputRef.current?.focus();
     }, [editing]);
 
     const create = async () => {
-        const trimmed = name.trim();
+        const trimmed = title.trim();
         if (!trimmed) return;
-        //Create document
-        setName("");
+        const supaProvider = new SupabaseProvider(supabase);
+        const newDocId = await supaProvider.createDocument(trimmed);
+        setCurrentDocId(newDocId);
+        setTitle("");
         setEditing(false);
         triggerRef.current?.focus();
     };
 
     const cancel = () => {
-        setName("");
+        setTitle("");
         setEditing(false);
         triggerRef.current?.focus();
     };
@@ -40,8 +46,8 @@ export function NewDocument({open} : {open : boolean}) {
                 <div className="grid grid-rows-2 gap-4">
                     <div>
                         <TextField.Root
-                            value={name} 
-                            onChange={(e) => setName(e.target.value)}
+                            value={title} 
+                            onChange={(e) => setTitle(e.target.value)}
                             placeholder="Untitled document"
                             aria-label="New document name"
                             className="w-full"
@@ -58,7 +64,7 @@ export function NewDocument({open} : {open : boolean}) {
                         </TextField.Root>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
-                        <Button onClick={create} disabled={!name.trim()} className="">
+                        <Button onClick={create} disabled={!title.trim()} className="">
                             Create
                         </Button>
                         <Button onClick={cancel}>

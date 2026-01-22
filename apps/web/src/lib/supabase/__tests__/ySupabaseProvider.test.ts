@@ -76,7 +76,7 @@ function createMockSupabase() {
       calls.channels.push(name);
       return channelObj;
     },
-    from: (...args: any[]) => fromObj,
+    from: () => fromObj,
   };
 }
 

@@ -141,10 +141,13 @@ export class SupabaseProvider {
 
     const { data } = await this.supabase
       .from('documents')
-      .insert({"title": title})
-      .select('doc_id, title');
+      .insert({
+        "title": title,
+        "user_id": this.user.id
+      }).select();
 
     if (data && data.length > 0 && data[0]) {
+      console.log(data[0].doc_id);
       return data[0].doc_id;
     }
     return null;

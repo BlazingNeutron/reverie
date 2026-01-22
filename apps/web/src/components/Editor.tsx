@@ -18,7 +18,7 @@ const Editor = forwardRef(({}, ref : any) => {
       const ydoc = new Y.Doc()
       const supaProvider = new SupabaseProvider(supabase);
       supaProvider.setDoc(currentDocId, ydoc);
-      const ytext = ydoc.getText('quill')
+      const ytext = ydoc.getText('quill');
 
       if (!containerRef || !containerRef.current) return;
       const container : HTMLElement = containerRef.current;

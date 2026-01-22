@@ -31,7 +31,7 @@ export function DocumentsSection({ open }: { open: boolean }) {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [currentDocId]);
 
   return (
     <Accordion.Root type="single" collapsible defaultValue="docs">
