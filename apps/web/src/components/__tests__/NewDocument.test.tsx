@@ -106,7 +106,6 @@ describe('New Document component', () => {
   });
 
   it('Clicking New Document button then Enter saves a new document', async () => {
-    
     await act(async () => {
       ReactDOMClient.createRoot(container).render(<NewDocument open={true} />);
     });

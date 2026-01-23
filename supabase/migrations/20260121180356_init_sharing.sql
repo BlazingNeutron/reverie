@@ -93,7 +93,7 @@ END;
 $$ LANGUAGE plpgsql
 SET search_path = "public";
 
-DROP TRIGGER sync_profile_after_upsert on auth.users;
+DROP TRIGGER IF EXISTS sync_profile_after_upsert on auth.users;
 
 CREATE TRIGGER sync_profile_after_upsert
 AFTER INSERT ON auth.users
@@ -113,3 +113,22 @@ GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE "public".
 
 
 
+CREATE OR REPLACE FUNCTION public.share_with_self()
+RETURNS trigger AS
+$$
+BEGIN
+    INSERT INTO public.shared (user_id, doc_id)
+    VALUES (
+        NEW.user_id,
+        NEW.doc_id
+    );
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql
+SET search_path = "public";
+
+DROP TRIGGER IF EXISTS share_with_self_trigger on public.documents;
+
+CREATE TRIGGER share_with_self_trigger
+AFTER INSERT ON public.documents
+FOR EACH ROW EXECUTE FUNCTION public.share_with_self();

@@ -124,7 +124,7 @@ export class SupabaseProvider {
     if (!await this.ensureSession()) return [];
     const { data, error } = await this.supabase
       .from('documents')
-      .select('*')
+      .select('doc_id, title, shared(doc_id)')
       .eq('user_id', this.user.id)
       .order('title', { ascending: false });
 
@@ -147,9 +147,38 @@ export class SupabaseProvider {
       }).select();
 
     if (data && data.length > 0 && data[0]) {
-      console.log(data[0].doc_id);
       return data[0].doc_id;
     }
     return null;
+  }
+
+  async shareDocument(users : [string]) {
+    if (!await this.ensureSession()) return;
+
+    if (!this.docId) return;
+
+    users.forEach(async (user_id) => {
+      await this.supabase
+        .from('shared')
+        .insert({
+          "doc_id": this.docId,
+          "user_id": user_id
+        });
+    });
+  }
+
+  async findCollaborators() : Promise<any> {
+    if (!await this.ensureSession()) return null;
+
+    const { data, error } = await this.supabase
+      .from('profiles')
+      .select('*');
+
+    if (error) {
+      console.error("Error fetching collaborators:", error);
+      return [];
+    }
+    
+    return data || [];
   }
 }

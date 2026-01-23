@@ -4,6 +4,7 @@ import Quill from 'quill'
 import "@radix-ui/themes/styles.css";
 import { Box, Flex } from '@radix-ui/themes';
 import { Sidebar } from '../components/Sidebar';
+import { Header } from '../components/Header';
 
 function App() {
   const quillRef = useRef<Quill | null>(null);
@@ -12,7 +13,11 @@ function App() {
     <Flex gap="3">
       <Sidebar />
       <Box className='w-full h-screen'>
-        <Editor ref={quillRef}/>
+        <Header />
+        
+        <Box className="h-full">
+          <Editor ref={quillRef}/>
+        </Box>
       </Box>
     </Flex>
   )
