@@ -64,3 +64,52 @@ ALTER TABLE "public"."shared" ENABLE ROW LEVEL SECURITY;
 GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE "public"."shared" TO "anon";
 GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE "public"."shared" TO "authenticated";
 GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE "public"."shared" TO "service_role";
+
+CREATE TABLE IF NOT EXISTS public.profiles (
+    user_id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    display_name text,
+    username text,
+    created_at timestamptz DEFAULT now()
+) TABLESPACE pg_default;
+
+CREATE OR REPLACE FUNCTION public.sync_profile_from_auth()
+RETURNS trigger AS
+$$
+BEGIN
+    INSERT INTO public.profiles (user_id, display_name, username, created_at)
+    VALUES (
+        NEW.id,
+        split_part(NEW.email, '@', 1),
+        split_part(NEW.email, '@', 1),
+        now()
+    )
+    ON CONFLICT (user_id) DO UPDATE SET
+        display_name = EXCLUDED.display_name,
+        username = EXCLUDED.username,
+        created_at = now();
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql
+SET search_path = "public";
+
+DROP TRIGGER sync_profile_after_upsert on auth.users;
+
+CREATE TRIGGER sync_profile_after_upsert
+AFTER INSERT ON auth.users
+FOR EACH ROW EXECUTE FUNCTION public.sync_profile_from_auth();
+
+CREATE POLICY "Enable users to view their own data only" ON "public"."profiles" FOR SELECT TO "authenticated" USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
+
+CREATE POLICY "Enable insert for authenticated users only" ON "public"."profiles" FOR INSERT TO "authenticated" WITH CHECK (true);
+
+CREATE POLICY "Enable delete for users based on user_id" ON "public"."profiles" FOR DELETE USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
+
+ALTER TABLE "public"."profiles" ENABLE ROW LEVEL SECURITY;
+
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE "public"."profiles" TO "anon";
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE "public"."profiles" TO "authenticated";
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,TRUNCATE,UPDATE ON TABLE "public"."profiles" TO "service_role";
+
+
+
