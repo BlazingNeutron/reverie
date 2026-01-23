@@ -1,21 +1,22 @@
 import { render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { MemoryRouter } from 'react-router';
+import Index from '../index';
+import ThemeProvider from '../../components/ThemeProvider';
 
-// Mock useAuth from the auth context so we can assert signIn was called
 vi.mock('../../lib/auth/auth-context', () => ({
   useAuth: () => ({
     session: { user: { id: 'u-123', email: '<EMAIL>' } }
   }),
 }));
 
-import { MemoryRouter } from 'react-router';
-import Index from '../index';
-
 describe('Index component', () => {
   it('Loads quill editor within index component', async () => {
     const { container } = render(
       <MemoryRouter>
-        <Index />
+        <ThemeProvider>
+          <Index />
+        </ThemeProvider>
       </MemoryRouter>
     );
 

@@ -5,10 +5,10 @@ import { MemoryRouter } from 'react-router';
 import Login from '../login';
 import { act } from 'react';
 
-const signInMock = vi.fn().mockResolvedValue({ error: null });
+let signInMock = vi.fn().mockResolvedValue({ error: null });
 vi.mock('../../lib/auth/authContext', () => ({
   useAuth: () => ({
-    signIn: signInMock,
+    signIn: () => signInMock(),
   }),
 }));
 
@@ -18,6 +18,7 @@ describe('Login component', () => {
   beforeEach(() => {
     container = document.createElement('div');
     document.body.appendChild(container);
+    signInMock = vi.fn().mockResolvedValue({ error: null });
   });
 
   afterEach(() => {
@@ -26,6 +27,26 @@ describe('Login component', () => {
   });
 
   it('calls signIn on submit with form values', async () => {
+    await attemptSignIn();
+
+    expect(signInMock).toHaveBeenCalled();
+  });
+
+  it('Error message is relayed to user', async () => {
+    signInMock = vi.fn().mockResolvedValue({ error: new Error("Test error") });
+    await attemptSignIn();
+    
+    expect(container.querySelector('.text-red-500').textContent).toBe("Test error");
+  });
+
+  it('Unknown error occures', async () => {
+    signInMock = vi.fn().mockResolvedValue({ error: "Something bad" });
+    await attemptSignIn();
+    
+    expect(container.querySelector('.text-red-500').textContent).toBe("An error occurred");
+  });
+
+  async function attemptSignIn() {
     await act(async () => {
       ReactDOMClient.createRoot(container).render(
         <MemoryRouter>
@@ -45,8 +66,6 @@ describe('Login component', () => {
     await act(async () => {
       fireEvent.click(submit);
     });
-
-    // signIn is async; ensure it was called with the entered values
-    expect(signInMock).toHaveBeenCalled();
-  });
+  }
 });
+

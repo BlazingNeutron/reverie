@@ -14,10 +14,7 @@ function App() {
       <Sidebar />
       <Box className='w-full h-screen'>
         <Header />
-        
-        <Box className="h-full">
-          <Editor ref={quillRef}/>
-        </Box>
+        <Editor ref={quillRef}/>
       </Box>
     </Flex>
   )
