@@ -9,7 +9,7 @@ export function UserMenu() {
 
     return (<DropdownMenu.Root>
         <DropdownMenu.Trigger>
-            <button className="h-9 w-9 rounded-full light:bg-neutral-900 dark:bg-gray-900 border text-white flex items-center justify-center text-sm font-medium hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-400"
+            <button className="h-9 w-9 rounded-full bg-neutral-300 dark:bg-gray-900 border light:text-black dark:text-white flex items-center justify-center text-sm font-medium hover:bg-neutral-400 dark:hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-400"
                 aria-label="User menu">
                 {initial}
             </button>

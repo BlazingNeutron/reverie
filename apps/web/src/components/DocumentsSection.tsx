@@ -38,11 +38,11 @@ export function DocumentsSection({ open }: { open: boolean }) {
       <Accordion.Item value="docs">
         <Accordion.Header>
           <Accordion.Trigger asChild>
-            <div className="relative flex py-5 items-center cursor-pointer">
+            {open && <div className="relative flex py-5 items-center cursor-pointer">
               <div className="grow border-t border-gray-400"></div>
               <span className="shrink mx-4 text-gray-400">Documents</span>
               <div className="grow border-t border-gray-400"></div>
-            </div>
+            </div>}
           </Accordion.Trigger>
         </Accordion.Header>
 
