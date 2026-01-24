@@ -2,8 +2,9 @@
 @import 'tw-animate-css';
 
 @custom-variant dark (&:where(.dark, .dark *));
+@custom-variant light (&:where(.light, .light *));
 
-:root {
+.light, :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -134,3 +135,16 @@
   text-decoration: line-through;
 }
 
+.dark .ql-editor.ql-blank::before {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.ql-toolbar {
+  border-top-right-radius: 6px;
+  border-top-left-radius: 6px;
+}
+
+.ql-container {
+  border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+}

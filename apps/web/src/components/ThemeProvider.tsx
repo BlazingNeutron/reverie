@@ -27,15 +27,8 @@ export default function ThemeProvider({ children }:{children:ReactElement}) {
     }
   };
 
-  const toggle = () => {
-    const body : HTMLElement | any = document.getElementsByTagName("body")[0];
-    body.style.cssText = "transition: background .5s ease";
-
-    setDark(!dark);
-  };
-
   return (
-    <ThemeContext.Provider value={{dark, toggle}}>
+    <ThemeContext.Provider value={{dark, toggle : () => setDark(!dark) }}>
         <Theme appearance={dark ? "dark" : "light"} panelBackground="solid">
             {children}
         </Theme>
