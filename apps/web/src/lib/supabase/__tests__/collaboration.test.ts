@@ -19,18 +19,13 @@ describe('supabase collaboration', () => {
     })
 
     it('Select updates on specific document', async () => {
-        await selectYJsUpdates("docId1", "userId1");
+        await selectYJsUpdates("docId1");
 
-        //two equal and an order by
         expect(supabaseClientMock.calls.query()).toEqual({
             "filters": [
                 {
                     "column": "doc_id",
                     "value": "docId1",
-                },
-                {
-                    "column": "user_id",
-                    "value": "userId1",
                 },
             ],
             "order": {

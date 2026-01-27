@@ -71,7 +71,7 @@ export class SupabaseProvider {
   async loadInitialUpdates() {
     if (!this.session) return;
 
-    const { data } = await selectYJsUpdates(this.docId, this.user.id)
+    const { data } = await selectYJsUpdates(this.docId)
 
     if (data) {
       data.forEach((row: any) => {
