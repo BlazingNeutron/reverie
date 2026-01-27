@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { SupabaseProvider } from '../lib/supabase/ySupabaseProvider';
-import { supabase } from '../lib/supabase/client';
 import { useDocStore } from '../lib/stores/documentStore';
 import { Accordion } from 'radix-ui';
 import { DocumentItem } from './DocumentItem';
+import { findUserDocs } from '../lib/supabase/documents';
+import { ensureSession } from '../lib/supabase/auth';
 
 export function DocumentsSection({ open }: { open: boolean }) {
   const [docs, setDocs] = useState<any[]>([]);
@@ -13,21 +13,20 @@ export function DocumentsSection({ open }: { open: boolean }) {
 
   useEffect(() => {
     let mounted = true;
-    const provider = new SupabaseProvider(supabase);
-
-    provider
-      .findUserDocs()
-      .then((res: any) => {
-        if (mounted) setDocs(res || []);
-        //set currentDocId to first doc if not set
-        if (mounted && res && res.length > 0 && !currentDocId) {
-          setCurrentDocId(res[0].doc_id);
-        }
-      })
-      .catch(() => {
-        if (mounted) setDocs([]);
-      });
-
+    ensureSession().then((session) => {
+      if (!session) return;
+      findUserDocs(session?.user.id)
+        .then((res: any) => {
+          if (mounted) setDocs(res || []);
+          //set currentDocId to first doc if not set
+          if (mounted && res && res.length > 0 && !currentDocId) {
+            setCurrentDocId(res[0].doc_id);
+          }
+        })
+        .catch(() => {
+          if (mounted) setDocs([]);
+        });
+    });
     return () => {
       mounted = false;
     };

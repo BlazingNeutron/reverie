@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Button, TextField } from "@radix-ui/themes";
-import { SupabaseProvider } from "../lib/supabase/ySupabaseProvider";
-import { supabase } from "../lib/supabase/client";
 import { useDocStore } from "../lib/stores/documentStore";
+import { createDocument } from "../lib/supabase/documents";
+import { useAuthStore } from "../lib/stores/authStore";
 
 export function NewDocument({open} : {open : boolean}) {
     const [editing, setEditing] = useState(false);
@@ -10,6 +10,7 @@ export function NewDocument({open} : {open : boolean}) {
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const setCurrentDocId = useDocStore((state: any) => state.setCurrentDocId);
+    const { user } = useAuthStore();
 
     useEffect(() => {
         if (editing) inputRef.current?.focus();
@@ -18,8 +19,7 @@ export function NewDocument({open} : {open : boolean}) {
     const create = async () => {
         const trimmed = title.trim();
         if (!trimmed) return;
-        const supaProvider = new SupabaseProvider(supabase);
-        const newDocId = await supaProvider.createDocument(trimmed);
+        const newDocId = createDocument(trimmed, user?.id)
         setCurrentDocId(newDocId);
         setTitle("");
         setEditing(false);
