@@ -3,36 +3,17 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { useDocStore } from '../../lib/stores/documentStore';
 import { DocumentsSection } from '../DocumentsSection';
 
-// Mock yjs Doc
-vi.mock('yjs', () => {
-  return {
-    Doc: class {
-      getText() {
-        return {
-          insert: () => {},
-          toString: () => 'mock',
-        };
-      }
-    }
-  };
-});
-
 let mockFindUserDocs = async () => {
-        return [
-            { doc_id: 'doc1', title: 'Document 1' },
-            { doc_id: 'doc2', title: 'Document 2' },
-        ];
-    };
-// // Mock SupabaseProvider so Editor does not perform network work
-vi.mock('../../lib/supabase/ySupabaseProvider', () => ({
-  SupabaseProvider: class {
-    awareness = {};
-    constructor() {
-      // noop
-    }
-    findUserDocs = async () => mockFindUserDocs()
-  },
-}));
+    return [
+        { doc_id: 'doc1', title: 'Document 1' },
+        { doc_id: 'doc2', title: 'Document 2' },
+    ];
+};
+vi.mock("../../lib/supabase/documents", () => {
+  return {
+    findUserDocs: () => mockFindUserDocs()
+  }
+})
 
 describe('Documents Section component', () => {
   beforeEach(() => {
@@ -45,20 +26,20 @@ describe('Documents Section component', () => {
     };
   });
   
-  // it('Document Section renders open', async () => {
-  //   const { container } = render(<DocumentsSection open={true} />);
-  //   await waitFor(() => {
-  //     expect(container.querySelectorAll('button').length).toBe(2);
-  //   });
-  // });
+  it('Document Section renders open', async () => {
+    const { container } = render(<DocumentsSection open={true} />);
+    await waitFor(() => {
+      expect(container.querySelectorAll('button').length).toBe(2);
+    });
+  });
 
-  // it('First Document is selected', async () => {
-  //   const { container } = render(<DocumentsSection open={true} />);
-  //   await waitFor(() => {
-  //     expect(container.querySelectorAll('button').length).toBe(2);
-  //   });
-  //   expect(useDocStore.getState().currentDocId).toBe("doc1");
-  // });
+  it('First Document is selected', async () => {
+    const { container } = render(<DocumentsSection open={true} />);
+    await waitFor(() => {
+      expect(container.querySelectorAll('button').length).toBe(2);
+    });
+    expect(useDocStore.getState().currentDocId).toBe("doc1");
+  });
 
   it('Empty document list returned', async () => {
     mockFindUserDocs = async () => {

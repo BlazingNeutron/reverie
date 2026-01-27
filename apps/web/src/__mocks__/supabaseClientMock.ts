@@ -113,6 +113,11 @@ function supabaseMock() {
     results : [{}],
     auth: {
       getSession: async () => ({ data: { session: { user: { id: 'test-user' } } } }),
+      signInWithPassword: vi.fn().mockReturnValue({ error: null }),
+      signOut: vi.fn(),
+      onAuthStateChange: (cb: any) => {
+        return { data: { subscription: { unsubscribe: cb } } };
+      }
     },
     channel: (name: string) => {
       calls.channels.push(name);
