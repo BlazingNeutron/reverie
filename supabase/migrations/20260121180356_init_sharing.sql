@@ -53,11 +53,19 @@ CREATE TABLE IF NOT EXISTS "public"."shared" (
   constraint shared_user_id_fkey foreign KEY (user_id) references auth.users (id) on delete CASCADE
 ) TABLESPACE pg_default;
 
-CREATE POLICY "Enable users to view their own data only" ON "public"."shared" FOR SELECT TO "authenticated" USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
+DROP POLICY IF EXISTS "Enable users to view their own data only" ON "public"."documents";
+
+CREATE POLICY "Enable read access for all users" ON "public"."documents" FOR SELECT TO "authenticated" USING (true);
+
+DROP POLICY IF EXISTS "Enable users to view their own data only" ON "public"."yjs_updates";
+
+CREATE POLICY "Enable read access for all users" ON "public"."yjs_updates" FOR SELECT TO "authenticated" USING (true);
+
+CREATE POLICY "Enable read access for all users" ON "public"."shared" FOR SELECT TO "authenticated" USING (true);
 
 CREATE POLICY "Enable insert for authenticated users only" ON "public"."shared" FOR INSERT TO "authenticated" WITH CHECK (true);
 
-CREATE POLICY "Enable delete for users based on user_id" ON "public"."shared" FOR DELETE USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
+CREATE POLICY "Enable delete for all users" ON "public"."shared" FOR DELETE TO "authenticated" USING (true);
 
 ALTER TABLE "public"."shared" ENABLE ROW LEVEL SECURITY;
 
@@ -99,7 +107,7 @@ CREATE TRIGGER sync_profile_after_upsert
 AFTER INSERT ON auth.users
 FOR EACH ROW EXECUTE FUNCTION public.sync_profile_from_auth();
 
-CREATE POLICY "Enable users to view their own data only" ON "public"."profiles" FOR SELECT TO "authenticated" USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
+CREATE POLICY "Enable read access for all users" ON "public"."profiles" FOR SELECT TO "authenticated" USING (true);
 
 CREATE POLICY "Enable insert for authenticated users only" ON "public"."profiles" FOR INSERT TO "authenticated" WITH CHECK (true);
 
