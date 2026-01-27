@@ -4,7 +4,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     globals: true,
-    setupFiles: 'src/setup-tests.ts',
+    setupFiles: 'src/setupTests.ts',
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     coverage: {
       // Include all source files so untested files are counted in the report

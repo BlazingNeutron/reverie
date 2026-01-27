@@ -1,53 +1,44 @@
 import { applyUpdate, Doc } from 'yjs';
 import { Buffer } from 'buffer';
-import { type SupabaseClient } from '@supabase/supabase-js';
+import { ensureSession } from './auth';
+import { subscribe, broadcast } from './realtime';
+import { selectDocument, updateDocumentSearch } from './documents';
+import { insertYJsUpdates, selectYJsUpdates } from './collaboration';
 
 export class SupabaseProvider {
-  doc : Doc | any;
-  docId : string | any;
-  supabase;
-  awareness : any;
-  user : any;
-  session : any;
+  doc: Doc | any;
+  docId: string | any;
+  awareness: any;
+  user: any;
+  session: any;
 
-  constructor(supabase : SupabaseClient) {
-    this.supabase = supabase;
-    this.init();
-  }
-
-  async ensureSession() {
-    const {
-      data: { session },
-    } = await this.supabase.auth.getSession();
-
-    if (!session) return null;
-
-    this.user = session.user;
-    this.session = session;
-    return session;
+  constructor(docId: string, doc: Doc) {
+    this.init().then(()=>{
+      this.setDoc(docId, doc);
+    });
   }
 
   async init() {
-    await this.ensureSession();
+    const session = await ensureSession();
+    this.session = session;
+    this.user = session?.user;
   }
 
-  async setDoc(docId : string, doc : Doc) : Promise<any> {
-    if (!await this.ensureSession()) return;
+  async setDoc(docId: string, doc: Doc): Promise<any> {
+    if (!this.session) return;
 
     //TODO unsubscribe from previous docId
     if (!docId) {
       return;
     }
-    
+
     this.docId = docId;
     this.doc = doc;
-    const document = await this.supabase.from('documents')
-      .select('doc_id, title, content, user_id')
-      .eq('doc_id', docId);
+    const document = await selectDocument(this.docId);
 
     // Send local updates to Supabase
-    if (this.doc && this.doc.on){
-      this.doc.on('update', async (update : any) => {
+    if (this.doc && this.doc.on) {
+      this.doc.on('update', async (update: any) => {
         await this.sendUpdate(update);
       });
 
@@ -58,127 +49,35 @@ export class SupabaseProvider {
     return document;
   }
 
-  async sendUpdate(update : string) {
-    if (!await this.ensureSession()) return;
+  async sendUpdate(update: string) {
+    if (!this.session) return;
 
     const base64Update = Buffer.from(update).toString('base64');
 
-    await this.supabase
-      .from('yjs_updates')
-      .insert([{ doc_id: this.docId, update: base64Update, user_id: this.user.id }]);
+    await insertYJsUpdates(this.docId, base64Update, this.user.id);
+    await broadcast(this.docId, base64Update);
 
-    // // Optionally broadcast to other clients via Realtime
-    await this.supabase.channel(`yjs-${this.docId}`).send({
-      type: 'broadcast',
-      event: 'y-update',
-      payload: { update: base64Update },
-    });
-    
-    // write document contents to search table
-    await this.supabase.from('documents').upsert({
-      doc_id: this.docId,
-      title: this.doc.title,
-      content: this.doc.getText('quill').toString(),
-      user_id: this.user.id
-    });
-
-    // // Supabase text search
-    // const searchResults = await this.supabase
-    //   .from('documents')
-    //   .select('*')
-    //   .textSearch('tsv', `'Test Search'`, { type: 'plain' });
-    
+    await updateDocumentSearch(this.docId, this.doc.title, this.doc.getText('quill').toString(), this.user.id);
   }
 
   async subscribeToUpdates() {
-    if (!await this.ensureSession()) return;
+    if (!this.session) return;
 
-    this.supabase
-      .channel(`yjs-${this.docId}`)
-      .on('broadcast', { event: 'y-update' }, (payload : {payload:{update:string}}) => {
-        const update = Buffer.from(payload.payload.update, 'base64');
-        applyUpdate(this.doc, update);
-      })
-      .subscribe();
+    await subscribe(this.docId, (update: Uint8Array) => {
+      applyUpdate(this.doc, update);
+    });
   }
 
   async loadInitialUpdates() {
-    if (!await this.ensureSession()) return;
+    if (!this.session) return;
 
-    const { data } = await this.supabase
-      .from('yjs_updates')
-      .select('update')
-      .eq('doc_id', this.docId)
-      .eq('user_id', this.user.id)
-      .order('created_at', { ascending: true });
+    const { data } = await selectYJsUpdates(this.docId, this.user.id)
 
     if (data) {
-      data.forEach((row : any) => {
+      data.forEach((row: any) => {
         const update = Buffer.from(row.update, 'base64');
         applyUpdate(this.doc, update);
       });
     }
-  }
-
-  async findUserDocs() : Promise<any> {
-    if (!await this.ensureSession()) return [];
-    const { data, error } = await this.supabase
-      .from('documents')
-      .select('doc_id, title, shared(doc_id)')
-      .eq('user_id', this.user.id)
-      .order('title', { ascending: false });
-
-    if (error) {
-      console.error("Error fetching user docs:", error);
-      return [];
-    }
-    
-    return data || [];
-  }
-
-  async createDocument(title : string) : Promise<any> {
-    if (!await this.ensureSession()) return null;
-
-    const { data } = await this.supabase
-      .from('documents')
-      .insert({
-        "title": title,
-        "user_id": this.user.id
-      }).select();
-
-    if (data && data.length > 0 && data[0]) {
-      return data[0].doc_id;
-    }
-    return null;
-  }
-
-  async shareDocument(users : [string]) {
-    if (!await this.ensureSession()) return;
-
-    if (!this.docId) return;
-
-    users.forEach(async (user_id) => {
-      await this.supabase
-        .from('shared')
-        .insert({
-          "doc_id": this.docId,
-          "user_id": user_id
-        });
-    });
-  }
-
-  async findCollaborators() : Promise<any> {
-    if (!await this.ensureSession()) return null;
-
-    const { data, error } = await this.supabase
-      .from('profiles')
-      .select('*');
-
-    if (error) {
-      console.error("Error fetching collaborators:", error);
-      return [];
-    }
-    
-    return data || [];
   }
 }
