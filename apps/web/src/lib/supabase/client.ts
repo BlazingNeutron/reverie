@@ -10,6 +10,6 @@ declare global {
   }
 }
 
-const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
+const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const baseUrl = `${window.location.protocol}//${window.location.host}`;
 export const supabase = createClient(baseUrl, supabasePublishableKey)

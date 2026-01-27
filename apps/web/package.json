@@ -41,6 +41,7 @@
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.89.0",
     "buffer": "^6.0.3",
+    "cors": "^2.8.6",
     "quill": "^2.0.3",
     "quill-cursors": "^4.0.4",
     "react": "^19.2.3",
