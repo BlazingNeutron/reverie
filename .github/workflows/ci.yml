@@ -17,13 +17,15 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
+        working-directory: ./apps/web/
         run: npm ci
 
       - name: Run tests across workspace (with coverage)
+        working-directory: ./apps/web/
         run: npm run test:coverage
 
       - name: Upload coverage artifact

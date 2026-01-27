@@ -1,6 +1,5 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
-import '@testing-library/jest-dom'
 import { supabaseClientMock } from './__mocks__/supabaseClientMock';
 
 // TODO later with store context vi.mock('zustand') 
