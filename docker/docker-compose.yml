@@ -15,8 +15,9 @@ services:
   db:
     image: supabase/postgres:15.8.1.085
     restart: unless-stopped
-#    ports:
-#      - 5432:5432
+    # TODO feel free to remove port #s after creating users
+    #ports:
+    #  - 54321:5432
     environment:
       POSTGRES_HOST: /var/run/postgresql
       PGPORT: ${POSTGRES_PORT:-5432}
@@ -33,6 +34,8 @@ services:
       - ./volumes/db/roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:Z
       - ./volumes/db/jwt.sql:/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql:Z
       - ./volumes/db/data:/var/lib/postgresql/data
+      # TODO remove later when sign up is active
+      - ./create-user.sql:/scripts/create-user.sql
     healthcheck:
       test: [ "CMD","pg_isready","-U","postgres","-h","localhost" ]
       interval: 5s
@@ -54,7 +57,7 @@ services:
     environment:
       GOTRUE_API_HOST: 0.0.0.0
       GOTRUE_API_PORT: 9999
-      API_EXTERNAL_URL: ${API_EXTERNAL_URL}
+      API_EXTERNAL_URL: ${SITE_URL}
 
       GOTRUE_DB_DRIVER: postgres
       GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:${POSTGRES_PASSWORD}@${POSTGRES_HOST:-db}:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-postgres}
