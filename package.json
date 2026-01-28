@@ -4,6 +4,7 @@
   "description": "Note taking app for all of your dreamy, thoughtful, deep thinking and shared ideas.",
   "scripts": {
     "build": "turbo run build",
+    "check:licenses": "node scripts/check-licenses.cjs",
     "dev": "turbo run dev",
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
@@ -12,20 +13,16 @@
     "db:migrate": "turbo run db:migrate"
   },
   "dependencies": {
-    "concurrently": "^9.2.0"
+    "concurrently": "^9.2.1"
   },
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "apps/*"
   ],
   "type": "module",
   "packageManager": "npm@11.4.2",
   "devDependencies": {
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.0",
-    "@testing-library/user-event": "^14.6.1",
-    "jsdom": "^27.2.0",
-    "turbo": "^2.5.4",
-    "vitest": "^4.0.13"
+    "jsdom": "^27.4.0",
+    "turbo": "^2.7.6",
+    "vitest": "^4.0.18"
   }
 }
