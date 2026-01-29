@@ -42,8 +42,8 @@ jobs:
         with:
           context: ./apps/web
           file: ./apps/web/Dockerfile
-          build-args: |
-            VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+          secrets: |
+            "VITE_SUPABASE_PUBLISHABLE_KEY=${{ secrets.SUPABASE_PUBLISHABLE_KEY }}"
           tags: ghcr.io/blazingneutron/reverie-web:${{ github.sha }},ghcr.io/blazingneutron/reverie-web:latest
           push: true
           cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:latest
