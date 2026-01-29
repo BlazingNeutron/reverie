@@ -12,4 +12,10 @@ declare global {
 
 const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 const baseUrl = `${window.location.protocol}//${window.location.host}`;
-export const supabase = createClient(baseUrl, supabasePublishableKey)
+
+if (!supabasePublishableKey) {
+  // eslint-disable-next-line no-console
+  console.warn('Supabase publishable key not found at runtime or build-time.');
+}
+
+export const supabase = createClient(baseUrl, supabasePublishableKey ?? '');
