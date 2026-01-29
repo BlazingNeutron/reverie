@@ -84,7 +84,7 @@ describe('supabase sharing', () => {
 
     it('Find Collaborators - shares error', async () => {
         supabaseClientMock.results = [
-            { data: [], error: null }, // profiles
+            { data: [{ user_id: "userId2" }], error: null }, // profiles
             { data: null, error: new Error("Test Error") }  // share statuses
         ];
         const collaborators = await findCollaborators("docId1", "userId1");

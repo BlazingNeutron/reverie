@@ -30,6 +30,9 @@ export async function findCollaborators(docId: string, userId: string | any) {
         return [];
     }
     const user_ids = profiles.map((profile) => profile.user_id);
+    if (user_ids.length == 0) {
+        return [];
+    }
     const { data: shares, error: sharesErrors } = await supabase
         .from('shared')
         .select('user_id')
