@@ -18,4 +18,9 @@ if (!supabasePublishableKey) {
   console.warn('Supabase publishable key not found at runtime or build-time.');
 }
 
-export const supabase = createClient(baseUrl, supabasePublishableKey ?? '');
+export let supabase = createClient(baseUrl, supabasePublishableKey ?? '');
+
+const { data: { session } } = await supabase.auth.getSession();
+if (session) {
+  supabase = createClient(baseUrl, session.access_token) 
+}
