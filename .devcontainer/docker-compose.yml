@@ -1,6 +1,6 @@
 include:
 #  - ../docker/postgres/docker-compose.postgres.yml
-  - docker-compose.supabase.yml
+  - supabase-docker/docker-compose.yml
 
 services:
   app:
