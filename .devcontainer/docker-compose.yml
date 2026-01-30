@@ -1,6 +1,8 @@
 include:
 #  - ../docker/postgres/docker-compose.postgres.yml
-  - supabase-docker/docker-compose.yml
+  - path: supabase-docker/docker-compose.yml
+    project_directory: supabase-docker/
+    env_file: .env
 
 services:
   app:
