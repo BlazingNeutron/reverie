@@ -143,3 +143,11 @@ FOR EACH ROW EXECUTE FUNCTION public.share_with_self();
 
 -- Enable email identities
 INSERT INTO auth.identities (id,user_id,provider_id,identity_data,provider,last_sign_in_at,created_at,updated_at) (select uuid_generate_v4 (),id,id,format('{"sub":"%s","email":"%s"}', id :: text, email) :: jsonb,'email',current_timestamp,current_timestamp,current_timestamp from auth.users);
+
+-- Allow authenticated users to receive broadcasts
+CREATE POLICY "authenticated_users_can_receive" ON realtime.messages
+  FOR SELECT TO authenticated USING (true);
+
+-- Allow authenticated users to send broadcasts
+CREATE POLICY "authenticated_users_can_send" ON realtime.messages
+  FOR INSERT TO authenticated WITH CHECK (true);
