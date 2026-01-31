@@ -1,8 +1,8 @@
 import { supabase } from "./client";
 
-export async function insertYJsUpdates(docId: string, base64Update: string, userId: string) {
+export async function insertYJsUpdates(docId: string, base64Update: string) {
       await supabase.from('yjs_updates')
-            .insert([{ doc_id: docId, update: base64Update, user_id: userId }]);
+            .insert([{ doc_id: docId, update: base64Update }]);
 }
 
 export async function selectYJsUpdates(docId: string) {

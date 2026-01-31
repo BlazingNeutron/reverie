@@ -9,12 +9,11 @@ describe('supabase collaboration', () => {
     })
 
     it('Colllaboration, doc update is inserted', async () => {
-        await insertYJsUpdates("docId1", "base64UpdateString", "userId1")
+        await insertYJsUpdates("docId1", "base64UpdateString")
 
         expect(supabaseClientMock.calls.query().inserts[0]).toEqual({
             "doc_id": "docId1",
-            "update": "base64UpdateString",
-            "user_id": "userId1",
+            "update": "base64UpdateString"
         });
     })
 
