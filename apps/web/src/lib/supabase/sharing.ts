@@ -18,6 +18,7 @@ export async function unshareDocument(docId: string, userId: string) {
 }
 
 export async function findCollaborators(docId: string, userId: string | any) {
+    if (!docId) return [];
     const { data: profiles, error: profileErrors } = await supabase
         .from('profiles')
         .select('user_id, display_name')
