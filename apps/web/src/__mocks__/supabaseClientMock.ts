@@ -112,7 +112,7 @@ function supabaseMock() {
     calls,
     results : [{}],
     auth: {
-      getSession: async () => ({ data: { session: { user: { id: 'test-user' } } } }),
+      getSession: async () => ({ data: { session: { user: { id: 'test-user' }, access_token: "test_access_token" } } }),
       signInWithPassword: vi.fn().mockReturnValue({ error: null }),
       signOut: vi.fn(),
       onAuthStateChange: (cb: any) => {
