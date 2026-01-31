@@ -93,23 +93,28 @@ function supabaseMock() {
   }
 
   const calls: any = { channels: [], sends: [], on: [], query: null };
+  async function removeChannel() {
+    calls.on.pop();
+  }
+  const mockSubscribe = vi.fn().mockReturnThis();
   const channelObj = {
     on: (name: string, event : any, callback: Function) => { 
       calls.on.push([ name, event, callback]);
-      return { subscribe: () => ({}) };
+      return { subscribe: mockSubscribe };
     },
-    send: vi.fn().mockImplementation(async (payload: any) => {
+    send: async (payload: any) => {
       calls.sends.push(payload);
       if (calls.on.length > 0) {
         calls.on[0][2](payload)
       }
       return { ok: true };
-    }),
-    subscribe: vi.fn().mockReturnThis(),
+    },
+    subscribe: mockSubscribe,
   };
 
   const mockSupbase = {
     calls,
+    removeChannel: () => removeChannel(),
     results : [{}],
     auth: {
       getSession: async () => ({ data: { session: { user: { id: 'test-user' }, access_token: "test_access_token" } } }),

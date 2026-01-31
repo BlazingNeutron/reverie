@@ -27,6 +27,26 @@ vi.mock('yjs', () => {
     applyUpdate: (...args: any[]) => mockApplyUpdate(...args)
   };
 });
+let mockYAwarenessOnCallback : Function = vi.fn();
+class Awareness {
+  state : any = {};
+  on(name:string, callback: Function) {
+    mockYAwarenessOnCallback = callback;
+    return name;
+  }
+  setLocalStateField(name:string, fieldData:any) {
+    this.state[name] = fieldData;
+  }
+}
+const mockApplyAwarenessUpdate = vi.fn();
+const mockEncodeAwarenessUpdate = vi.fn().mockReturnValue("testEncodedUpdate");
+vi.mock('y-protocols/awareness', () => {
+  return {
+    Awareness: Awareness,
+    encodeAwarenessUpdate: () => mockEncodeAwarenessUpdate(),
+    applyAwarenessUpdate: () => mockApplyAwarenessUpdate(),
+  }
+});
 
 const mockInsertYJsUpdates = vi.fn();
 let mockSelectYJsUpdates = vi.fn().mockReturnValue({ data: [{ update: "Updated Test Text" }] });
@@ -45,11 +65,15 @@ vi.mock("../auth", () => {
 });
 
 let mockSubscribe = vi.fn();
+let mockSubscribeAwareness = vi.fn();
 const mockBroadcast = vi.fn();
+const mockBroadcastAwareness = vi.fn();
 vi.mock("../realtime", () => {
   return {
     broadcast: () => mockBroadcast(),
-    subscribe: (...args: any[]) => mockSubscribe(args)
+    subscribe: (...args: any[]) => mockSubscribe(args),
+    broadcastAwareness: () => mockBroadcastAwareness(),
+    subscribeAwareness: (...args: any[]) => mockSubscribeAwareness(args),
   }
 })
 
@@ -64,7 +88,7 @@ vi.mock("../documents", () => {
 describe('SupabaseProvider (basic)', () => {
   let provider: any;
   let doc: YDoc | any;
-
+  // it('test', ()=>{})
   beforeEach(async () => {
     doc = new YDoc();
     const module = await import('../ySupabaseProvider');
@@ -74,6 +98,10 @@ describe('SupabaseProvider (basic)', () => {
   });
 
   afterEach(() => {
+    mockSelectDoument = vi.fn().mockReturnValue({ doc_id: "docId1", title: "MockTitle", content: "MockContent", user_id: "userId1" });
+    mockSubscribe = vi.fn();
+    mockSelectYJsUpdates = vi.fn().mockReturnValue({ data: [{ update: "Updated Test Text" }] });
+    mockEnsureSession = vi.fn().mockReturnValue({ user: { id: "test-user" } });
     provider = null;
     doc = null;
     vi.restoreAllMocks();
@@ -103,7 +131,7 @@ describe('SupabaseProvider (basic)', () => {
     expect(mockBroadcast).toHaveBeenCalled();
   });
 
-  it('subscribeToUpdates calls subscribe which can call applyUpdate', async () => {
+  it('Subscribed callback function calls applyUpdate', async () => {
     mockApplyUpdate = vi.fn();
     await provider.subscribeToUpdates();
 
@@ -145,4 +173,55 @@ describe('SupabaseProvider (basic)', () => {
     await provider.loadInitialUpdates();
     expect(mockSelectYJsUpdates).not.toHaveBeenCalled();
   })
+
+  it('Subscribed Awareness callback call applyAwarenesUpdate', async () => {
+    await provider.setDoc("docId1", doc)
+    expect(mockSubscribeAwareness).toHaveBeenCalledWith([
+      "doc-1",
+      expect.any(Function)
+    ]);
+    // call anonymous function to verify applyAwarenessUpdate
+    if (mockSubscribeAwareness && mockSubscribeAwareness.mock && 
+        mockSubscribeAwareness.mock.calls && mockSubscribeAwareness.mock.calls[0] && 
+        mockSubscribeAwareness.mock.calls[0][0] && mockSubscribeAwareness.mock.calls[0][0][1]
+    ) {
+      mockSubscribeAwareness.mock.calls[0][0][1]()
+    }
+    expect(mockApplyAwarenessUpdate).toHaveBeenCalled()
+  })
+
+  it('call Awareness.on callback function to mock typing in editor - no updates', async () => {
+    await mockYAwarenessOnCallback({added:[],updated:[],removed:[]});
+
+    expect(mockEncodeAwarenessUpdate).not.toHaveBeenCalled();
+    expect(mockBroadcastAwareness).not.toHaveBeenCalled();
+  });
+
+  it('call Awareness.on callback function to mock typing in editor - added', async () => {
+    await mockYAwarenessOnCallback({added:[1234],updated:[],removed:[]});
+
+    expect(mockEncodeAwarenessUpdate).toHaveBeenCalled();
+    expect(mockBroadcastAwareness).toHaveBeenCalled();
+  });
+
+  it('call Awareness.on callback function to mock typing in editor - updated', async () => {
+    await mockYAwarenessOnCallback({added:[],updated:[1234],removed:[]});
+
+    expect(mockEncodeAwarenessUpdate).toHaveBeenCalled();
+    expect(mockBroadcastAwareness).toHaveBeenCalled();
+  });
+
+  it('call Awareness.on callback function to mock typing in editor - removed', async () => {
+    await mockYAwarenessOnCallback({added:[],updated:[1234],removed:[]});
+
+    expect(mockEncodeAwarenessUpdate).toHaveBeenCalled();
+    expect(mockBroadcastAwareness).toHaveBeenCalled();
+  });
+
+  it('call Awareness.on callback function to mock typing in editor - null', async () => {
+    await mockYAwarenessOnCallback(null);
+
+    expect(mockEncodeAwarenessUpdate).not.toHaveBeenCalled();
+    expect(mockBroadcastAwareness).not.toHaveBeenCalled();
+  });
 });
