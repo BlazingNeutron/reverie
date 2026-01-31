@@ -1,5 +1,5 @@
 
-ALTER TABLE doc_index RENAME TO documents;
+ALTER TABLE IF EXISTS doc_index RENAME TO documents;
 
 CREATE OR REPLACE FUNCTION UPDATE_DOC_ID_TO_UUID() 
   RETURNS VOID 
@@ -20,7 +20,8 @@ BEGIN
     END LOOP;
 END;
 $$ 
-LANGUAGE plpgsql;
+LANGUAGE plpgsql
+SET search_path = "public";
 select UPDATE_DOC_ID_TO_UUID();
 DROP FUNCTION UPDATE_DOC_ID_TO_UUID();
 
