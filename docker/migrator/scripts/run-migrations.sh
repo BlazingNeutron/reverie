@@ -26,3 +26,4 @@ for f in /migrations/*.sql; do
 done
 
 echo "✅ All migrations applied."
+exec sleep infinity

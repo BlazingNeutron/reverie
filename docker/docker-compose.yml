@@ -162,6 +162,7 @@ services:
 
   migrator:
     image: ghcr.io/blazingneutron/reverie-migrator
+    restart: unless-stopped
     depends_on:
       db:
         # Disable this if you are using an external Postgres database
