@@ -88,7 +88,7 @@ describe('supabase documents', () => {
     })
 
     it('Upsert document - does not update when updates are same', async () => {
-        supabaseClientMock.results = [{ doc_id: "docId1", title: "Test Title", content: "Test Contents", user_id: "UserId1" }];
+        supabaseClientMock.results = [{data: [{ doc_id: "docId1", title: "Test Title", content: "Test Contents", user_id: "UserId1" }]}];
         await updateDocumentSearch("docId1", "Test Title", "Test Contents", "UserId1");
 
         expect(supabaseClientMock.calls.query().upserts).toBeUndefined();
