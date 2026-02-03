@@ -3,6 +3,7 @@ import { waitFor } from '@testing-library/react';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import ReactDOMClient from 'react-dom/client';
 import Editor from '../Editor';
+import { useDocStore } from '../../lib/stores/documentStore';
 
 // Mock yjs Doc
 vi.mock('yjs', () => {
@@ -46,6 +47,10 @@ vi.mock('../../lib/supabase/y-supabase-provider', () => ({
   },
 }));
 
+// vi.mock('../../lib/stores/documentStore', () => {
+//   return { useDocStore: () => "docId1" }
+// })
+
 describe('Editor component', () => {
   let container : any;
 
@@ -60,6 +65,9 @@ describe('Editor component', () => {
   });
 
   it('initializes Quill and QuillBinding', async () => {
+    
+    const useDocStore = (await import('../../lib/stores/documentStore')).useDocStore;
+    useDocStore.getState().setCurrentDocId('doc-id');
     await act(async () => {
       const ref = createRef<any>();
       ReactDOMClient.createRoot(container).render(<Editor ref={ref} />);

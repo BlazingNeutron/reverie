@@ -49,6 +49,10 @@ const Editor = forwardRef(({ }, ref: any) => {
     };
   }, [ref, currentDocId]);
 
+  if (!currentDocId) {
+    return (<div>No current document</div>)
+  }
+
   return (<div className="m-10 h-10/12">
     <div className="hidden">{currentDocId}</div>
     <div ref={containerRef} className="h-full"></div>

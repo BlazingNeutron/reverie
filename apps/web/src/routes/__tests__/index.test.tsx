@@ -25,6 +25,8 @@ describe('Index component', () => {
   });
 
   it('Loads quill editor within index component', async () => {
+    const useDocStore = (await import('../../lib/stores/documentStore')).useDocStore;
+    useDocStore.getState().setCurrentDocId('doc-id');
     await act(async () => {
       ReactDOMClient.createRoot(container).render(
         <MemoryRouter>

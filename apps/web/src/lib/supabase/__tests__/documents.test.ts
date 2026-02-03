@@ -26,6 +26,7 @@ describe('supabase documents', () => {
     });
 
     it('Update Document Search Index', async () => {
+        supabaseClientMock.results = [{ doc_id: "docId1", content: "Updatable Test Text" }];
         await updateDocumentSearch("docId1", "TestTitle", "NewTestText", "userId1");
 
         expect(supabaseClientMock.calls.query().upserts).toEqual({
@@ -84,5 +85,12 @@ describe('supabase documents', () => {
         const newDocId = await createDocument("newTestTitle", "userId1");
 
         expect(newDocId).toBeNull();
+    })
+
+    it('Upsert document - does not update when updates are same', async () => {
+        supabaseClientMock.results = [{ doc_id: "docId1", title: "Test Title", content: "Test Contents", user_id: "UserId1" }];
+        await updateDocumentSearch("docId1", "Test Title", "Test Contents", "UserId1");
+
+        expect(supabaseClientMock.calls.query().upserts).toBeUndefined();
     })
 })

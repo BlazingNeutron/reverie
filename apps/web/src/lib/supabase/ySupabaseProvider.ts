@@ -49,6 +49,7 @@ export class SupabaseProvider {
     // Send local updates to Supabase
     if (this.doc && this.doc.on) {
       this.doc.on('update', async (update: any) => {
+        // TODO debounce
         await this.sendUpdate(update);
       });
 
