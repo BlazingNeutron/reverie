@@ -33,8 +33,8 @@ export function ShareDialog() {
             <Dialog.Trigger asChild>
                 <Button>Share</Button>
             </Dialog.Trigger>
-            <Dialog.Overlay className="fixed inset-0 bg-black/60  data-[state=open]:animate-overlayShow" />
-            <Dialog.Content id="shareDialog" className="fixed left-1/2 top-1/2 max-h-[85vh] w-[90vw] max-w-[500px] bg-background -translate-x-1/2 -translate-y-1/2 rounded-md p-[25px] shadow-[var(--shadow-6)] focus:outline-none data-[state=open]:animate-contentShow">
+            <Dialog.Overlay className="fixed inset-0 bg-black/60  data-[state=open]:animate-overlayShow z-10" />
+            <Dialog.Content id="shareDialog" className="fixed left-1/2 top-1/2 max-h-[85vh] w-[90vw] max-w-[500px] bg-background -translate-x-1/2 -translate-y-1/2 rounded-md p-[25px] shadow-[var(--shadow-6)] focus:outline-none data-[state=open]:animate-contentShow z-20">
                 <Dialog.Title className="text-lg font-semibold dark:text-white">
                     Share this document
                 </Dialog.Title>

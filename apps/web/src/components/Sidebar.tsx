@@ -14,7 +14,7 @@ export function Sidebar() {
     >
       <aside
         className={`flex h-full flex-col border-r bg-gray-900 text-white transition-all duration-300
-          ${open ? "w-72" : "w-16"}
+          ${open ? "max-sm:w-80 md:w-72" : "max-sm:w-0 md:w-16"}
         `}
       >
         <SidebarHeader open={open} />
@@ -31,10 +31,10 @@ export function Sidebar() {
 function SidebarHeader({ open }: { open: boolean }) {
   return (
     <div className="flex items-center justify-between p-4">
-      {open && <span className="font-semibold">Reverie Notes</span>}
+      {open && <span className="md:hidden font-semibold">Reverie Notes</span>}
 
       <Collapsible.Trigger asChild>
-        <button className="rounded p-2 hover:bg-gray-800">☰</button>
+        <button className="rounded p-2 hover:bg-gray-800 z-5">☰</button>
       </Collapsible.Trigger>
     </div>
   );
