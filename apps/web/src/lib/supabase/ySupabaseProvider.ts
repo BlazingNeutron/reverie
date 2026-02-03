@@ -48,27 +48,29 @@ export class SupabaseProvider {
 
     // Send local updates to Supabase
     if (this.doc && this.doc.on) {
-      this.doc.on('update', async (update: any) => {
-        // TODO debounce
-        await this.sendUpdate(update);
-      });
+      
 
       // Optionally load initial state from DB
       await this.loadInitialUpdates();
       await this.subscribeToUpdates();
+
+      this.doc.on('update', async (update: any) => {
+        // TODO debounce
+        await this.sendUpdate(update);
+      });
     }
     return document;
   }
 
   async sendUpdate(update: string) {
     if (!this.session) return;
-
     const base64Update = Buffer.from(update).toString('base64');
-
-    await insertYJsUpdates(this.docId, base64Update);
     await broadcast(this.docId, base64Update);
 
-    await updateDocumentSearch(this.docId, this.doc.title, this.doc.getText('quill').toString(), this.user.id);
+    const hasUpdates = await updateDocumentSearch(this.docId, this.doc.title, this.doc.getText('quill').toString(), this.user.id);
+    if (hasUpdates) {
+      await insertYJsUpdates(this.docId, base64Update);
+    }
   }
 
   async subscribeToUpdates() {

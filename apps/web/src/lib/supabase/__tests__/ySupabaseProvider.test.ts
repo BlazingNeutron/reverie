@@ -81,7 +81,7 @@ let mockSelectDoument = vi.fn().mockReturnValue({ doc_id: "docId1", title: "Mock
 vi.mock("../documents", () => {
   return {
     selectDocument: () => mockSelectDoument(),
-    updateDocumentSearch: vi.fn(),
+    updateDocumentSearch: vi.fn().mockReturnValue(true),
   }
 })
 

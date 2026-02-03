@@ -1,4 +1,3 @@
-import type { PostgrestSingleResponse } from "@supabase/supabase-js";
 import { supabase } from "./client";
 
 export async function selectDocument(docId: string) {
@@ -9,9 +8,9 @@ export async function selectDocument(docId: string) {
 
 export async function updateDocumentSearch(docId: string, title: string, content: string, userId: string) {
     const results = await selectDocument(docId);
-    if (results && results.data && results.data.length >= 0){
+    if (results && results.data && results.data.length > 0){
         if (hasNoUpdate(results.data[0], content)) {
-            return;
+            return false;
         }
     }
     await supabase.from('documents').upsert({
@@ -20,11 +19,12 @@ export async function updateDocumentSearch(docId: string, title: string, content
         content: content,
         user_id: userId
     });
+    return true;S
 }
 
-function hasNoUpdate(document : { doc_id: string, title: string, content: string, user_id: string}, content : string) {
-    console.log(document)
-    return (document && document.content && document.content == content)
+function hasNoUpdate(document: { doc_id: string, title: string, content: string, user_id: string } | undefined, content: string): boolean {
+    if (!document || typeof document.content !== 'string') return false;
+    return document.content === content;
 }
 
 export async function findUserDocs(userId: string) {
