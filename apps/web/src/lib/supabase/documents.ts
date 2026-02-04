@@ -19,7 +19,7 @@ export async function updateDocumentSearch(docId: string, title: string, content
         content: content,
         user_id: userId
     });
-    return true;S
+    return true;
 }
 
 function hasNoUpdate(document: { doc_id: string, title: string, content: string, user_id: string } | undefined, content: string): boolean {
