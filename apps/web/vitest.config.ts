@@ -6,6 +6,7 @@ export default defineConfig({
     globals: true,
     setupFiles: 'src/setupTests.ts',
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    exclude: ['src/**/*.it.{test,spec}.{ts,tsx}'],
     coverage: {
       // Include all source files so untested files are counted in the report
       include: ['src/**/*.{ts,tsx}'],
