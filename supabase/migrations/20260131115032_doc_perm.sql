@@ -70,4 +70,4 @@ with check (
 );
 
 ALTER TABLE "public"."yjs_updates"
-    DROP COLUMN IF EXISTS "user_id";
+    DROP COLUMN IF EXISTS "user_id" CASCADE;

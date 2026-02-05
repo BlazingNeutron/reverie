@@ -1,7 +1,8 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from "@supabase/supabase-js"
 
 interface ImportMetaEnv {
   VITE_SUPABASE_PUBLISHABLE_KEY: string;
+  VITE_SUPABASE_BASE_URL: string;
 }
 
 declare global {
@@ -11,10 +12,13 @@ declare global {
 }
 
 const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-const baseUrl = `${window.location.protocol}//${window.location.host}`;
+let baseUrl = import.meta.env.VITE_SUPABASE_BASE_URL;
 
-if (!supabasePublishableKey || supabasePublishableKey.trim() == '') {
-  console.warn('Supabase publishable key not found at runtime or build-time.');
+if (!supabasePublishableKey || supabasePublishableKey.trim() == "") {
+  console.warn("Supabase publishable key not found at runtime or build-time.");
+}
+if (!baseUrl || baseUrl.trim() == "") {
+  baseUrl = `${window.location.protocol}//${window.location.host}`;
 }
 
 export let supabase = createClient(baseUrl, supabasePublishableKey);
