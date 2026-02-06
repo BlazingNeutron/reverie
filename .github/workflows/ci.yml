@@ -59,7 +59,7 @@ jobs:
           file: ./docker/migrator/Dockerfile
           build-contexts: |
             migrations=./supabase/migrations
-          tags: ghcr.io/${{ github.repository }}/reverie-migrator:${{ github.sha }}
+          tags: ghcr.io/blazingneutron/reverie-migrator:${{ github.sha }}
           load: true
           push: false
           cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:latest
