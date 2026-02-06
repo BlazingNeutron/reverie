@@ -16,32 +16,35 @@ const Editor = forwardRef(({ }, ref: any) => {
 
     const ydoc = new Y.Doc();
     const supaProvider = new SupabaseProvider(currentDocId, ydoc);
-    const ytext = ydoc.getText("quill");
 
     if (!containerRef || !containerRef.current) return;
     const container: HTMLElement = containerRef.current;
 
-    const editorContainer = container.appendChild(
-      container.ownerDocument.createElement("div"),
-    );
-    const quill = new Quill(editorContainer, {
-      modules: {
-        cursors: true,
-        toolbar: [
-          [{ "header": [1, 2, false] }],
-          ["bold", "italic", "underline"],
-          ["image", "code-block"],
-          [{ "list": "check" }]
-        ],
-        history: {
-          userOnly: true
-        }
-      },
-      placeholder: "Start collaborating...",
-      theme: "snow",
+    supaProvider.init().then(()=>{
+      const ytext = ydoc.getText("quill");
+      
+      const editorContainer = container.appendChild(
+        container.ownerDocument.createElement("div"),
+      );
+      const quill = new Quill(editorContainer, {
+        modules: {
+          cursors: true,
+          toolbar: [
+            [{ "header": [1, 2, false] }],
+            ["bold", "italic", "underline"],
+            ["image", "code-block"],
+            [{ "list": "check" }]
+          ],
+          history: {
+            userOnly: true
+          }
+        },
+        placeholder: "Start collaborating...",
+        theme: "snow",
+      });
+      new QuillBinding(ytext, quill, supaProvider.awareness);
+      ref.current = quill;
     });
-    new QuillBinding(ytext, quill, supaProvider.awareness);
-    ref.current = quill;
 
     return () => {
       ref.current = null;

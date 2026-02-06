@@ -15,6 +15,7 @@ describe('supabase documents', () => {
             "data": {
                 "filters": [
                     {
+                        "filter": "eq",
                         "column": "doc_id",
                         "value": "docId1",
                     },
@@ -44,6 +45,7 @@ describe('supabase documents', () => {
         expect(documents).toEqual({
             "filters": [
                 {
+                    "filter": "in",
                     "column": "doc_id",
                     "value": [
                         "docId1",

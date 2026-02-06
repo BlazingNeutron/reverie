@@ -19,22 +19,33 @@ function supabaseMock() {
 
     eq(column: string, value: any) {
       if (!this.query.filters) this.query.filters = [];
-      this.query.filters.push({ column, value });
+      this.query.filters.push({ filter: "eq", column, value });
       return this;
     }
 
     neq(column: string, value: any) {
       if (!this.query.filters) this.query.filters = [];
-      this.query.filters.push({ column, value });
+      this.query.filters.push({ filter: "neq", column, value });
       return this;
     }
 
     in(column: string, value: any[]) {
       if (!this.query.filters) this.query.filters = [];
-      this.query.filters.push({ column, value });
+      this.query.filters.push({ filter: "in", column, value });
       return this;
     }
 
+    gt(column: string, value: any[]) {
+      if (!this.query.filters) this.query.filters = [];
+      this.query.filters.push({ filter: "gt", column, value });
+      return this;
+    }
+
+    lt(column: string, value: any[]) {
+      if (!this.query.filters) this.query.filters = [];
+      this.query.filters.push({ filter: "lt", column, value });
+      return this;
+    }
 
     order(column: string, { ascending = true }) {
       this.query.order = { column, ascending };

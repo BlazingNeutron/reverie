@@ -26,10 +26,12 @@ describe('supabase sharing', () => {
             "deletes": "shared",
             "filters": [
                 {
+                    "filter": "eq",
                     "column": "doc_id",
                     "value": "docId1",
                 },
                 {
+                    "filter": "eq",
                     "column": "user_id",
                     "value": "userId2",
                 },

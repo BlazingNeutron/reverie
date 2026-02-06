@@ -35,7 +35,7 @@ vi.mock('quill-cursors', () => ({ default: {} }));
 vi.mock('y-quill', () => ({ QuillBinding: vi.fn() }));
 
 // Mock SupabaseProvider so Editor does not perform network work
-vi.mock('../../lib/supabase/y-supabase-provider', () => ({
+vi.mock('../../lib/supabase/ySupabaseProvider', () => ({
   SupabaseProvider: class {
     awareness = {};
     constructor() {
@@ -44,6 +44,11 @@ vi.mock('../../lib/supabase/y-supabase-provider', () => ({
     setDoc = () => {
       // noop
     }
+    init = () => ({
+      then: (callback: any) => {
+        callback()
+      }
+    })
   },
 }));
 

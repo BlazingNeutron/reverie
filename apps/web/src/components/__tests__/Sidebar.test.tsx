@@ -20,7 +20,7 @@ vi.mock('yjs', () => {
 });
 
 // // Mock SupabaseProvider so Editor does not perform network work
-vi.mock('../../lib/supabase/y-supabase-provider', () => ({
+vi.mock('../../lib/supabase/ySupabaseProvider', () => ({
   SupabaseProvider: class {
     awareness = {};
     constructor() {

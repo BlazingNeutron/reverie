@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
-let SupabaseProvider: any;
 
 // Mock the yjs module so we can observe applyUpdate calls reliably in tests
 let mockApplyUpdate = vi.fn();
@@ -16,7 +15,10 @@ class YDoc {
     return this._texts.get(name);
   }
   on(name:string, callback:Function) {
-    mockYDocOnCallback = callback;
+    mockYDocOnCallback = async (update:string) => {
+      console.log("mockYDocOnCallback has been called")
+      await callback(update);
+    }
     return name;
   }
 }
@@ -24,7 +26,8 @@ class YDoc {
 vi.mock('yjs', () => {
   return {
     Doc: YDoc,
-    applyUpdate: (...args: any[]) => mockApplyUpdate(...args)
+    applyUpdate: (...args: any[]) => mockApplyUpdate(...args),
+    encodeStateAsUpdate: vi.fn().mockReturnValue("encodedState")
   };
 });
 let mockYAwarenessOnCallback : Function = vi.fn();
@@ -48,12 +51,20 @@ vi.mock('y-protocols/awareness', () => {
   }
 });
 
-const mockInsertYJsUpdates = vi.fn();
+let mockInsertYJsUpdates = vi.fn();
 let mockSelectYJsUpdates = vi.fn().mockReturnValue({ data: [{ update: "Updated Test Text" }] });
+let mockSelectYJsSnapshots = vi.fn().mockReturnValue({ data: [{ snapshot: "Snapshoted Test Text", created_at: new Date() }] });
+let mockSelectYJsUpdatesSince = vi.fn().mockReturnValue({ data: [{ update: "Updated Test Text" }] });
+let mockUpsertYJsSnapshot = vi.fn().mockReturnValue({ created_at: "snapshotCreatedAt" });
+const mockDeleteYJsUpdatesBefore = vi.fn();
 vi.mock("../collaboration", () => {
   return {
     selectYJsUpdates: () => mockSelectYJsUpdates(),
-    insertYJsUpdates: () => mockInsertYJsUpdates()
+    insertYJsUpdates: () => mockInsertYJsUpdates(),
+    selectYJsSnapshot: () => mockSelectYJsSnapshots(),
+    selectYJsUpdatesSince: () => mockSelectYJsUpdatesSince(),
+    upsertYJsSnapshot: () => mockUpsertYJsSnapshot(),
+    deleteYJsUpdatesBefore: () => mockDeleteYJsUpdatesBefore()
   }
 })
 
@@ -88,12 +99,15 @@ vi.mock("../documents", () => {
 describe('SupabaseProvider (basic)', () => {
   let provider: any;
   let doc: YDoc | any;
-  // it('test', ()=>{})
+  let SupabaseProvider: any;
+
   beforeEach(async () => {
+    vi.useFakeTimers();
     doc = new YDoc();
     const module = await import('../ySupabaseProvider');
     SupabaseProvider = module.SupabaseProvider;
-    provider = await new SupabaseProvider('doc-1', doc);
+    provider = new SupabaseProvider('doc-1', doc);
+    await provider.init();
     vi.clearAllMocks();
   });
 
@@ -102,6 +116,7 @@ describe('SupabaseProvider (basic)', () => {
     mockSubscribe = vi.fn();
     mockSelectYJsUpdates = vi.fn().mockReturnValue({ data: [{ update: "Updated Test Text" }] });
     mockEnsureSession = vi.fn().mockReturnValue({ user: { id: "test-user" } });
+    mockInsertYJsUpdates = vi.fn();
     provider = null;
     doc = null;
     vi.restoreAllMocks();
@@ -125,6 +140,7 @@ describe('SupabaseProvider (basic)', () => {
   });
 
   it('call YDoc.on callback function to mock typing in editor', async () => {
+    await provider.setDoc()
     await mockYDocOnCallback("Test update");
 
     expect(mockInsertYJsUpdates).toHaveBeenCalled();
@@ -149,12 +165,11 @@ describe('SupabaseProvider (basic)', () => {
     expect(mockApplyUpdate).toHaveBeenCalled()
   });
 
-  it('loadInitialUpdates decodes persisted updates and applies them', async () => {
+  it('loadInitialUpdates decodes persisted snapshot, then updates and applies them', async () => {
     mockApplyUpdate = vi.fn();
-    mockSelectYJsUpdates = vi.fn().mockReturnValue({ data: [{ update: "Updated Test Text2" }] });
     await provider.loadInitialUpdates();
 
-    expect(mockApplyUpdate).toHaveBeenCalled();
+    expect(mockApplyUpdate).toHaveBeenCalledTimes(2);
   });
 
   it('Null session ', async () => {
@@ -164,7 +179,7 @@ describe('SupabaseProvider (basic)', () => {
     mockSelectYJsUpdates = vi.fn();
 
     provider = await new SupabaseProvider('doc-1', doc);
-    await provider.setDoc("testDocId", new YDoc());
+    await provider.setDoc();
     expect(mockSelectDoument).not.toHaveBeenCalled()
     await provider.sendUpdate("test update string");
     expect(mockInsertYJsUpdates).not.toHaveBeenCalled();
@@ -175,7 +190,7 @@ describe('SupabaseProvider (basic)', () => {
   })
 
   it('Subscribed Awareness callback call applyAwarenesUpdate', async () => {
-    await provider.setDoc("docId1", doc)
+    await provider.setDoc()
     expect(mockSubscribeAwareness).toHaveBeenCalledWith([
       "doc-1",
       expect.any(Function)
@@ -224,4 +239,27 @@ describe('SupabaseProvider (basic)', () => {
     expect(mockEncodeAwarenessUpdate).not.toHaveBeenCalled();
     expect(mockBroadcastAwareness).not.toHaveBeenCalled();
   });
+
+  it('loadInitialUpdates no snapshots, loads updates and applies them', async () => {
+    mockSelectYJsSnapshots = vi.fn().mockReturnValue();
+    mockApplyUpdate = vi.fn();
+    await provider.loadInitialUpdates();
+
+    expect(mockSelectYJsUpdates).toHaveBeenCalled()
+    expect(mockApplyUpdate).toHaveBeenCalled();
+  });
+
+  it('scheduleSnapshot is called', async () => {
+    await provider.setDoc();
+    await mockYDocOnCallback("Test update");
+    
+    expect(provider.snapshotTimer).not.toBeNull();
+
+    expect(mockUpsertYJsSnapshot).not.toHaveBeenCalled();
+    expect(mockDeleteYJsUpdatesBefore).not.toHaveBeenCalled();
+
+    await vi.advanceTimersByTimeAsync(provider.snapshotDelay);
+    expect(mockUpsertYJsSnapshot).toHaveBeenCalled();
+    expect(mockDeleteYJsUpdatesBefore).toHaveBeenCalled();
+  })
 });
