@@ -86,16 +86,16 @@ jobs:
         env:
             WAIT_TIMEOUT: 120
         run: |
-          timeout "${TIMEOUT}" bash -c '
-          docker compose -f docker-compose.dev-env.yml logs -f migrator |
-          while IFS= read -r line; do
-            echo "$line"
-            [[ "$line" == *"All migrations applied"* ]] && exit 0
-          done
+          timeout "${WAIT_TIMEOUT}" bash -c '
+            docker compose -f docker-compose.dev-env.yml logs -f migrator |
+            while IFS= read -r line; do
+              echo "$line"
+              [[ "$line" == *"All migrations applied"* ]] && exit 0
+            done
           '
 
-          # If we reach here, the timeout fired → fail the job
-          echo "❌ Migration did not finish within ${TIMEOUT}s"
+          # If we fall out of the timeout block, the migration didn’t finish in time
+          echo "❌ Migration did not finish within ${WAIT_TIMEOUT}s"
           docker compose -f docker-compose.dev-env.yml logs migrator
           exit 1
       - name: Setup integration .env file
