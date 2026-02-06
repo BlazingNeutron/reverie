@@ -1,6 +1,6 @@
 services:
   migrator:
-    image: ghcr.io/blazingneutron/reverie-migrator
+    image: ghcr.io/blazingneutron/reverie-migrator:latest
     build:
       context: ./
       additional_contexts:

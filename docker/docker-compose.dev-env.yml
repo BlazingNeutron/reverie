@@ -2,6 +2,12 @@ services:
   nginx:
     image: ghcr.io/blazingneutron/reverie-nginx:latest
     restart: always
+    depends_on:
+      db:
+        # Disable this if you are using an external Postgres database
+        condition: service_healthy
+      reverie-web:
+        condition: service_started
     ports:
       - "8000:80"
       - "8443:443"
@@ -9,6 +15,10 @@ services:
   reverie-web:
     image: ghcr.io/blazingneutron/reverie-web:latest
     restart: always
+    depends_on:
+      db:
+        # Disable this if you are using an external Postgres database
+        condition: service_healthy
 
   db:
     image: supabase/postgres:15.8.1.085
@@ -98,6 +108,12 @@ services:
       GOTRUE_EXTERNAL_EMAIL_ENABLED: ${ENABLE_EMAIL_SIGNUP:-true}
       GOTRUE_EXTERNAL_ANONYMOUS_USERS_ENABLED: ${ENABLE_ANONYMOUS_USERS:-false}
       GOTRUE_MAILER_AUTOCONFIRM: ${ENABLE_EMAIL_AUTOCONFIRM:-true}
+      GOTRUE_SMTP_ADMIN_EMAIL: ${SMTP_ADMIN_EMAIL:-admin@example.com}
+      GOTRUE_SMTP_HOST: ${SMTP_HOST:-supabase-mail}
+      GOTRUE_SMTP_PORT: ${SMTP_PORT:-2500}
+      GOTRUE_SMTP_USER: ${SMTP_USER}
+      GOTRUE_SMTP_PASS: ${SMTP_PASS}
+      GOTRUE_SMTP_SENDER_NAME: ${SMTP_SENDER_NAME:-fake_sender}
 
   realtime:
     container_name: realtime-reverie.supabase-realtime
@@ -147,13 +163,26 @@ services:
         "postgrest"
       ]
 
+  mail:
+    container_name: supabase-mail
+    image: inbucket/inbucket:3.0.3
+    ports:
+      - '2500:2500' # SMTP
+      - '9000:9000' # web interface
+      - '1100:1100' # POP3
+
   migrator:
     image: ghcr.io/blazingneutron/reverie-migrator:${IMAGE:-latest}
     container_name: migrator
-    restart: unless-stopped
     depends_on:
+      realtime:
+        condition: service_started
+      rest:
+        condition: service_started
       db:
         # Disable this if you are using an external Postgres database
+        condition: service_healthy
+      auth:
         condition: service_healthy
     environment:
       POSTGRES_DB: postgres

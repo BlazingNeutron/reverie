@@ -69,5 +69,7 @@ with check (
   WHERE ((s.doc_id = yjs_updates.doc_id) AND (s.user_id = auth.uid()))))
 );
 
+DROP POLICY "Enable delete for users based on user_id" ON "public"."yjs_updates";
+
 ALTER TABLE "public"."yjs_updates"
     DROP COLUMN IF EXISTS "user_id" CASCADE;
