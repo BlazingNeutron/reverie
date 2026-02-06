@@ -26,4 +26,6 @@ for f in /migrations/*.sql; do
 done
 
 echo "✅ All migrations applied."
-exec sleep infinity
+if [ "$SLEEP" = "true" ]; then
+  exec sleep infinity
+fi

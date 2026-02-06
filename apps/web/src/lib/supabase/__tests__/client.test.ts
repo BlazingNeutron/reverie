@@ -22,6 +22,7 @@ describe("supabase client", () => {
     beforeEach(() => {
         vi.resetModules();
         import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY = originalViteEnv;
+        import.meta.env.VITE_SUPABASE_BASE_URL = "http://test.com";
     })
 
     afterEach(() => {

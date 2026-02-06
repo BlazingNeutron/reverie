@@ -11,6 +11,7 @@
     "db:migrate": "supabase migration new migration_name",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:integration": "vitest run --config vitest.config.it.ts",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest run --coverage"
   },

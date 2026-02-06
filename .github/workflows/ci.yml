@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
+  unit-tests:
     name: Run tests and upload coverage
     runs-on: ubuntu-latest
     steps:
@@ -37,3 +37,67 @@ jobs:
           name: coverage-reports
           path: |
             **/coverage/**
+            
+  build:
+    needs: unit-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3.3.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build migrator image
+        uses: docker/build-push-action@v6.5.0
+        with:
+          context: ./docker/migrator/
+          file: ./docker/migrator/Dockerfile
+          build-contexts: |
+            migrations=./supabase/migrations
+          tags: ghcr.io/blazingneutron/reverie-migrator:${{ github.sha }}
+          push: false
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:latest
+          cache-to: type=inline
+          
+  integration-tests:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup docker compose .env file
+        working-directory: ./docker/
+        run: |
+          cp .env.dev-env .env
+          echo "IMAGE=${{ github.sha }}" >> .env
+      - name: Bring up test stack
+        working-directory: ./docker/
+        run: docker compose -f docker-compose.dev-env.yml up -d --wait
+      - name: Wait for migrations
+        working-directory: ./docker/
+        run: |
+          # Poll the migrator container until it stops (or fails)
+          while docker ps -q --filter "name=migrator" --filter "status=running" | grep -q .; do
+            echo "Migrator still running…"
+            sleep 2
+          done
+          # Capture exit code
+          MIGRATOR_EXIT=$(docker inspect migrator --format='{{.State.ExitCode}}')
+          if [ "$MIGRATOR_EXIT" -ne 0 ]; then
+            echo "❌ Migrations failed (exit $MIGRATOR_EXIT)"
+            docker compose logs migrator
+            exit 1
+          fi
+          echo "✅ Migrations completed"
+      - name: Setup integration .env file
+        working-directory: ./apps/web/
+        run: |
+          echo "VITE_SUPABASE_PUBLISHABLE_KEY=${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}" > .env.it
+          echo "VITE_SUPABASE_BASE_URL=http://localhost:8000" >> .env.it
+      - name: Run Integration tests
+        working-directory: ./apps/web/
+        run: npm run test:integration
+      - name: Shut down test stack
+        working-directory: ./docker/
+        if: always()
+        run: docker compose -f docker-compose.dev-env.yml down

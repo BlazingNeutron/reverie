@@ -1,7 +1,7 @@
 
 ALTER TABLE IF EXISTS doc_index RENAME TO documents;
 
-CREATE OR REPLACE FUNCTION UPDATE_DOC_ID_TO_UUID() 
+CREATE OR REPLACE FUNCTION public.UPDATE_DOC_ID_TO_UUID() 
   RETURNS VOID 
 AS
 $$
@@ -22,8 +22,8 @@ END;
 $$ 
 LANGUAGE plpgsql
 SET search_path = "public";
-select UPDATE_DOC_ID_TO_UUID();
-DROP FUNCTION UPDATE_DOC_ID_TO_UUID();
+select public.UPDATE_DOC_ID_TO_UUID();
+DROP FUNCTION public.UPDATE_DOC_ID_TO_UUID();
 
 ALTER TABLE documents ALTER COLUMN doc_id TYPE uuid USING (gen_random_uuid());
 ALTER TABLE documents ALTER doc_id SET DEFAULT gen_random_uuid();
