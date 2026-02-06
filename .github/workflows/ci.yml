@@ -86,20 +86,18 @@ jobs:
         env:
             WAIT_TIMEOUT: 120
         run: |
-          MIGRATOR_ID=$(docker compose -f docker-compose.dev-env.yml ps -q migrator)
-          timeout "${WAIT_TIMEOUT}" docker wait "${MIGRATOR_ID}" || {
-            echo "❌ Migration timed out after ${WAIT_TIMEOUT}s"
-            docker compose -f docker-compose.dev-env.yml logs migrator
-            exit 1
-          }
-          EXIT_CODE=$(docker inspect -f '{{.State.ExitCode}}' "${MIGRATOR_ID}")
-          if [ "$EXIT_CODE" -ne 0 ]; then
-            echo "❌ Migrator exited with code $EXIT_CODE"
-            docker compose -f docker-compose.dev-env.yml logs migrator
-            exit 1
-          fi
+          timeout "${TIMEOUT}" bash -c '
+          docker compose -f docker-compose.dev-env.yml logs -f migrator |
+          while IFS= read -r line; do
+            echo "$line"
+            [[ "$line" == *"All migrations applied"* ]] && exit 0
+          done
+          '
 
-          echo "✅ Migrations completed"
+          # If we reach here, the timeout fired → fail the job
+          echo "❌ Migration did not finish within ${TIMEOUT}s"
+          docker compose -f docker-compose.dev-env.yml logs migrator
+          exit 1
       - name: Setup integration .env file
         working-directory: ./apps/web/
         run: |
