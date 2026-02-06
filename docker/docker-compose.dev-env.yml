@@ -172,7 +172,7 @@ services:
       - '1100:1100' # POP3
 
   migrator:
-    image: ghcr.io/blazingneutron/reverie-migrator:${IMAGE:-latest}
+    image: ghcr.io/blazingneutron/reverie-migrator:${IMAGE_TAG}
     container_name: migrator
     depends_on:
       realtime:
