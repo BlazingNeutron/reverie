@@ -45,6 +45,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3.3.0
         with:
@@ -89,14 +95,21 @@ jobs:
             docker compose -f docker-compose.dev-env.yml logs migrator
             exit $EXIT_CODE
           fi
+
       - name: Setup integration .env file
         working-directory: ./apps/web/
         run: |
           echo "VITE_SUPABASE_PUBLISHABLE_KEY=${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}" > .env.it
           echo "VITE_SUPABASE_BASE_URL=http://localhost:8000" >> .env.it
+
+      - name: Install dependencies
+        working-directory: ./apps/web/
+        run: npm i
+
       - name: Run Integration tests
         working-directory: ./apps/web/
         run: npm run test:integration
+
       - name: Shut down test stack
         working-directory: ./docker/
         if: always()
