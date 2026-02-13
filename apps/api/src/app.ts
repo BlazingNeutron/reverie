@@ -1,11 +1,12 @@
 import express from "express";
-import userRoutes from "./user/routes";
+import userRouter from "./user/routes.ts";
+
 const app = express();
 
 app.use(express.json());
-app.use("/", userRoutes);
+app.use("/", userRouter);
 
-app.get("/status", (req, res) => {
+app.get("/status", (_req, res) => {
   res.json({
     status: "Running",
     timestamp: new Date().toISOString(),

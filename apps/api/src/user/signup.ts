@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { Request, Response } from "express";
+import { type Request, type Response } from "express";
 import { passwordCheck } from "@repo/validators";
 
 const supabaseUrl = process.env.SUPABASE_URL!;
