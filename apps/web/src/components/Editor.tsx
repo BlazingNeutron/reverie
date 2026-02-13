@@ -3,11 +3,13 @@ import * as Y from "yjs"
 import { QuillBinding } from "y-quill"
 import Quill from "quill"
 import QuillCursors from "quill-cursors"
+import QuillResizeImage from 'quill-resize-image';
 import { SupabaseProvider } from "../lib/supabase/ySupabaseProvider"
 import { useDocStore } from "../lib/stores/documentStore";
 import "quill/dist/quill.snow.css";
 
 Quill.register("modules/cursors", QuillCursors);
+Quill.register("modules/resize", QuillResizeImage);
 
 const Editor = forwardRef(({ }, ref: any) => {
   const containerRef = useRef(null);
@@ -37,10 +39,16 @@ const Editor = forwardRef(({ }, ref: any) => {
           ],
           history: {
             userOnly: true
-          }
+          },
+          resize: {
+            locale: {},
+          },
         },
         placeholder: "Start collaborating...",
         theme: "snow",
+        formats: [
+          'image',
+        ],
       });
       new QuillBinding(ytext, quill, supaProvider.awareness);
       ref.current = quill;

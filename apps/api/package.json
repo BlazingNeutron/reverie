@@ -1,0 +1,32 @@
+{
+  "name": "api",
+  "version": "0.0.2",
+  "description": "Reverie Notes API server",
+  "main": "app.ts",
+  "scripts": {
+    "start": "tsx --env-file=.env app.ts",
+    "dev": "tsx watch --env-file=.env app.ts",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage"
+  },
+  "type": "module",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.95.3",
+    "express": "^5.2.1",
+    "@repo/validators": "0.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "eslint": "^9.31.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-only-warn": "^1.1.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-turbo": "^2.5.4",
+    "globals": "^16.3.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.36.0"
+  }
+}

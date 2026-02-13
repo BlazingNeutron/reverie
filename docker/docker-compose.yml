@@ -1,14 +1,24 @@
 services:
   nginx:
-    image: ghcr.io/blazingneutron/reverie-nginx
+    image: ghcr.io/blazingneutron/reverie-nginx:latest
     restart: always
+    depends_on:
+      db:
+        # Disable this if you are using an external Postgres database
+        condition: service_healthy
+      reverie-web:
+        condition: service_started
     ports:
       - "${HTTP_PORT:-80}:80"
       - "${HTTPS_PORT:-443}:443"
 
   reverie-web:
-    image: ghcr.io/blazingneutron/reverie-web
+    image: ghcr.io/blazingneutron/reverie-web:latest
     restart: always
+    depends_on:
+      db:
+        # Disable this if you are using an external Postgres database
+        condition: service_healthy
 
   db:
     image: supabase/postgres:15.8.1.085
@@ -160,12 +170,26 @@ services:
         "postgrest"
       ]
 
+  mail:
+    container_name: supabase-mail
+    image: inbucket/inbucket:3.0.3
+    ports:
+      - '2500:2500' # SMTP
+      - '9000:9000' # web interface
+      - '1100:1100' # POP3
+
   migrator:
-    image: ghcr.io/blazingneutron/reverie-migrator
+    image: ghcr.io/blazingneutron/reverie-migrator:latest
     restart: unless-stopped
     depends_on:
+      realtime:
+        condition: service_started
+      rest:
+        condition: service_started
       db:
         # Disable this if you are using an external Postgres database
+        condition: service_healthy
+      auth:
         condition: service_healthy
     environment:
       POSTGRES_DB: postgres

@@ -27,7 +27,12 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/realtime\/v1/, ''),
         target: 'http://realtime-dev.supabase-realtime:4000/socket',
         changeOrigin: true
-      }
+      },
+      '/api': {
+        rewrite: (path) => path.replace(/^\/api/, ''),
+        target: 'http://localhost:3000',
+        changeOrigin: true
+      },
     }
   },
   test: {

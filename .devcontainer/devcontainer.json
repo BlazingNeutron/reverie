@@ -11,12 +11,16 @@
 				"vitest.explorer",
 				"github.vscode-github-actions",
 				"bradlc.vscode-tailwindcss",
-				"ms-ossdata.vscode-pgsql"
+				"ms-ossdata.vscode-pgsql",
+				"EditorConfig.EditorConfig"
 			]
 		}
 	}
 	,"features": {
 		"ghcr.io/devcontainers-extra/features/supabase-cli": "latest"
+	}
+	,"containerEnv": {
+		"PGSSLMODE":"disable"
 	}
 	,"postCreateCommand": "npm i turbo -g && npm i"
 }

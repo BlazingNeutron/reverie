@@ -6,6 +6,7 @@ import App from './routes/index';
 import Login from './routes/login';
 import AuthProvider, { useAuth } from './lib/auth/authContext.tsx';
 import ThemeProvider from './components/ThemeProvider.tsx';
+import SignUp from './routes/sign-up.tsx';
 
 export const ProtectedRoute = () => {
   const { session, loading } = useAuth();  
@@ -36,12 +37,15 @@ const router = createBrowserRouter([
     path: '/login',
     element: (
       <AuthProvider>
-        <Outlet />
+        <Login />
       </AuthProvider>
-    ),
-    children: [
-      { element: <Login /> },
-    ],
+    )
+  },
+  {
+    path: '/sign-up',
+    element: (
+      <SignUp />
+    )
   }
 ]);
 

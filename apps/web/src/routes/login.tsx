@@ -2,7 +2,8 @@
 import { Button, Card, Grid, Text, TextField } from '@radix-ui/themes'
 import { Label } from "radix-ui"
 import { useAuth } from '../lib/auth/authContext'
-import { useState, type FormEvent } from 'react'
+import { useState } from 'react'
+import { Link } from 'react-router'
 
 export default function Login() {
   const auth = useAuth()
@@ -11,7 +12,7 @@ export default function Login() {
   const [email, setEmail] = useState<string>("")
   const [password, setPassword] = useState<string>("")
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
     setError("")
@@ -58,6 +59,12 @@ export default function Login() {
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? 'Logging in...' : 'Login'}
                   </Button>
+                </div>
+                <div className="mt-4 text-center text-sm">
+                  Don&apos;t have an account?{' '}
+                  <Link to="/sign-up" className="underline underline-offset-4">
+                    Sign up
+                  </Link>
                 </div>
               </form>
 

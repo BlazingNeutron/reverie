@@ -1,28 +1,33 @@
 {
   "name": "reverie-notes",
-  "version": "0.0.1",
-  "description": "Note taking app for all of your dreamy, thoughtful, deep thinking and shared ideas.",
+  "version": "0.0.2",
+  "license": "MIT",
+  "description": "Collaborative Note app for all of your dreamy and thoughtful ideas.",
   "scripts": {
     "build": "turbo run build",
     "check:licenses": "node scripts/check-licenses.cjs",
+    "check-types": "turbo run check-types",
+    "clean": "turbo run clean",
+    "db:reset": "turbo run db:reset",
+    "db:migrate": "turbo run db:migrate",
     "dev": "turbo run dev",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "lint": "turbo run lint",
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",
-    "test:updateSnapshots": "turbo run test:updateSnapshots",
-    "db:reset": "turbo run db:reset",
-    "db:migrate": "turbo run db:migrate"
+    "test:updateSnapshots": "turbo run test:updateSnapshots"
   },
   "dependencies": {
     "concurrently": "^9.2.1"
   },
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "packages/*"
   ],
   "type": "module",
   "packageManager": "npm@11.4.2",
   "devDependencies": {
-    "jsdom": "^27.4.0",
-    "turbo": "^2.7.6",
-    "vitest": "^4.0.18"
+    "turbo": "^2.8.7",
+    "prettier": "^3.8.1"
   }
 }
