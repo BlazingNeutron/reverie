@@ -1,26 +1,26 @@
-import { createRef, act } from 'react';
-import { waitFor } from '@testing-library/react';
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
-import ReactDOMClient from 'react-dom/client';
-import Editor from '../Editor';
-import { useDocStore } from '../../lib/stores/documentStore';
+import { createRef, act } from "react";
+import { waitFor } from "@testing-library/react";
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
+import ReactDOMClient from "react-dom/client";
+import Editor from "../Editor";
+import { useDocStore } from "../../lib/stores/documentStore";
 
 // Mock yjs Doc
-vi.mock('yjs', () => {
+vi.mock("yjs", () => {
   return {
     Doc: class {
       getText() {
         return {
           insert: () => {},
-          toString: () => 'mock',
+          toString: () => "mock",
         };
       }
-    }
+    },
   };
 });
 
 // Mock quill and quill-cursors
-vi.mock('quill', () => {
+vi.mock("quill", () => {
   function QuillMock(this: any, el: any, opts: any) {
     // emulate instance created by `new Quill(...)`
     return { el, opts };
@@ -29,13 +29,13 @@ vi.mock('quill', () => {
   return { default: QuillMock };
 });
 
-vi.mock('quill-cursors', () => ({ default: {} }));
+vi.mock("quill-cursors", () => ({ default: {} }));
 
 // Mock y-quill binding constructor
-vi.mock('y-quill', () => ({ QuillBinding: vi.fn() }));
+vi.mock("y-quill", () => ({ QuillBinding: vi.fn() }));
 
 // Mock SupabaseProvider so Editor does not perform network work
-vi.mock('../../lib/supabase/ySupabaseProvider', () => ({
+vi.mock("../../lib/supabase/ySupabaseProvider", () => ({
   SupabaseProvider: class {
     awareness = {};
     constructor() {
@@ -43,12 +43,12 @@ vi.mock('../../lib/supabase/ySupabaseProvider', () => ({
     }
     setDoc = () => {
       // noop
-    }
+    };
     init = () => ({
       then: (callback: any) => {
-        callback()
-      }
-    })
+        callback();
+      },
+    });
   },
 }));
 
@@ -56,11 +56,11 @@ vi.mock('../../lib/supabase/ySupabaseProvider', () => ({
 //   return { useDocStore: () => "docId1" }
 // })
 
-describe('Editor component', () => {
-  let container : any;
+describe("Editor component", () => {
+  let container: any;
 
   beforeEach(() => {
-    container = document.createElement('div');
+    container = document.createElement("div");
     document.body.appendChild(container);
   });
 
@@ -69,37 +69,38 @@ describe('Editor component', () => {
     container = null;
   });
 
-  it('initializes Quill and QuillBinding', async () => {
-    
-    const useDocStore = (await import('../../lib/stores/documentStore')).useDocStore;
-    useDocStore.getState().setCurrentDocId('doc-id');
+  it("initializes Quill and QuillBinding", async () => {
+    const useDocStore = (await import("../../lib/stores/documentStore"))
+      .useDocStore;
+    useDocStore.getState().setCurrentDocId("doc-id");
     await act(async () => {
       const ref = createRef<any>();
       ReactDOMClient.createRoot(container).render(<Editor ref={ref} />);
     });
 
     await waitFor(async () => {
-      const { QuillBinding } = await import('y-quill');
+      const { QuillBinding } = await import("y-quill");
       expect((QuillBinding as any).mock.calls.length).toBeGreaterThan(0);
     });
   });
 
-  it('switching currentDocId re-initializes editor', async () => {
+  it("switching currentDocId re-initializes editor", async () => {
     // set currentDocId to something else
-    const useDocStore = (await import('../../lib/stores/documentStore')).useDocStore;
+    const useDocStore = (await import("../../lib/stores/documentStore"))
+      .useDocStore;
     await act(async () => {
-      useDocStore.getState().setCurrentDocId('doc-id');
+      useDocStore.getState().setCurrentDocId("doc-id");
       const ref = createRef<any>();
       ReactDOMClient.createRoot(container).render(<Editor ref={ref} />);
     });
     const firstContainer = container.firstChild;
     const firstContainerHtml = firstContainer?.innerHTML;
-    
+
     // set currentDocId to something else
     await act(async () => {
-      useDocStore.getState().setCurrentDocId('another-doc-id');
+      useDocStore.getState().setCurrentDocId("another-doc-id");
     });
-    
+
     const secondContainer = container.firstChild;
     const secondContainerHtml = secondContainer?.innerHTML;
     expect(firstContainerHtml).not.toBe(secondContainerHtml);

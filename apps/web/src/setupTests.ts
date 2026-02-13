@@ -1,15 +1,15 @@
-import '@testing-library/jest-dom';
-import { vi } from 'vitest';
-import { supabaseClientMock } from './__mocks__/supabaseClientMock';
+import "@testing-library/jest-dom";
+import { vi } from "vitest";
+import { supabaseClientMock } from "./__mocks__/supabaseClientMock";
 
-// TODO later with store context vi.mock('zustand') 
-globalThis.IS_REACT_ACT_ENVIRONMENT = true
+// TODO later with store context vi.mock('zustand')
+globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
-vi.mock('./lib/supabase/client', () => ({ supabase: supabaseClientMock }));
+vi.mock("./lib/supabase/client", () => ({ supabase: supabaseClientMock }));
 
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -19,4 +19,4 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   })),
-})
+});

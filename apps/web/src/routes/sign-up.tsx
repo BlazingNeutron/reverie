@@ -1,24 +1,24 @@
-import { Link, useSearchParams } from 'react-router'
-import { Button, Card, Grid, Text, TextField } from '@radix-ui/themes'
-import { Label } from "radix-ui"
-import { useState } from 'react'
+import { Link, useSearchParams } from "react-router";
+import { Button, Card, Grid, Text, TextField } from "@radix-ui/themes";
+import { Label } from "radix-ui";
+import { useState } from "react";
 import { passwordCheck } from "@repo/validators";
 
 export default function SignUp() {
   const [searchParams] = useSearchParams();
   const inviteCode = searchParams.get("__invite_code");
-  const [success, setSuccess] = useState<boolean>(false)
-  const [loading, setLoading] = useState<boolean>(false)
-  const [error, setError] = useState<string>("")
-  const [email, setEmail] = useState<string>("")
-  const [password, setPassword] = useState<string>("")
-  const [confirm, setConfirm] = useState<string>("")
+  const [success, setSuccess] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [confirm, setConfirm] = useState<string>("");
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setSuccess(false)
-    setLoading(true)
-    setError("")
+    e.preventDefault();
+    setSuccess(false);
+    setLoading(true);
+    setError("");
 
     try {
       if (!password || !passwordCheck(password)) {
@@ -29,25 +29,34 @@ export default function SignUp() {
         setError("Password confirmation failed");
         return;
       }
-      const response = await fetch('/api/signup', {
-        method: 'POST',
+      const response = await fetch("/api/signup", {
+        method: "POST",
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: email, password: password, confirm: confirm, invite_code: inviteCode })
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          confirm: confirm,
+          invite_code: inviteCode,
+        }),
       });
       const content = await response.json();
 
       if (content.error) {
-        setError(content.error instanceof Error ? content.error.message : 'An error occurred')
-        return
+        setError(
+          content.error instanceof Error
+            ? content.error.message
+            : "An error occurred",
+        );
+        return;
       }
-      setSuccess(true)
+      setSuccess(true);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-sm">
@@ -60,8 +69,8 @@ export default function SignUp() {
               </Grid>
               <Grid>
                 <p className="text-sm text-muted-foreground">
-                  You&apos;ve successfully signed up. Please check your email to confirm your
-                  account before signing in.
+                  You&apos;ve successfully signed up. Please check your email to
+                  confirm your account before signing in.
                 </p>
               </Grid>
             </Card>
@@ -96,11 +105,14 @@ export default function SignUp() {
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        required />
+                        required
+                      />
                     </div>
                     <div className="grid gap-2">
                       <div className="flex items-center">
-                        <Label.Root htmlFor="repeat-password">Confirm Password</Label.Root>
+                        <Label.Root htmlFor="repeat-password">
+                          Confirm Password
+                        </Label.Root>
                       </div>
                       <TextField.Root
                         id="repeat-password"
@@ -108,15 +120,16 @@ export default function SignUp() {
                         type="password"
                         value={confirm}
                         onChange={(e) => setConfirm(e.target.value)}
-                        required />
+                        required
+                      />
                     </div>
                     {error && <p className="text-sm text-red-500">{error}</p>}
                     <Button type="submit" className="w-full" disabled={loading}>
-                      {loading ? 'Creating an account...' : 'Sign up'}
+                      {loading ? "Creating an account..." : "Sign up"}
                     </Button>
                   </div>
                   <div className="mt-4 text-center text-sm">
-                    Already have an account?{' '}
+                    Already have an account?{" "}
                     <Link to="/login" className="underline underline-offset-4">
                       Login
                     </Link>
@@ -128,5 +141,5 @@ export default function SignUp() {
         </div>
       </div>
     </div>
-  )
+  );
 }

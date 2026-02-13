@@ -3,10 +3,10 @@ const { violet, blackA, mauve, green, gray } = require("@radix-ui/colors");
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './index.html',
-    './src/**/*.{js,ts,jsx,tsx}',
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
     // include packages and shared code when working in monorepo dev
-    '../**/src/**/*.{js,ts,jsx,tsx}'
+    "../**/src/**/*.{js,ts,jsx,tsx}",
   ],
   darkMode: true,
   theme: {
@@ -38,4 +38,4 @@ module.exports = {
     },
   },
   plugins: [],
-}
+};

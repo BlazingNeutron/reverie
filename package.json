@@ -11,7 +11,7 @@
     "db:reset": "turbo run db:reset",
     "db:migrate": "turbo run db:migrate",
     "dev": "turbo run dev",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "format": "prettier * --write",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "test:coverage": "turbo run test:coverage",

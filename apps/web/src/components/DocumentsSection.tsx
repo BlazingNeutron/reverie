@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { useDocStore } from '../lib/stores/documentStore';
-import { Accordion } from 'radix-ui';
-import { DocumentItem } from './DocumentItem';
-import { findUserDocs } from '../lib/supabase/documents';
-import { ensureSession } from '../lib/supabase/auth';
+import { useEffect, useState } from "react";
+import { useDocStore } from "../lib/stores/documentStore";
+import { Accordion } from "radix-ui";
+import { DocumentItem } from "./DocumentItem";
+import { findUserDocs } from "../lib/supabase/documents";
+import { ensureSession } from "../lib/supabase/auth";
 
 export function DocumentsSection({ open }: { open: boolean }) {
   const [docs, setDocs] = useState<any[]>([]);
@@ -37,11 +37,13 @@ export function DocumentsSection({ open }: { open: boolean }) {
       <Accordion.Item value="docs">
         <Accordion.Header>
           <Accordion.Trigger asChild>
-            {open && <div className="relative flex py-5 items-center cursor-pointer">
-              <div className="grow border-t border-gray-400"></div>
-              <span className="shrink mx-4 text-gray-400">Documents</span>
-              <div className="grow border-t border-gray-400"></div>
-            </div>}
+            {open && (
+              <div className="relative flex py-5 items-center cursor-pointer">
+                <div className="grow border-t border-gray-400"></div>
+                <span className="shrink mx-4 text-gray-400">Documents</span>
+                <div className="grow border-t border-gray-400"></div>
+              </div>
+            )}
           </Accordion.Trigger>
         </Accordion.Header>
 

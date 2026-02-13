@@ -1,9 +1,10 @@
 # reverie
-Note taking app for all of your dreamy, thoughtful, deep thinking and shared ideas. 
+
+Note taking app for all of your dreamy, thoughtful, deep thinking and shared ideas.
 
 # Development
 
-It is recommended to use the devcontainers. 
+It is recommended to use the devcontainers.
 
 Start the frontend and backend servers with
 `turbo dev`

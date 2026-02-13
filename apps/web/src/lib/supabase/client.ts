@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js"
+import { createClient } from "@supabase/supabase-js";
 
 interface ImportMetaEnv {
   VITE_SUPABASE_PUBLISHABLE_KEY: string;
@@ -23,7 +23,9 @@ if (!baseUrl || baseUrl.trim() == "") {
 
 export let supabase = createClient(baseUrl, supabasePublishableKey);
 
-const { data: { session } } = await supabase.auth.getSession();
+const {
+  data: { session },
+} = await supabase.auth.getSession();
 if (session) {
-  supabase = createClient(baseUrl, session.access_token) 
+  supabase = createClient(baseUrl, session.access_token);
 }

@@ -1,5 +1,4 @@
 services:
-
   nginx:
     image: ghcr.io/blazingneutron/reverie-nginx
     build:
