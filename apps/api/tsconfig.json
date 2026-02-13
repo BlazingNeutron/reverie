@@ -3,20 +3,22 @@
     "target": "ES2020",
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "nodenext",
+    "module": "es2022",
     "skipLibCheck": true,
     "allowJs": true,
     "verbatimModuleSyntax": true,
 
     /* Bundler mode */
     "moduleDetection": "force",
-    "moduleResolution": "nodenext",
-    "allowImportingTsExtensions": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": false,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "noEmit": false,
     "jsx": "react-jsx",
     "esModuleInterop": true,
+    "rootDir": ".",
+    "outDir": "./dist/",
 
     /* Linting */
     "strict": true,

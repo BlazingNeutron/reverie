@@ -5,5 +5,7 @@ services:
     build:
       context: ../../apps/web
       dockerfile: Dockerfile
+      additional_contexts:
+        root: ../../
     env_file:
       - ../.env

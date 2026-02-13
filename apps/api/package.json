@@ -4,8 +4,9 @@
   "description": "Reverie Notes API server",
   "main": "app.ts",
   "scripts": {
-    "start": "tsx --env-file=.env app.ts",
-    "dev": "tsx watch --env-file=.env app.ts",
+    "build": "tsc ",
+    "start": "tsx --env-file=.env src/app.ts",
+    "dev": "tsx watch --env-file=.env src/app.ts",
     "test": "vitest",
     "test:coverage": "vitest --coverage"
   },
