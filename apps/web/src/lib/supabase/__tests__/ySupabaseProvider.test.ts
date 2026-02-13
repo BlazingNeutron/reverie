@@ -55,11 +55,9 @@ let mockInsertYJsUpdates = vi.fn();
 let mockSelectYJsUpdates = vi
   .fn()
   .mockReturnValue({ data: [{ update: "Updated Test Text" }] });
-let mockSelectYJsSnapshots = vi
-  .fn()
-  .mockReturnValue({
-    data: [{ snapshot: "Snapshoted Test Text", created_at: new Date() }],
-  });
+let mockSelectYJsSnapshots = vi.fn().mockReturnValue({
+  data: [{ snapshot: "Snapshoted Test Text", created_at: new Date() }],
+});
 let mockSelectYJsUpdatesSince = vi
   .fn()
   .mockReturnValue({ data: [{ update: "Updated Test Text" }] });
@@ -98,14 +96,12 @@ vi.mock("../realtime", () => {
   };
 });
 
-let mockSelectDoument = vi
-  .fn()
-  .mockReturnValue({
-    doc_id: "docId1",
-    title: "MockTitle",
-    content: "MockContent",
-    user_id: "userId1",
-  });
+let mockSelectDoument = vi.fn().mockReturnValue({
+  doc_id: "docId1",
+  title: "MockTitle",
+  content: "MockContent",
+  user_id: "userId1",
+});
 vi.mock("../documents", () => {
   return {
     selectDocument: () => mockSelectDoument(),
@@ -129,14 +125,12 @@ describe("SupabaseProvider (basic)", () => {
   });
 
   afterEach(() => {
-    mockSelectDoument = vi
-      .fn()
-      .mockReturnValue({
-        doc_id: "docId1",
-        title: "MockTitle",
-        content: "MockContent",
-        user_id: "userId1",
-      });
+    mockSelectDoument = vi.fn().mockReturnValue({
+      doc_id: "docId1",
+      title: "MockTitle",
+      content: "MockContent",
+      user_id: "userId1",
+    });
     mockSubscribe = vi.fn();
     mockSelectYJsUpdates = vi
       .fn()

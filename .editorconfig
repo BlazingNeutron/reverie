@@ -49,7 +49,7 @@
     "xsl"
   ],
   "autoBarrel.files.includeExtensionOnExport": ["ts", "tsx"],
-  "autoBarrel.formatting.useSingleQuotes": "<option you chose>", // true or false
+  "autoBarrel.formatting.useSingleQuotes": "false",
   "autoBarrel.language.defaultLanguage": "TypeScript",
   "colorize.colorized_variables": ["CSS", "LESS", "SASS", "STYLUS"],
   "colorize.enable_search_variables": true,
@@ -107,7 +107,7 @@
     "output": true
   },
   "template-string-converter.autoRemoveTemplateString": true,
-  "template-string-converter.quoteType": "<option you chose>", // "single" or "double"
+  "template-string-converter.quoteType": "double",
   "template-string-converter.validLanguages": [
     "javascript",
     "javascriptreact",
@@ -118,7 +118,7 @@
   ],
   "turboConsoleLog.addSemicolonInTheEnd": true,
   "turboConsoleLog.insertEmptyLineAfterLogMessage": true,
-  "turboConsoleLog.quote": "<option you chose>", // "'" or "\""
+  "turboConsoleLog.quote": "\"",
   "typescript.inlayHints.enumMemberValues.enabled": true,
   "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
   "typescript.inlayHints.parameterNames.enabled": "all",

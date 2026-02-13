@@ -11,11 +11,9 @@ vi.mock("../../../lib/supabase/client", () => {
     supabase: {
       auth: {
         getSession: () => mockGetSession(),
-        onAuthStateChange: vi
-          .fn()
-          .mockImplementation(() => ({
-            data: { subscription: { unsubscribe: vi.fn() } },
-          })),
+        onAuthStateChange: vi.fn().mockImplementation(() => ({
+          data: { subscription: { unsubscribe: vi.fn() } },
+        })),
         signInWithPassword: (email: string, password: string) =>
           mockSignInWithPassword(email, password),
         signOut: () => mockSignOut(),
@@ -48,11 +46,9 @@ describe("AuthProvider", () => {
   });
 
   it("provides user and finishes loading", async () => {
-    mockGetSession = vi
-      .fn()
-      .mockResolvedValue({
-        data: { session: { user: { id: "u-123", email: "a@b.com" } } },
-      });
+    mockGetSession = vi.fn().mockResolvedValue({
+      data: { session: { user: { id: "u-123", email: "a@b.com" } } },
+    });
     await act(async () => {
       ReactDOMClient.createRoot(container).render(
         <MemoryRouter>
@@ -123,11 +119,9 @@ describe("AuthProvider", () => {
   });
 
   it("signOut calls supabase auth signOut", async () => {
-    mockGetSession = vi
-      .fn()
-      .mockResolvedValue({
-        data: { session: { user: { id: "u-123", email: "a@b.com" } } },
-      });
+    mockGetSession = vi.fn().mockResolvedValue({
+      data: { session: { user: { id: "u-123", email: "a@b.com" } } },
+    });
     const Capture = () => {
       const auth = useAuth();
       React.useEffect(() => {
