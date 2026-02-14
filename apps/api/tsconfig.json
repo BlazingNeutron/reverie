@@ -1,32 +1,38 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "es2022",
     "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "es2022",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "module": "commonjs",
     "skipLibCheck": true,
     "allowJs": true,
-    "verbatimModuleSyntax": true,
+    "verbatimModuleSyntax": false,
 
     /* Bundler mode */
     "moduleDetection": "force",
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": false,
+    "moduleResolution": "node",
+    "allowImportingTsExtensions": null,
+    "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
+    "isolatedModules": false,
     "noEmit": false,
     "jsx": "react-jsx",
     "esModuleInterop": true,
-    "rootDir": ".",
-    "outDir": "./dist/",
+    "rootDir": "./src",
+    "outDir": "./dist",
 
     /* Linting */
     "strict": true,
+    "noImplicitAny": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["./src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

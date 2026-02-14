@@ -12,6 +12,16 @@ services:
       - "${HTTP_PORT:-80}:80"
       - "${HTTPS_PORT:-443}:443"
 
+  api:
+    image: ghcr.io/blazingneutron/reverie-api:latest
+    restart: always
+    depends_on:
+      db:
+        # Disable this if you are using an external Postgres database
+        condition: service_healthy
+    environment:
+      - SERVICE_ROLE_KEY=${SERVICE_ROLE_KEY}
+
   reverie-web:
     image: ghcr.io/blazingneutron/reverie-web:latest
     restart: always
@@ -19,6 +29,8 @@ services:
       db:
         # Disable this if you are using an external Postgres database
         condition: service_healthy
+      api:
+        condition: service_started
 
   db:
     image: supabase/postgres:15.8.1.085
@@ -43,8 +55,6 @@ services:
       - ./volumes/db/pooler.sql:/docker-entrypoint-initdb.d/migrations/99-pooler.sql:Z
       # Use named volume to persist pgsodium decryption key between restarts
       - db-config:/etc/postgresql-custom
-      # Create user sql
-      - ./create-user.sql:/scripts/create-user.sql
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost"]
       interval: 5s

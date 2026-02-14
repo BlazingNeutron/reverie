@@ -1,0 +1,7 @@
+.devcontainer/
+.github/
+.turbo/
+.vscode/
+node_modules/
+docker/
+out/

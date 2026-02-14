@@ -1,18 +1,35 @@
-FROM node:22 AS builder
+FROM node:25 AS base
 
-COPY --from=root package.json /build/package.json
-COPY --from=root package-lock.json /build/package-lock.json
-COPY --from=root turbo.json /build/turbo.json
 
-WORKDIR /build
-RUN npm install
-COPY --from=root /apps /build/apps
-COPY --from=root /packages /build/packages
-RUN npm install
+FROM base AS prepare
+WORKDIR /app
+RUN npm install -g turbo
+COPY package*.json /app
+COPY turbo.json /app
+COPY packages /app/packages
+COPY apps /app/apps
+RUN turbo prune api --docker
+
+
+FROM base AS builder
+WORKDIR /app
+COPY --from=prepare /app/out/json/ .
+RUN npm install 
+COPY --from=prepare /app/out/full/ .
 RUN npm run build
 
-FROM node:22 AS runner
-WORKDIR /app
-COPY --from=builder /build/apps/api .
 
-CMD [ "npm", "run", "start" ]
+FROM node:25-alpine AS runner
+USER node
+WORKDIR /app
+
+COPY --from=builder /app .
+
+WORKDIR /app/apps/api
+
+EXPOSE 3000
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD wget -qO- http://localhost:${PORT:-3000}/health || exit 1
+
+CMD [ "node", "dist/app.js" ]
