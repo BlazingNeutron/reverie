@@ -1,26 +1,26 @@
 {
-	"name": "Reverie Notes",
-	"dockerComposeFile": "docker-compose.yml",
-	"service": "app",
-	"workspaceFolder": "/workspace",
-	"customizations": {
-		"vscode": {
-			"extensions": [
-				"ms-azuretools.vscode-docker",
-				"ms-vscode.makefile-tools",
-				"vitest.explorer",
-				"github.vscode-github-actions",
-				"bradlc.vscode-tailwindcss",
-				"ms-ossdata.vscode-pgsql",
-				"EditorConfig.EditorConfig"
-			]
-		}
-	}
-	,"features": {
-		"ghcr.io/devcontainers-extra/features/supabase-cli": "latest"
-	}
-	,"containerEnv": {
-		"PGSSLMODE":"disable"
-	}
-	,"postCreateCommand": "npm i turbo -g && npm i"
+  "name": "Reverie Notes",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "ms-vscode.makefile-tools",
+        "vitest.explorer",
+        "github.vscode-github-actions",
+        "bradlc.vscode-tailwindcss",
+        "ms-ossdata.vscode-pgsql",
+        "EditorConfig.EditorConfig"
+      ]
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers-extra/features/supabase-cli": "latest",
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+  },
+  "containerEnv": {
+    "PGSSLMODE": "disable"
+  },
+  "postCreateCommand": "npm i turbo -g && npm i && npx supabase start",
+  "initializeCommand": "npx supabase start"
 }

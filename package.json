@@ -18,7 +18,8 @@
     "test:updateSnapshots": "turbo run test:updateSnapshots"
   },
   "dependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.1",
+    "supabase": "^2.83.0"
   },
   "workspaces": [
     "apps/*",
@@ -30,6 +31,6 @@
     "prettier": "^3.8.1",
     "pretty-quick": "^4.2.2",
     "simple-git-hooks": "^2.13.1",
-    "turbo": "^2.8.7"
+    "turbo": "^2.8.20"
   }
 }
