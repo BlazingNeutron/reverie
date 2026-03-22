@@ -1,6 +1,6 @@
 services:
   reverie-web:
-    image: ghcr.io/blazingneutron/reverie-web
+    image: ghcr.io/blazingneutron/reverie-web:latest
     restart: always
     build:
       context: ../../apps/web

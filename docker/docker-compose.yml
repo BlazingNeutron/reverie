@@ -1,17 +1,4 @@
 services:
-  nginx:
-    image: ghcr.io/blazingneutron/reverie-nginx:latest
-    restart: always
-    depends_on:
-      db:
-        # Disable this if you are using an external Postgres database
-        condition: service_healthy
-      reverie-web:
-        condition: service_started
-    ports:
-      - "${HTTP_PORT:-80}:80"
-      - "${HTTPS_PORT:-443}:443"
-
   api:
     image: ghcr.io/blazingneutron/reverie-api:latest
     restart: always
@@ -20,11 +7,15 @@ services:
         # Disable this if you are using an external Postgres database
         condition: service_healthy
     environment:
+      - SUPABASE_URL=http://kong
       - SERVICE_ROLE_KEY=${SERVICE_ROLE_KEY}
 
   reverie-web:
     image: ghcr.io/blazingneutron/reverie-web:latest
     restart: always
+    environment:
+      - SUPABASE_DB_URL=postgres://postgres
+      - VITE_SUPABASE_PUBLISHABLE_KEY=specialkey
     depends_on:
       db:
         # Disable this if you are using an external Postgres database
@@ -176,13 +167,56 @@ services:
       PGRST_APP_SETTINGS_JWT_EXP: 3600
     command: ["postgrest"]
 
-  mail:
-    container_name: supabase-mail
-    image: inbucket/inbucket:3.0.3
+  kong:
     ports:
-      - "2500:2500" # SMTP
-      - "9000:9000" # web interface
-      - "1100:1100" # POP3
+      - ${KONG_HTTP_PORT:-8000}:8000/tcp
+      - ${KONG_HTTPS_PORT:-8443}:8443/tcp
+    image: kong:2.8.1
+    restart: unless-stopped
+    volumes:
+      # https://github.com/supabase/supabase/issues/12661
+      - ./volumes/api/kong.yml:/home/kong/temp.yml:ro,z
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /home/kong/kong.yml
+      # https://github.com/supabase/cli/issues/14
+      KONG_DNS_ORDER: LAST,A,CNAME
+      KONG_PLUGINS: request-transformer,cors,key-auth,acl,basic-auth,request-termination,ip-restriction
+      KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
+      KONG_NGINX_PROXY_PROXY_BUFFERS: 64 160k
+      SUPABASE_ANON_KEY: ${ANON_KEY}
+      SUPABASE_SERVICE_KEY: ${SERVICE_ROLE_KEY}
+    # https://unix.stackexchange.com/a/294837
+    entrypoint: bash -c 'eval "echo \"$$(cat ~/temp.yml)\"" > ~/kong.yml && /docker-entrypoint.sh kong docker-start'
+    depends_on:
+      db:
+        # Disable this if you are using an external Postgres database
+        condition: service_healthy
+
+  meta:
+    container_name: supabase-meta
+    image: supabase/postgres-meta:v0.95.2
+    restart: unless-stopped
+    depends_on:
+      db:
+        # Disable this if you are using an external Postgres database
+        condition: service_healthy
+    environment:
+      PG_META_PORT: 8080
+      PG_META_DB_HOST: ${POSTGRES_HOST:-db}
+      PG_META_DB_PORT: ${POSTGRES_PORT:-5432}
+      PG_META_DB_NAME: ${POSTGRES_DB:-postgres}
+      PG_META_DB_USER: supabase_admin
+      PG_META_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      CRYPTO_KEY: your-encryption-key-32-chars-min
+
+  # mail:
+  #   container_name: supabase-mail
+  #   image: inbucket/inbucket:3.0.3
+  #   ports:
+  #     - "2500:2500" # SMTP
+  #     - "9000:9000" # web interface
+  #     - "1100:1100" # POP3
 
   migrator:
     image: ghcr.io/blazingneutron/reverie-migrator:latest
