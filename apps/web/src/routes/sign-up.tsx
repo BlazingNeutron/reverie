@@ -29,7 +29,7 @@ export default function SignUp() {
         setError("Password confirmation failed");
         return;
       }
-      const response = await fetch("/api/signup", {
+      const response = await fetch("/api/v1/user/signup", {
         method: "POST",
         headers: {
           Accept: "application/json",

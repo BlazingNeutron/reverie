@@ -20,7 +20,7 @@ export default async function register(req: Request, res: Response) {
     invite_code,
   }: { email: string; password: string; confirm: string; invite_code: string } =
     req.body;
-  console.log(email, password, confirm, invite_code);
+
   if (!invite_code) {
     res.status(500).json({
       success: false,
@@ -47,8 +47,11 @@ export default async function register(req: Request, res: Response) {
     });
     return;
   }
-
-  const supabase = createClient(supabaseUrl, serviceKey);
+  console.log(supabaseUrl, serviceKey);
+  const supabase = createClient(
+    "http://supabase_kong_reverie.supabase_network_reverie:8000",
+    serviceKey,
+  );
   const { data, error } = await supabase.rpc("check_invite_code", {
     check_code: invite_code,
   });

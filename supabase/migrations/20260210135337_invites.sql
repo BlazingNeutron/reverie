@@ -14,7 +14,11 @@ ALTER TABLE ONLY "public"."invites"
 
 DROP POLICY IF EXISTS "Enable insert for service role only" ON "public"."invites";
 
+DROP POLICY IF EXISTS "Enable read access for all users" ON "public"."invites";
+
 CREATE POLICY "Enable insert for service role only" ON "public"."invites" FOR INSERT TO "service_role" WITH CHECK ( true );
+
+CREATE POLICY "Enable read access for all users" ON "public"."invites" TO public USING ( true );
 
 ALTER TABLE "public"."invites" ENABLE ROW LEVEL SECURITY;
 

@@ -1,26 +1,20 @@
 import { createClient } from "@supabase/supabase-js";
 
-interface ImportMetaEnv {
-  VITE_SUPABASE_PUBLISHABLE_KEY: string;
-  VITE_SUPABASE_BASE_URL: string;
-}
+const response = await fetch("/api/v1/supabase/keys", {
+  method: "POST",
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
+});
+const content = await response.json();
 
-declare global {
-  interface ImportMeta {
-    env: ImportMetaEnv;
-  }
-}
-
-const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-let baseUrl = import.meta.env.VITE_SUPABASE_BASE_URL;
+const supabasePublishableKey = content.keys.publishableKey;
+const baseUrl = `${window.location.protocol}//${window.location.host}`;
 
 if (!supabasePublishableKey || supabasePublishableKey.trim() == "") {
   console.warn("Supabase publishable key not found at runtime or build-time.");
 }
-if (!baseUrl || baseUrl.trim() == "") {
-  baseUrl = `${window.location.protocol}//${window.location.host}`;
-}
-
 export let supabase = createClient(baseUrl, supabasePublishableKey);
 
 const {
