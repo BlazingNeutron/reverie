@@ -21,6 +21,7 @@
   "containerEnv": {
     "PGSSLMODE": "disable"
   },
-  "postCreateCommand": "npm i turbo -g && npm i && npx supabase start",
+  "postCreateCommand": "npm i turbo -g && npm i",
+  "postStartCommand": "supabase start && docker network connect supabase_network_reverie $HOSTNAME",
   "initializeCommand": "npx supabase start"
 }
