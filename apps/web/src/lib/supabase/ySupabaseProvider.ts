@@ -21,6 +21,7 @@ import {
   selectYJsUpdatesSince,
   deleteYJsUpdatesBefore,
 } from "./collaboration";
+import logger from "../logger/logger";
 
 export class SupabaseProvider {
   doc: Doc | any;
@@ -185,11 +186,14 @@ export class SupabaseProvider {
 
       // subscribe to remote awareness updates and apply
       subscribeAwareness(this.docId, (update: Uint8Array) => {
-        // console.log("Awareness subscribe callback ", update);
+        logger.debug(
+          "[ySupabaseProvider] Awareness subscribe callback ",
+          update,
+        );
         try {
           applyAwarenessUpdate(this.awareness, update, "remote");
         } catch (e) {
-          // ignore
+          logger.error("[ySupabaseProvider] Awareness subscribe error ", e);
         }
       });
       this.awareness.setLocalStateField("user", {

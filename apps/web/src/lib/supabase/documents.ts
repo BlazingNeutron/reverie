@@ -1,3 +1,4 @@
+import logger from "../logger/logger";
 import { supabase } from "./client";
 
 export async function selectDocument(docId: string) {
@@ -43,6 +44,9 @@ export async function findUserDocs(userId: string) {
     .from("shared")
     .select("doc_id")
     .eq("user_id", userId);
+  if (error) {
+    logger.error("[documents.findUserDocs] Error:", error);
+  }
   if (!shared) return [];
   const doc_ids = shared.map((sharedDoc) => sharedDoc.doc_id);
 
@@ -53,7 +57,7 @@ export async function findUserDocs(userId: string) {
     .order("title", { ascending: false });
 
   if (docError) {
-    console.error("Error fetching user docs:", error);
+    logger.error("[documents.findUserDocs] Error fetching user docs:", error);
     return [];
   }
 

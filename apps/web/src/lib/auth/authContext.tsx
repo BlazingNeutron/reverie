@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { useAuthStore } from "../stores/authStore";
 import { useAuthListener } from "../hooks/useAuthListener";
 import { useAuthActions } from "../hooks/useAuthActions";
+import logger from "../logger/logger";
 
 const AuthContext = createContext(null as any);
 
@@ -12,7 +13,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useAuthListener();
   const { user, session, loading } = useAuthStore();
   const actions = useAuthActions();
-
+  logger.debug("[AuthProvider] Rendering", { loading, session: !!session });
   return (
     <AuthContext.Provider
       value={{

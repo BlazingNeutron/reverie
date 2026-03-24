@@ -4,6 +4,7 @@ import { MemoryRouter } from "react-router";
 import AuthProvider, { useAuth } from "../authContext";
 import React, { act } from "react";
 import ReactDOMClient from "react-dom/client";
+import logger from "../../logger/logger";
 
 // Mock the supabase client used by AuthProvider
 vi.mock("../../../lib/supabase/client", () => {
@@ -87,7 +88,7 @@ describe("AuthProvider", () => {
     const Capture = () => {
       const auth = useAuth();
       React.useEffect(() => {
-        // console.log("Signing in again")
+        logger.debug("Signing in again");
         void auth.signIn("<EMAIL>", "password");
       }, [auth]);
       return null;

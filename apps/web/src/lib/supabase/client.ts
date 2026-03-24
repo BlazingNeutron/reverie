@@ -1,25 +1,31 @@
 import { createClient } from "@supabase/supabase-js";
+import logger from "../logger/logger";
 
-const response = await fetch("/api/v1/supabase/keys", {
-  method: "POST",
-  headers: {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-  },
-});
-const content = await response.json();
+let publishableKey = "";
+try {
+  const response = await fetch("/api/v1/supabase/keys", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  });
+  const content = await response.json();
+  publishableKey = content.keys.publishableKey;
+} catch (err: any) {
+  logger.error("[LoadKey] Error loading supabase publishableKey", err);
+}
 
-const supabasePublishableKey = content.keys.publishableKey;
 const baseUrl = `${window.location.protocol}//${window.location.host}`;
 
-if (!supabasePublishableKey || supabasePublishableKey.trim() == "") {
-  console.warn("Supabase publishable key not found at runtime or build-time.");
+if (!publishableKey || publishableKey.trim() == "") {
+  logger.warn("Supabase publishable key not found at runtime or build-time.");
 }
-export let supabase = createClient(baseUrl, supabasePublishableKey);
-
-const {
-  data: { session },
-} = await supabase.auth.getSession();
-if (session) {
-  supabase = createClient(baseUrl, session.access_token);
-}
+logger.log("Creating client...", baseUrl, publishableKey);
+export const supabase = createClient(baseUrl, publishableKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: false,
+  },
+});

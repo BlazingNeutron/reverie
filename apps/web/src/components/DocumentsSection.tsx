@@ -4,33 +4,62 @@ import { Accordion } from "radix-ui";
 import { DocumentItem } from "./DocumentItem";
 import { findUserDocs } from "../lib/supabase/documents";
 import { ensureSession } from "../lib/supabase/auth";
+import logger from "../lib/logger/logger";
 
 export function DocumentsSection({ open }: { open: boolean }) {
   const [docs, setDocs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   //just set currentDocId to first doc for now
   const currentDocId = useDocStore((state: any) => state.currentDocId);
   const setCurrentDocId = useDocStore((state: any) => state.setCurrentDocId);
 
   useEffect(() => {
     let mounted = true;
-    ensureSession().then((session) => {
-      if (!session) return;
-      findUserDocs(session?.user.id)
-        .then((res: any) => {
-          if (mounted) setDocs(res || []);
+    setLoading(true);
+    setError(null);
+
+    const fetchDocs = async () => {
+      try {
+        const session = await ensureSession();
+
+        if (!session) {
+          if (mounted) {
+            setError("Session expired");
+            setLoading(false);
+          }
+          return;
+        }
+        const res = await findUserDocs(session.user.id);
+        if (mounted) {
+          setDocs(res || []);
+
           //set currentDocId to first doc if not set
-          if (mounted && res && res.length > 0 && !currentDocId) {
+          if (res && res.length > 0 && res[0] && !currentDocId) {
             setCurrentDocId(res[0].doc_id);
           }
-        })
-        .catch(() => {
-          if (mounted) setDocs([]);
-        });
-    });
+
+          setLoading(false);
+        }
+      } catch (err: any) {
+        if (mounted) {
+          logger.error("Failed to fetch docs:", err);
+          setError(err.message || "Failed to load documents");
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchDocs();
+
     return () => {
       mounted = false;
     };
   }, [currentDocId]);
+
+  if (loading) return <div>Loading documents...</div>;
+  if (error) return <div className="text-red-500">Error: {error}</div>;
 
   return (
     <Accordion.Root type="single" collapsible defaultValue="docs">

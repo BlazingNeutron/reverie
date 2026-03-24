@@ -1,3 +1,4 @@
+import logger from "../logger/logger";
 import { supabase } from "./client";
 
 export async function shareDocument(docId: string, userId: string) {
@@ -25,7 +26,10 @@ export async function findCollaborators(docId: string, userId: string | any) {
     return [];
   }
   if (profileErrors) {
-    console.error("Error fetching collaborators:", profileErrors);
+    logger.error(
+      "[sharing.findCollaborators] Error fetching collaborators:",
+      profileErrors,
+    );
     return [];
   }
   const user_ids = profiles.map((profile) => profile.user_id);
@@ -46,7 +50,10 @@ export async function findCollaborators(docId: string, userId: string | any) {
     };
   });
   if (sharesErrors) {
-    console.error("Error fetching collaborators:", sharesErrors);
+    logger.error(
+      "[sharing.findCollaborators] Error fetching collaborators:",
+      sharesErrors,
+    );
     return [];
   }
 

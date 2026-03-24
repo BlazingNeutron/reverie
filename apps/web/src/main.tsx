@@ -12,10 +12,13 @@ import Login from "./routes/login";
 import AuthProvider, { useAuth } from "./lib/auth/authContext.tsx";
 import ThemeProvider from "./components/ThemeProvider.tsx";
 import SignUp from "./routes/sign-up.tsx";
+import logger from "./lib/logger/logger.ts";
+
+logger.debug("[main.tsx] Starting the app");
 
 export const ProtectedRoute = () => {
   const { session, loading } = useAuth();
-  if (loading) return null; // or a spinner
+  if (loading) return <div className="spinner">Loading...</div>;
   if (!session) return <Navigate to="/login" replace />;
   return <Outlet />;
 };
