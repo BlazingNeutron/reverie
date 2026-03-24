@@ -48,10 +48,7 @@ export default async function register(req: Request, res: Response) {
     return;
   }
   console.log(supabaseUrl, serviceKey);
-  const supabase = createClient(
-    "http://supabase_kong_reverie.supabase_network_reverie:8000",
-    serviceKey,
-  );
+  const supabase = createClient(supabaseUrl, serviceKey);
   const { data, error } = await supabase.rpc("check_invite_code", {
     check_code: invite_code,
   });

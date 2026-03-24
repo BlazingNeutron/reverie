@@ -2,11 +2,13 @@ import express from "express";
 import userRouter from "./user/routes";
 import healthRouter from "./health/health";
 import supabaseRouter from "./supabase/routes";
+import logRouter from "./logger/routes";
 
 const app = express();
 
 app.use(express.json());
 app.use("/", healthRouter);
+app.use("/", logRouter);
 app.use("/user", userRouter);
 app.use("/supabase", supabaseRouter);
 
