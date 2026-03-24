@@ -8,7 +8,7 @@ export default async function register(req: Request, res: Response) {
       level: logEntry.level || "info",
       message: logEntry.message,
       metadata: logEntry.metadata || {},
-      source: "spa-client",
+      source: "reverie-web-client",
     }),
   );
 
