@@ -1,21 +1,18 @@
 services:
   api:
     image: ghcr.io/blazingneutron/reverie-api:latest
-    restart: always
+    restart: unless-stopped
     depends_on:
       db:
         # Disable this if you are using an external Postgres database
         condition: service_healthy
     environment:
-      - SUPABASE_URL=http://kong
+      - SUPABASE_URL=http://kong:8000
       - SERVICE_ROLE_KEY=${SERVICE_ROLE_KEY}
 
   reverie-web:
     image: ghcr.io/blazingneutron/reverie-web:latest
-    restart: always
-    environment:
-      - SUPABASE_DB_URL=postgres://postgres
-      - VITE_SUPABASE_PUBLISHABLE_KEY=specialkey
+    restart: unless-stopped
     depends_on:
       db:
         # Disable this if you are using an external Postgres database
