@@ -15,9 +15,9 @@ vi.mock("react-router", () => {
       capturedRoutes = routes;
       return {};
     },
-    Navigate: (props: any) => null,
-    Outlet: (props: any) => null,
-    RouterProvider: (props: any) => null,
+    Navigate: () => null,
+    Outlet: () => null,
+    RouterProvider: () => null,
   };
 });
 
@@ -81,8 +81,8 @@ describe("main.tsx routing", () => {
     // Render the ProtectedRoute
     const result = ProtectedRoute();
 
-    // It should return null when loading
-    expect(result).toBeNull();
+    // It should return spinner when loading
+    expect(result.props["children"]).toBe("Loading...");
   });
 
   it("the base url returns outlet when session exists", async () => {

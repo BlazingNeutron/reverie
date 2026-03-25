@@ -5,9 +5,14 @@ import ReactDOMClient from "react-dom/client";
 
 const mockSetAuth = vi.fn();
 const mockClearAuth = vi.fn();
+const mockSetLoading = vi.fn();
 vi.mock("../../stores/authStore", () => ({
   useAuthStore: (selector: any) =>
-    selector({ setAuth: mockSetAuth, clearAuth: mockClearAuth }),
+    selector({
+      setAuth: mockSetAuth,
+      clearAuth: mockClearAuth,
+      setLoading: mockSetLoading,
+    }),
 }));
 
 const { useAuthListener } = await import("../useAuthListener");
@@ -23,17 +28,17 @@ describe("useAuthListener", () => {
   const unsubscribeSpy = vi.fn();
 
   beforeEach(() => {
-    supabaseClientMock.auth.getSession = vi.fn().mockReturnValue({
-      then: () => {
+    supabaseClientMock.auth.getSession = vi.fn().mockReturnValue(
+      Promise.resolve({
         data: {
           session: {
             user: {
-              id: "test-user";
-            }
-          }
-        }
-      },
-    });
+              id: "test-user",
+            },
+          },
+        },
+      }),
+    );
     supabaseClientMock.auth.onAuthStateChange = (cb: any) => {
       capturedOnAuthCb = cb;
       return { data: { subscription: { unsubscribe: unsubscribeSpy } } };

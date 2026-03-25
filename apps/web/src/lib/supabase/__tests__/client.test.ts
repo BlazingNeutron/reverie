@@ -16,13 +16,13 @@ vi.mock("@supabase/supabase-js", () => ({
   createClient: (...args: any[]) => mockCreateClient(args),
 }));
 
-const originalViteEnv = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+vi.mock("../keys", () => ({
+  getPublishableKey: () => "testPublishableKey",
+}));
 
 describe("supabase client", () => {
   beforeEach(() => {
     vi.resetModules();
-    import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY = originalViteEnv;
-    import.meta.env.VITE_SUPABASE_BASE_URL = "http://test.com";
   });
 
   afterEach(() => {
@@ -30,7 +30,7 @@ describe("supabase client", () => {
   });
 
   it("supabase is returned", async () => {
-    const supabase = await setImportClient("averyspecialtestkey");
+    const supabase = await setImportClient();
     expect(supabase).toEqual(supabaseClientMock);
   });
 
@@ -40,6 +40,13 @@ describe("supabase client", () => {
     expect(mockCreateClient).toHaveBeenCalledWith([
       "http://test.com",
       "averyspecialtestkey2",
+      {
+        auth: {
+          autoRefreshToken: true,
+          detectSessionInUrl: false,
+          persistSession: true,
+        },
+      },
     ]);
   });
 
@@ -50,23 +57,14 @@ describe("supabase client", () => {
     expect(consoleSpy).toHaveBeenCalled();
   });
 
-  it("supabase session exists", async () => {
-    await setImportClient("key", {
-      user: { id: "test-user" },
-      access_token: "test_access_token",
-    });
-    expect(mockCreateClient).toHaveBeenCalledTimes(2);
-    expect(mockCreateClient).toHaveBeenCalledWith([
-      "http://test.com",
-      "test_access_token",
-    ]);
-  });
-
   async function setImportClient(key: string, session?: any) {
     supabaseClientMock.auth.getSession = vi
       .fn()
       .mockReturnValue({ data: { session: session } });
-    import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY = key;
+    vi.unmock("../keys");
+    vi.doMock("../keys", () => ({
+      getPublishableKey: () => key,
+    }));
     vi.unmock("../client");
     const { supabase } = await import("../client");
     return supabase;

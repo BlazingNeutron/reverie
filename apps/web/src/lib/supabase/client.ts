@@ -1,20 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 import logger from "../logger/logger";
+import { getPublishableKey } from "./keys";
 
-let publishableKey = "";
-try {
-  const response = await fetch("/api/v1/supabase/keys", {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-  });
-  const content = await response.json();
-  publishableKey = content.keys.publishableKey;
-} catch (err: any) {
-  logger.error("[LoadKey] Error loading supabase publishableKey", err);
-}
+const publishableKey = await getPublishableKey();
 
 const baseUrl = `${window.location.protocol}//${window.location.host}`;
 
