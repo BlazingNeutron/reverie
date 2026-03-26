@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { type Request, type Response } from "express";
-import { passwordCheck } from "@repo/validators";
+import { passwordCheck, isValidEmail } from "@repo/validators";
 
 const supabaseUrl = process.env.SUPABASE_URL!;
 const serviceKey = process.env.SERVICE_ROLE_KEY!;
@@ -70,12 +70,4 @@ export default async function register(req: Request, res: Response) {
       data: data2,
     });
   }
-}
-
-function isValidEmail(email: string) {
-  const pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  if (pattern.test(email)) {
-    return true;
-  }
-  return false;
 }
