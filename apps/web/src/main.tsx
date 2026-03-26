@@ -11,7 +11,7 @@ import App from "./routes/index";
 import Login from "./routes/login";
 import AuthProvider, { useAuth } from "./lib/auth/authContext.tsx";
 import ThemeProvider from "./components/ThemeProvider.tsx";
-import SignUp from "./routes/sign-up.tsx";
+import SignUp from "./routes/signup.tsx";
 import logger from "./lib/logger/logger.ts";
 
 logger.debug("[main.tsx] Starting the app");
@@ -48,7 +48,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/sign-up",
+    path: "/signup",
     element: <SignUp />,
   },
 ]);

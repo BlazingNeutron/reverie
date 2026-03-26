@@ -21,6 +21,10 @@
       "outputs": ["coverage/**"],
       "dependsOn": []
     },
+    "test:coverage": {
+      "outputs": ["coverage/**"],
+      "dependsOn": []
+    },
     "db:reset": {
       "cache": false
     },

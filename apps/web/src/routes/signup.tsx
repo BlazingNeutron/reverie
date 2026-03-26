@@ -2,7 +2,7 @@ import { Link, useSearchParams } from "react-router";
 import { Button, Card, Grid, Text, TextField } from "@radix-ui/themes";
 import { Label } from "radix-ui";
 import { useState } from "react";
-import { passwordCheck } from "@repo/validators";
+import { passwordCheck, isValidEmail } from "@repo/validators";
 
 export default function SignUp() {
   const [searchParams] = useSearchParams();
@@ -21,6 +21,10 @@ export default function SignUp() {
     setError("");
 
     try {
+      if (!email || !isValidEmail(email)) {
+        setError("Not a valid email address");
+        return;
+      }
       if (!password || !passwordCheck(password)) {
         setError("Password does not meet requirements");
         return;

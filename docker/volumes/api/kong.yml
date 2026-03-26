@@ -155,10 +155,10 @@ services:
         strip_path: true
         paths:
           - /
-      - name: sign-up
+      - name: signup
         strip_path: true
         paths:
-          - /sign-up
+          - /signup
       - name: login
         strip_path: true
         paths:
