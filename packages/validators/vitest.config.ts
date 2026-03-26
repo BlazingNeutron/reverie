@@ -15,7 +15,7 @@ export default defineConfig({
         "node_modules/**",
         "__mocks__/**",
       ],
-      reporter: ["text", "lcov", "html"],
+      reporter: ["text", "lcov", "istanbul-reporter-html-dark"],
       // Keep thresholds optional; adjust as desired
       thresholds: {
         functions: 80,
