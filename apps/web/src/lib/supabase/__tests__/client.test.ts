@@ -57,7 +57,7 @@ describe("supabase client", () => {
     expect(consoleSpy).toHaveBeenCalled();
   });
 
-  async function setImportClient(key: string, session?: any) {
+  async function setImportClient(key?: string, session?: any) {
     supabaseClientMock.auth.getSession = vi
       .fn()
       .mockReturnValue({ data: { session: session } });
