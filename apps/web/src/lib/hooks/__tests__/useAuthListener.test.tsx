@@ -101,6 +101,50 @@ describe("useAuthListener", () => {
     expect(mockSetAuth).not.toHaveBeenCalled();
   });
 
+  it("calls getSession error and logs error", async () => {
+    const consoleSpy = vi.spyOn(console, "error");
+    supabaseClientMock.auth.getSession = vi.fn().mockReturnValue(
+      Promise.resolve({
+        data: null,
+        error: {
+          message: "Test Error From Get Session",
+        },
+      }),
+    );
+    renderAndSignIn({ user: { id: "new" } });
+    await waitFor(() => {
+      expect(supabaseClientMock.auth.getSession).toHaveBeenCalled();
+      expect(mockClearAuth).toHaveBeenCalled();
+    });
+    expect(consoleSpy).toHaveBeenCalled();
+  });
+
+  it("unmount and gets rerendered", async () => {
+    let resolvePromise: (value: any) => void;
+    const pendingPromise = new Promise((res) => (resolvePromise = res));
+
+    supabaseClientMock.auth.getSession = vi
+      .fn()
+      .mockReturnValue(pendingPromise as any);
+
+    const { unmount } = render(<TestComponent />);
+
+    unmount();
+
+    act(() => {
+      resolvePromise!({
+        data: null,
+        error: {
+          message: "Test Error From Get Session",
+        },
+      });
+    });
+
+    await Promise.resolve();
+
+    expect(mockSetAuth).not.toHaveBeenCalled();
+  });
+
   async function renderAndSignIn(session: any) {
     await act(async () => {
       ReactDOMClient.createRoot(container).render(<TestComponent />);

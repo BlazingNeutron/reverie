@@ -123,18 +123,39 @@ function supabaseMock() {
     subscribe: mockSubscribe,
   };
 
+  interface getSessionReturnType {
+    data:
+      | unknown
+      | {
+          session:
+            | unknown
+            | {
+                user: {
+                  id: string;
+                };
+                access_token: string;
+              };
+        };
+    error:
+      | unknown
+      | {
+          message: string;
+        };
+  }
+
   const mockSupbase = {
     calls,
     removeChannel: () => removeChannel(),
     results: [{}],
     auth: {
-      getSession: async () => ({
+      getSession: (): getSessionReturnType => ({
         data: {
           session: {
             user: { id: "test-user" },
             access_token: "test_access_token",
           },
         },
+        error: null,
       }),
       signInWithPassword: vi.fn().mockReturnValue({ error: null }),
       signOut: vi.fn(),

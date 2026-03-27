@@ -33,7 +33,7 @@ describe("supabase documents", () => {
 
   it("Update Document Search Index", async () => {
     supabaseClientMock.results = [
-      { doc_id: "docId1", content: "Updatable Test Text" },
+      { data: [{ doc_id: "docId1", content: "Updatable Test Text" }] },
     ];
     await updateDocumentSearch("docId1", "TestTitle", "NewTestText", "userId1");
 
@@ -119,5 +119,33 @@ describe("supabase documents", () => {
     );
 
     expect(supabaseClientMock.calls.query().upserts).toBeUndefined();
+  });
+
+  it("Upsert document - updates from empty document", async () => {
+    supabaseClientMock.results = [
+      {
+        data: [
+          {
+            doc_id: "docId1",
+            title: "Test Title",
+            content: null,
+            user_id: "UserId1",
+          },
+        ],
+      },
+    ];
+    await updateDocumentSearch(
+      "docId1",
+      "Test Title",
+      "Test Contents",
+      "UserId1",
+    );
+
+    expect(supabaseClientMock.calls.query().upserts).toEqual({
+      content: "Test Contents",
+      doc_id: "docId1",
+      title: "Test Title",
+      user_id: "UserId1",
+    });
   });
 });

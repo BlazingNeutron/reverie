@@ -43,7 +43,7 @@ describe("supabase collaboration", () => {
     });
   });
 
-  it("upsertYJsSnapshot", async () => {
+  it("upsertYJsSnapshot calls supabase with expected parameters", async () => {
     const response = await upsertYJsSnapshot("docId1", "base64Snapshot");
     expect(response).toBeNull();
     expect(supabaseClientMock.calls.query()).toEqual({
@@ -53,6 +53,12 @@ describe("supabase collaboration", () => {
         snapshot: "base64Snapshot",
       },
     });
+  });
+
+  it("upsertYJsSnapshot returns data", async () => {
+    supabaseClientMock.results = [{ data: [{ updated: 1 }], error: null }];
+    const response = await upsertYJsSnapshot("docId1", "base64Snapshot");
+    expect(response).toEqual({ updated: 1 });
   });
 
   it("selectYJsSnapshot", async () => {

@@ -4,10 +4,14 @@ import { supabase } from "./client";
 export async function ensureSession() {
   logger.debug("[ensureSession] Starting session check...");
 
-  const {
-    data: { session },
-    error,
-  } = await supabase.auth.getSession();
+  const { data, error } = await supabase.auth.getSession();
+
+  if (error || !data) {
+    logger.error("[ensureSession] Error:", error);
+    return null;
+  }
+
+  const session = data.session;
 
   logger.debug("[ensureSession] Session check result:", {
     hasSession: !!session,
@@ -15,10 +19,6 @@ export async function ensureSession() {
     error,
     tokenPreview: session?.access_token?.substring(0, 20) + "...",
   });
-
-  if (error) {
-    logger.error("[ensureSession] Error:", error);
-  }
 
   return session;
 }

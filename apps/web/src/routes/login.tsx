@@ -17,12 +17,7 @@ export default function Login() {
     setError("");
 
     try {
-      const form = e.currentTarget;
-      const formData = new FormData(form);
-      const emailValue = (formData.get("email") as string) ?? email;
-      const passwordValue = (formData.get("password") as string) ?? password;
-
-      const { error } = await auth.signIn(emailValue, passwordValue);
+      const { error } = await auth.signIn(email, password);
 
       if (error) {
         setError(error instanceof Error ? error.message : "An error occurred");

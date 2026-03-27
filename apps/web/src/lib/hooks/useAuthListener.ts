@@ -10,7 +10,7 @@ export function useAuthListener() {
 
   useEffect(() => {
     let mounted = true;
-    if (mounted) setLoading(true);
+    setLoading(true);
 
     supabase.auth
       .getSession()
