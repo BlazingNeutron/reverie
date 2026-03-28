@@ -114,13 +114,13 @@ export default function SignUp() {
                     </div>
                     <div className="grid gap-2">
                       <div className="flex items-center">
-                        <Label.Root htmlFor="repeat-password">
+                        <Label.Root htmlFor="confirmation-password">
                           Confirm Password
                         </Label.Root>
                       </div>
                       <TextField.Root
-                        id="repeat-password"
-                        name="repeat-password"
+                        id="confirmation-password"
+                        name="confirmation-password"
                         type="password"
                         value={confirm}
                         onChange={(e) => setConfirm(e.target.value)}
@@ -128,7 +128,12 @@ export default function SignUp() {
                       />
                     </div>
                     {error && <p className="text-sm text-red-500">{error}</p>}
-                    <Button type="submit" className="w-full" disabled={loading}>
+                    <Button
+                      type="submit"
+                      name="signup"
+                      className="w-full"
+                      disabled={loading}
+                    >
                       {loading ? "Creating an account..." : "Sign up"}
                     </Button>
                   </div>
