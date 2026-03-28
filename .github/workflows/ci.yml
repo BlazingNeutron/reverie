@@ -28,11 +28,10 @@ jobs:
         run: npm run check:licenses
 
       - name: Build workspace packages
-        working-directory: ./apps/web/packages/validators
+        working-directory: ./packages/validators
         run: npm run build
 
       - name: Run tests across workspace (with coverage)
-        working-directory: ./apps/web/
         run: npm run test:coverage
 
       - name: Upload coverage artifact
