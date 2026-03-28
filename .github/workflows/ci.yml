@@ -27,8 +27,8 @@ jobs:
       - name: Verify licenses
         run: npm run check:licenses
 
-      - name: Build workspace
-        working-directory: ./apps/web/
+      - name: Build workspace packages
+        working-directory: ./apps/web/package/validators
         run: npm run build
 
       - name: Run tests across workspace (with coverage)

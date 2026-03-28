@@ -1,6 +1,6 @@
 {
   "name": "@repo/reverie-notes-web-app",
-  "version": "0.0.2",
+  "version": "0.0.0",
   "description": "Note taking app for all of your dreamy, thoughtful, deep thinking and shared ideas.",
   "type": "module",
   "scripts": {
