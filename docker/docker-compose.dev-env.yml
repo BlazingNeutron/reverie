@@ -1,17 +1,4 @@
 services:
-  nginx:
-    image: ghcr.io/blazingneutron/reverie-nginx:latest
-    restart: always
-    depends_on:
-      db:
-        # Disable this if you are using an external Postgres database
-        condition: service_healthy
-      reverie-web:
-        condition: service_started
-    ports:
-      - "8000:80"
-      - "8443:443"
-
   api:
     image: ghcr.io/blazingneutron/reverie-api:latest
     restart: always
@@ -21,7 +8,8 @@ services:
         condition: service_healthy
     environment:
       - SUPABASE_BASE_URL=http://kong
-      - SERVICE_ROLE_KEY=${SERVICE_ROLE_KEY}
+      - SUPABASE_SECRET_KEY=${SUPABASE_SECRET_KEY}
+      - SUPABASE_PUBLISHABLE_KEY=${SUPABASE_PUBLISHABLE_KEY}
 
   reverie-web:
     image: ghcr.io/blazingneutron/reverie-web:latest
@@ -146,7 +134,7 @@ services:
       DB_AFTER_CONNECT_QUERY: "SET search_path TO _realtime"
       DB_ENC_KEY: supabaserealtime
       API_JWT_SECRET: ${JWT_SECRET}
-      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      SECRET_KEY_BASE: ${SUPABASE_SECRET_KEY}
       ERL_AFLAGS: -proto_dist inet_tcp
       DNS_NODES: "''"
       RLIMIT_NOFILE: "10000"
@@ -174,6 +162,9 @@ services:
 
   kong:
     container_name: supabase-kong
+    ports:
+      - ${HTTP_PORT:-8000}:8000/tcp
+      - ${HTTPS_PORT:-8443}:8443/tcp
     image: kong:2.8.1
     restart: unless-stopped
     volumes:
@@ -187,8 +178,8 @@ services:
       KONG_PLUGINS: request-transformer,cors,key-auth,acl,basic-auth,request-termination,ip-restriction
       KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
       KONG_NGINX_PROXY_PROXY_BUFFERS: 64 160k
-      SUPABASE_ANON_KEY: ${ANON_KEY}
-      SUPABASE_SERVICE_KEY: ${SERVICE_ROLE_KEY}
+      SUPABASE_ANON_KEY: ${SUPABASE_PUBLISHABLE_KEY}
+      SUPABASE_SERVICE_KEY: ${SUPABASE_SECRET_KEY}
     # https://unix.stackexchange.com/a/294837
     entrypoint: bash -c 'eval "echo \"$$(cat ~/temp.yml)\"" > ~/kong.yml && /docker-entrypoint.sh kong docker-start'
 
