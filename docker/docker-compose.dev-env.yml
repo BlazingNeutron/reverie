@@ -2,6 +2,11 @@ services:
   api:
     image: ghcr.io/blazingneutron/reverie-api:${IMAGE_TAG:-latest}
     restart: always
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     depends_on:
       db:
         # Disable this if you are using an external Postgres database
