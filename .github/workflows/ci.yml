@@ -59,6 +59,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Build API image
+        uses: docker/build-push-action@v6.5.0
+        with:
+          context: ./apps/api/
+          file: ./apps/api/Dockerfile
+          tags: ghcr.io/blazingneutron/reverie-api:${{ github.sha }}
+          load: true
+          push: false
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:latest
+          cache-to: type=inline
+
       - name: Build migrator image
         uses: docker/build-push-action@v6.5.0
         with:
