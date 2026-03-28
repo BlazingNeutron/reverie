@@ -21,9 +21,14 @@ describe("supabase integration tests for collaboration", () => {
   });
 
   async function createIntegrationDocument() {
+    supabase.auth.signInWithPassword({
+      email: "test@integration.test",
+      password: "testPassword",
+    });
     const profiles = await supabase
       .from("profiles")
       .select("user_id")
+      .eq("username", "test@integration.test")
       .limit(1)
       .single();
     const user = profiles.data;
@@ -33,7 +38,7 @@ describe("supabase integration tests for collaboration", () => {
     return docId;
   }
 
-  it("Colllaboration, doc update is inserted", async () => {
+  it("Collaboration, doc update is inserted", async () => {
     const docId = await createIntegrationDocument();
     const result = await insertYJsUpdates(docId, "base64Update");
     expect(result).toEqual({
@@ -58,7 +63,10 @@ describe("supabase integration tests for collaboration", () => {
     const snapshot = await upsertYJsSnapshot(docId, "Snapshot");
     await insertYJsUpdates(docId, "AfterSnapshotUpdate");
 
-    const results = await selectYJsUpdatesSince(docId, snapshot.created_at);
+    const results: any = await selectYJsUpdatesSince(
+      docId,
+      snapshot.created_at,
+    );
 
     expect(results.data[0]).toEqual({
       update: "AfterSnapshotUpdate",

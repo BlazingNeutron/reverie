@@ -1,3 +1,5 @@
+const baseUrl = process.env.SITE_URL || "";
+
 class Logger {
   trace(...args: any[]) {
     this.#log("trace", args);
@@ -45,7 +47,7 @@ class Logger {
 
   async #send(entry: {}) {
     try {
-      await fetch("/api/v1/logger", {
+      await fetch(baseUrl + "/api/v1/logger", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(entry),

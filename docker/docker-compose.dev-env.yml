@@ -14,6 +14,8 @@ services:
   reverie-web:
     image: ghcr.io/blazingneutron/reverie-web:latest
     restart: always
+    environment:
+      - SITE_URL=${SITE_URL}
     depends_on:
       db:
         # Disable this if you are using an external Postgres database
@@ -111,8 +113,8 @@ services:
       GOTRUE_SMTP_ADMIN_EMAIL: ${SMTP_ADMIN_EMAIL:-admin@example.com}
       GOTRUE_SMTP_HOST: ${SMTP_HOST:-supabase-mail}
       GOTRUE_SMTP_PORT: ${SMTP_PORT:-2500}
-      GOTRUE_SMTP_USER: ${SMTP_USER}
-      GOTRUE_SMTP_PASS: ${SMTP_PASS}
+      GOTRUE_SMTP_USER: ${SMTP_USER:-}
+      GOTRUE_SMTP_PASS: ${SMTP_PASS:-}
       GOTRUE_SMTP_SENDER_NAME: ${SMTP_SENDER_NAME:-fake_sender}
 
   realtime:

@@ -4,7 +4,9 @@ import { getPublishableKey } from "./keys";
 
 const publishableKey = await getPublishableKey();
 
-const baseUrl = `${window.location.protocol}//${window.location.host}`;
+const baseUrl =
+  process.env.SITE_URL ||
+  `${window.location.protocol}//${window.location.host}`;
 
 if (!publishableKey || publishableKey.trim() == "") {
   logger.warn("Supabase publishable key not found at runtime or build-time.");

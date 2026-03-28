@@ -97,12 +97,6 @@ jobs:
             exit $EXIT_CODE
           fi
 
-      - name: Setup integration .env file
-        working-directory: ./apps/web/
-        run: |
-          echo "VITE_SUPABASE_PUBLISHABLE_KEY=${{ secrets.SUPABASE_PUBLISHABLE_KEY }}" > .env.it
-          echo "VITE_SUPABASE_BASE_URL=http://localhost:8000" >> .env.it
-
       - name: Install dependencies
         run: npm i
 
