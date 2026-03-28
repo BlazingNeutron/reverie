@@ -1,6 +1,6 @@
 services:
   api:
-    image: ghcr.io/blazingneutron/reverie-api:latest
+    image: ghcr.io/blazingneutron/reverie-api:${IMAGE_TAG:-latest}
     restart: always
     depends_on:
       db:
