@@ -1,13 +1,13 @@
 import { type Request, type Response } from "express";
 
-const serviceKey = process.env.SERVICE_ROLE_KEY!;
+const serviceKey = process.env.SUPABASE_PUBLISHABLE_KEY!;
 
-export default async function register(req: Request, res: Response) {
+export default async function register(_req: Request, res: Response) {
   if (!serviceKey) {
     res.status(500).json({
       success: false,
       error: {
-        message: "SERVICE_ROLE_KEY in .env not set",
+        message: "SUPABASE_PUBLISHABLE_KEY in .env not set",
       },
     });
     return;

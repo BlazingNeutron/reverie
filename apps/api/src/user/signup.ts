@@ -3,7 +3,7 @@ import { type Request, type Response } from "express";
 import { passwordCheck, isValidEmail } from "@repo/validators";
 
 const supabaseUrl = process.env.SUPABASE_URL!;
-const serviceKey = process.env.SERVICE_ROLE_KEY!;
+const secretKey = process.env.SUPABASE_SECRET_KEY!;
 
 export default async function register(req: Request, res: Response) {
   if (!supabaseUrl) {
@@ -15,11 +15,11 @@ export default async function register(req: Request, res: Response) {
     });
     return;
   }
-  if (!serviceKey) {
+  if (!secretKey) {
     res.status(500).json({
       success: false,
       error: {
-        message: "SERVICE_ROLE_KEY in .env not set",
+        message: "SUPABASE_SECRET_KEY in .env not set",
       },
     });
     return;
@@ -37,7 +37,7 @@ export default async function register(req: Request, res: Response) {
     return;
   }
 
-  const supabase = createClient(supabaseUrl, serviceKey);
+  const supabase = createClient(supabaseUrl, secretKey);
   const { data: checkInviteData, error: checkInviteError } = await supabase.rpc(
     "check_invite_code",
     {
@@ -64,14 +64,12 @@ export default async function register(req: Request, res: Response) {
       data: signUpData,
     });
   }
-  res
-    .status(500)
-    .json({
-      success: false,
-      error: {
-        message: "An unexpected error occurred during account creation",
-      },
-    });
+  res.status(500).json({
+    success: false,
+    error: {
+      message: "An unexpected error occurred during account creation",
+    },
+  });
 }
 
 function validateSignUp(

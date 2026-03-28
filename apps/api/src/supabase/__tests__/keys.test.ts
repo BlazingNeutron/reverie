@@ -8,7 +8,7 @@ describe("Supabase Publishable Key API", () => {
   });
 
   it("POST /keys returns 200 with publishableKey", async () => {
-    vi.stubEnv("SERVICE_ROLE_KEY", "specialKey");
+    vi.stubEnv("SUPABASE_PUBLISHABLE_KEY", "specialKey");
     const supabaseRouter = await import("../routes");
     const app = express();
     app.use(express.json());
@@ -25,7 +25,7 @@ describe("Supabase Publishable Key API", () => {
   });
 
   it("POST /keys returns 500 when no env publishableKey", async () => {
-    vi.stubEnv("SERVICE_ROLE_KEY", undefined);
+    vi.stubEnv("SUPABASE_PUBLISHABLE_KEY", undefined);
     const supabaseRouter = await import("../routes");
     const app = express();
     app.use(express.json());
@@ -36,7 +36,7 @@ describe("Supabase Publishable Key API", () => {
     expect(response.body).toEqual({
       success: false,
       error: {
-        message: "SERVICE_ROLE_KEY in .env not set",
+        message: "SUPABASE_PUBLISHABLE_KEY in .env not set",
       },
     });
   });

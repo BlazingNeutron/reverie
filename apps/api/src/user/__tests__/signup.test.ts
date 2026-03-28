@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 import request from "supertest";
-import express, { type Express } from "express";
+import express from "express";
 
 let mockSupabaseRPC: Mock<
   () => {
@@ -42,7 +42,7 @@ describe("User Signup API", () => {
   beforeEach(async () => {
     vi.resetModules();
     vi.stubEnv("SUPABASE_URL", "http://supabaseBaseUrl");
-    vi.stubEnv("SERVICE_ROLE_KEY", "specialKey");
+    vi.stubEnv("SUPABASE_SECRET_KEY", "specialKey");
     const userRouterDefault = await import("../routes");
     userRouter = userRouterDefault.default;
     mockSupabaseRPC = vi.fn(() => ({
@@ -69,7 +69,7 @@ describe("User Signup API", () => {
     expect(response.body).toEqual({
       success: false,
       error: {
-        message: "SERVICE_ROLE_KEY in .env not set",
+        message: "SUPABASE_SECRET_KEY in .env not set",
       },
     });
     expect(response.status).toBe(500);
