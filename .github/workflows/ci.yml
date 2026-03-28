@@ -29,11 +29,11 @@ jobs:
 
       - name: Build workspace
         working-directory: ./apps/web/
-        run: turbo build
+        run: npm run build
 
       - name: Run tests across workspace (with coverage)
         working-directory: ./apps/web/
-        run: turbo test:coverage
+        run: npm run test:coverage
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
