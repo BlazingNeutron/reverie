@@ -86,7 +86,7 @@ describe("useAuthListener", () => {
 
     supabaseClientMock.auth.getSession = vi
       .fn()
-      .mockReturnValue(pendingPromise as any);
+      .mockReturnValue(pendingPromise);
 
     const { unmount } = render(<TestComponent />);
 
@@ -95,8 +95,6 @@ describe("useAuthListener", () => {
     act(() => {
       resolvePromise!({ data: { session: { user: { id: "xyz" } } } });
     });
-
-    await Promise.resolve();
 
     expect(mockSetAuth).not.toHaveBeenCalled();
   });

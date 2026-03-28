@@ -36,7 +36,7 @@ export function ShareDialog() {
       <Dialog.Overlay className="fixed inset-0 bg-black/60  data-[state=open]:animate-overlayShow z-10" />
       <Dialog.Content
         id="shareDialog"
-        className="fixed left-1/2 top-1/2 max-h-[85vh] w-[90vw] max-w-[500px] bg-background -translate-x-1/2 -translate-y-1/2 rounded-md p-[25px] shadow-[var(--shadow-6)] focus:outline-none data-[state=open]:animate-contentShow z-20"
+        className="fixed left-1/2 top-1/2 max-h-[85vh] w-[90vw] max-w-[500px] bg-background -translate-x-1/2 -translate-y-1/2 rounded-md p-[25px] shadow-(--shadow-6) focus:outline-none data-[state=open]:animate-contentShow z-20"
       >
         <Dialog.Title className="text-lg font-semibold dark:text-white">
           Share this document
@@ -48,7 +48,7 @@ export function ShareDialog() {
 
         <div className="mt-4 space-y-4">
           {/* <TextField.Root type="text" placeholder="Search by name or email"/> */}
-          <div className="space-y-2 overflow-y-scroll">
+          <div id="profilesList" className="space-y-2 overflow-y-scroll">
             {profiles.map((profile) => (
               <UserRow
                 key={profile.user_id}
