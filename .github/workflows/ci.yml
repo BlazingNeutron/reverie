@@ -79,7 +79,7 @@ jobs:
           echo "IMAGE_TAG=${{ github.sha }}" >> .env
       - name: Bring up test stack
         working-directory: ./docker/
-        run: docker compose -f docker-compose.dev-env.yml up db nginx reverie-web rest realtime auth mail -d --wait
+        run: docker compose -f docker-compose.dev-env.yml up db api reverie-web rest realtime auth mail kong -d --wait
       - name: Wait for migrations
         working-directory: ./docker/
         env:
@@ -104,8 +104,10 @@ jobs:
           echo "VITE_SUPABASE_BASE_URL=http://localhost:8000" >> .env.it
 
       - name: Install dependencies
-        working-directory: ./apps/web/
         run: npm i
+
+      - name: Build workspace packages
+        run: npm run build
 
       - name: Run Integration tests
         working-directory: ./apps/web/
