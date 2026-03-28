@@ -14,11 +14,11 @@ ALTER TABLE ONLY "public"."invites"
 
 DROP POLICY IF EXISTS "Enable insert for service role only" ON "public"."invites";
 
-DROP POLICY IF EXISTS "Enable read access for all users" ON "public"."invites";
+DROP POLICY IF EXISTS "Enable read access for service roles only" ON "public"."invites";
 
 CREATE POLICY "Enable insert for service role only" ON "public"."invites" FOR INSERT TO "service_role" WITH CHECK ( true );
 
-CREATE POLICY "Enable read access for all users" ON "public"."invites" TO public USING ( true );
+CREATE POLICY "Enable read access for service roles only" ON "public"."invites" TO service_role USING ( true );
 
 ALTER TABLE "public"."invites" ENABLE ROW LEVEL SECURITY;
 
@@ -34,3 +34,19 @@ BEGIN
   return valid_code;
 END;
 $$;
+
+DROP POLICY IF EXISTS "Enable read access for all users" ON "public"."documents";
+
+DROP POLICY IF EXISTS "Enable read access for all users" ON "public"."yjs_updates";
+
+DROP POLICY IF EXISTS "Enable users to view their own data only" ON "public"."yjs_updates";
+
+CREATE POLICY "Enable users to view their own data only" ON "public"."yjs_updates" FOR SELECT TO "authenticated" USING (  (EXISTS ( SELECT 1
+   FROM shared s
+  WHERE ((s.doc_id = yjs_updates.doc_id) AND (s.user_id = auth.uid())))));
+
+DROP POLICY IF EXISTS "Enable read access for all users" ON "public"."shared";
+
+DROP POLICY IF EXISTS "Enable read access for all shared with user" ON "public"."shared";
+
+CREATE POLICY "Enable read access for all shared with user" ON "public"."shared" FOR SELECT TO "authenticated" USING (  (user_id = auth.uid()) );
