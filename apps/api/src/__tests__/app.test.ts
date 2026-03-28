@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const mockListen = vi.fn((port, cb) => cb && cb());
+const mockListen = vi.fn((_port, cb) => cb && cb());
 vi.mock("express", () => {
   const mockRouter = vi.fn(() => ({
     post: vi.fn(),
