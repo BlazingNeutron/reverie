@@ -21,14 +21,12 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        working-directory: ./apps/web/
         run: npm ci
 
       - name: Verify licenses
         run: npm run check:licenses
 
       - name: Build workspace packages
-        working-directory: ./packages/validators
         run: npm run build
 
       - name: Run tests across workspace (with coverage)
