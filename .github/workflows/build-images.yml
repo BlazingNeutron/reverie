@@ -40,10 +40,8 @@ jobs:
       - name: Build reverie-web image
         uses: docker/build-push-action@v6.5.0
         with:
-          context: ./apps/web
+          context: .
           file: ./apps/web/Dockerfile
-          secrets: |
-            "VITE_SUPABASE_PUBLISHABLE_KEY=${{ secrets.SUPABASE_PUBLISHABLE_KEY }}"
           tags: ghcr.io/blazingneutron/reverie-web:${{ github.sha }},ghcr.io/blazingneutron/reverie-web:latest
           push: true
           cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:latest
