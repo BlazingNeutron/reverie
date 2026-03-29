@@ -21,7 +21,7 @@ describe("supabase integration tests for collaboration", () => {
   });
 
   async function createIntegrationDocument() {
-    supabase.auth.signInWithPassword({
+    await supabase.auth.signInWithPassword({
       email: "test@integration.test",
       password: "testPassword",
     });
