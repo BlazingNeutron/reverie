@@ -2,20 +2,20 @@ FROM node:25 AS base
 
 
 FROM base AS prepare
-WORKDIR /app
+WORKDIR /build
 RUN npm install -g turbo
-COPY package*.json /app
-COPY turbo.json /app
-COPY packages /app/packages
-COPY apps /app/apps
+COPY package*.json /build
+COPY turbo.json /build
+COPY packages /build/packages
+COPY apps /build/apps
 RUN turbo prune api --docker
 
 
 FROM base AS builder
-WORKDIR /app
-COPY --from=prepare /app/out/json/ .
+WORKDIR /build
+COPY --from=prepare /build/out/json/ .
 RUN npm install 
-COPY --from=prepare /app/out/full/ .
+COPY --from=prepare /build/out/full/ .
 RUN npm run build
 
 
@@ -23,7 +23,7 @@ FROM node:25-alpine AS runner
 USER node
 WORKDIR /app
 
-COPY --from=builder /app .
+COPY --from=builder /build .
 
 WORKDIR /app/apps/api
 

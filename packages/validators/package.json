@@ -20,7 +20,7 @@
     }
   },
   "scripts": {
-    "build": "tsc",
+    "build": "bunchee",
     "dev": "bunchee --watch",
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
