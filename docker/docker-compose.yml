@@ -1,14 +1,30 @@
 services:
-  nginx:
-    image: ghcr.io/blazingneutron/reverie-nginx
+  api:
+    image: ghcr.io/blazingneutron/reverie-api:latest
     restart: always
-    ports:
-      - "${HTTP_PORT:-80}:80"
-      - "${HTTPS_PORT:-443}:443"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    depends_on:
+      db:
+        # Disable this if you are using an external Postgres database
+        condition: service_healthy
+    environment:
+      - SUPABASE_BASE_URL=http://kong:8000
+      - SUPABASE_SECRET_KEY=${SUPABASE_SECRET_KEY}
+      - SUPABASE_PUBLISHABLE_KEY=${SUPABASE_PUBLISHABLE_KEY}
 
   reverie-web:
-    image: ghcr.io/blazingneutron/reverie-web
-    restart: always
+    image: ghcr.io/blazingneutron/reverie-web:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        # Disable this if you are using an external Postgres database
+        condition: service_healthy
+      api:
+        condition: service_started
 
   db:
     image: supabase/postgres:15.8.1.085
@@ -33,18 +49,8 @@ services:
       - ./volumes/db/pooler.sql:/docker-entrypoint-initdb.d/migrations/99-pooler.sql:Z
       # Use named volume to persist pgsodium decryption key between restarts
       - db-config:/etc/postgresql-custom
-      # Create user sql
-      - ./create-user.sql:/scripts/create-user.sql
     healthcheck:
-      test:
-        [
-        "CMD",
-        "pg_isready",
-        "-U",
-        "postgres",
-        "-h",
-        "localhost"
-        ]
+      test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -58,20 +64,27 @@ services:
       POSTGRES_DB: postgres
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXP: 3600
-    command:
-      [
+    command: [
         "postgres",
         "-c",
         "config_file=/etc/postgresql/postgresql.conf",
         "-c",
-        "log_min_messages=fatal" # prevents Realtime polling queries from appearing in logs
+        "log_min_messages=fatal", # prevents Realtime polling queries from appearing in logs
       ]
 
   auth:
     image: supabase/gotrue:v2.185.0
     restart: unless-stopped
     healthcheck:
-      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9999/health"]
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:9999/health",
+        ]
       timeout: 5s
       interval: 5s
       retries: 3
@@ -114,7 +127,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "curl -sSfL --head -o /dev/null -H \"Authorization: Bearer ${ANON_KEY}\" http://localhost:4000/api/tenants/realtime-reverie/health"
+          'curl -sSfL --head -o /dev/null -H "Authorization: Bearer ${SUPABASE_PUBLISHABLE_KEY}" http://localhost:4000/api/tenants/realtime-reverie/health',
         ]
       timeout: 5s
       interval: 30s
@@ -127,7 +140,7 @@ services:
       DB_USER: supabase_admin
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_NAME: postgres
-      DB_AFTER_CONNECT_QUERY: 'SET search_path TO _realtime'
+      DB_AFTER_CONNECT_QUERY: "SET search_path TO _realtime"
       DB_ENC_KEY: supabaserealtime
       API_JWT_SECRET: ${JWT_SECRET}
       SECRET_KEY_BASE: ${SECRET_KEY_BASE}
@@ -155,17 +168,71 @@ services:
       PGRST_DB_USE_LEGACY_GUCS: "false"
       PGRST_APP_SETTINGS_JWT_SECRET: ${JWT_SECRET}
       PGRST_APP_SETTINGS_JWT_EXP: 3600
-    command:
-      [
-        "postgrest"
-      ]
+    command: ["postgrest"]
 
-  migrator:
-    image: ghcr.io/blazingneutron/reverie-migrator
+  kong:
+    ports:
+      - ${HTTP_PORT:-8000}:8000/tcp
+      - ${HTTPS_PORT:-8443}:8443/tcp
+    image: kong:2.8.1
+    restart: unless-stopped
+    volumes:
+      # https://github.com/supabase/supabase/issues/12661
+      - ./volumes/api/kong.yml:/home/kong/temp.yml:ro,z
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /home/kong/kong.yml
+      # https://github.com/supabase/cli/issues/14
+      KONG_DNS_ORDER: LAST,A,CNAME
+      KONG_PLUGINS: request-transformer,cors,key-auth,acl,basic-auth,request-termination,ip-restriction
+      KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
+      KONG_NGINX_PROXY_PROXY_BUFFERS: 64 160k
+      SUPABASE_ANON_KEY: ${SUPABASE_PUBLISHABLE_KEY}
+      SUPABASE_SERVICE_KEY: ${SUPABASE_SECRET_KEY}
+    # https://unix.stackexchange.com/a/294837
+    entrypoint: bash -c 'eval "echo \"$$(cat ~/temp.yml)\"" > ~/kong.yml && /docker-entrypoint.sh kong docker-start'
+    depends_on:
+      db:
+        # Disable this if you are using an external Postgres database
+        condition: service_healthy
+
+  meta:
+    container_name: supabase-meta
+    image: supabase/postgres-meta:v0.95.2
     restart: unless-stopped
     depends_on:
       db:
         # Disable this if you are using an external Postgres database
+        condition: service_healthy
+    environment:
+      PG_META_PORT: 8080
+      PG_META_DB_HOST: ${POSTGRES_HOST:-db}
+      PG_META_DB_PORT: ${POSTGRES_PORT:-5432}
+      PG_META_DB_NAME: ${POSTGRES_DB:-postgres}
+      PG_META_DB_USER: supabase_admin
+      PG_META_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      CRYPTO_KEY: your-encryption-key-32-chars-min
+
+  # mail:
+  #   container_name: supabase-mail
+  #   image: inbucket/inbucket:3.0.3
+  #   ports:
+  #     - "2500:2500" # SMTP
+  #     - "9000:9000" # web interface
+  #     - "1100:1100" # POP3
+
+  migrator:
+    image: ghcr.io/blazingneutron/reverie-migrator:latest
+    restart: unless-stopped
+    depends_on:
+      realtime:
+        condition: service_started
+      rest:
+        condition: service_started
+      db:
+        # Disable this if you are using an external Postgres database
+        condition: service_healthy
+      auth:
         condition: service_healthy
     environment:
       POSTGRES_DB: postgres

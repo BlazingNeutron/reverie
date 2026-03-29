@@ -1,0 +1,6 @@
+services:
+  api:
+    image: ghcr.io/blazingneutron/reverie-api:latest
+    build:
+      context: ../../
+      dockerfile: apps/api/Dockerfile

@@ -1,46 +1,46 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
-import { useDocStore } from '../../lib/stores/documentStore';
-import { Sidebar } from '../Sidebar';
-import { Tooltip } from 'radix-ui';
-import ReactDOMClient from 'react-dom/client';
-import { act } from 'react';
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
+import { useDocStore } from "../../lib/stores/documentStore";
+import { Sidebar } from "../Sidebar";
+import { Tooltip } from "radix-ui";
+import ReactDOMClient from "react-dom/client";
+import { act } from "react";
 
 // Mock yjs Doc
-vi.mock('yjs', () => {
+vi.mock("yjs", () => {
   return {
     Doc: class {
       getText() {
         return {
           insert: () => {},
-          toString: () => 'mock',
+          toString: () => "mock",
         };
       }
-    }
+    },
   };
 });
 
 // // Mock SupabaseProvider so Editor does not perform network work
-vi.mock('../../lib/supabase/ySupabaseProvider', () => ({
+vi.mock("../../lib/supabase/ySupabaseProvider", () => ({
   SupabaseProvider: class {
     awareness = {};
     constructor() {
       // noop
     }
     findUserDocs = async () => {
-        return [
-            { doc_id: 'doc1', title: 'Document 1' },
-            { doc_id: 'doc2', title: 'Document 2' },
-        ];
-    }
+      return [
+        { doc_id: "doc1", title: "Document 1" },
+        { doc_id: "doc2", title: "Document 2" },
+      ];
+    };
   },
 }));
 
-describe('Sidebar component', () => {
-  let container : any;
+describe("Sidebar component", () => {
+  let container: any;
 
   beforeEach(() => {
     useDocStore.setState({ currentDocId: null });
-    container = document.createElement('div');
+    container = document.createElement("div");
     document.body.appendChild(container);
   });
 
@@ -49,24 +49,26 @@ describe('Sidebar component', () => {
     container = null;
   });
 
-  it('Sidebar renders open', async () => {
+  it("Sidebar renders open", async () => {
     await act(async () => {
-      ReactDOMClient.createRoot(container).render(<Tooltip.Provider>
-        <Sidebar />
-      </Tooltip.Provider>);
+      ReactDOMClient.createRoot(container).render(
+        <Tooltip.Provider>
+          <Sidebar />
+        </Tooltip.Provider>,
+      );
     });
-    
-    expect(container.querySelector('aside')).toBeTruthy();
-    expect(container.querySelector('aside')?.className).contains("w-72");
+
+    expect(container.querySelector("aside")).toBeTruthy();
+    expect(container.querySelector("aside")?.className).contains("w-72");
 
     await act(async () => {
-      const hamburgerMenuButton = container.querySelector('button');
+      const hamburgerMenuButton = container.querySelector("button");
       if (hamburgerMenuButton) {
         hamburgerMenuButton.click();
       }
     });
-    
-    expect(container.querySelector('aside')).toBeTruthy();
-    expect(container.querySelector('aside')?.className).contains("w-16");
+
+    expect(container.querySelector("aside")).toBeTruthy();
+    expect(container.querySelector("aside")?.className).contains("w-16");
   });
 });

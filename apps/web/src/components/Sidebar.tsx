@@ -7,11 +7,7 @@ export function Sidebar() {
   const [open, setOpen] = useState(true);
 
   return (
-    <Collapsible.Root
-      open={open}
-      onOpenChange={setOpen}
-      className="h-screen"
-    >
+    <Collapsible.Root open={open} onOpenChange={setOpen} className="h-screen">
       <aside
         className={`flex h-full flex-col border-r bg-gray-900 text-white transition-all duration-300
           ${open ? "max-sm:w-80 md:w-72" : "max-sm:w-0 md:w-16"}

@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   unit-tests:
@@ -17,18 +17,19 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Install dependencies
-        working-directory: ./apps/web/
         run: npm ci
-      
+
       - name: Verify licenses
         run: npm run check:licenses
 
+      - name: Build workspace packages
+        run: npm run build
+
       - name: Run tests across workspace (with coverage)
-        working-directory: ./apps/web/
         run: npm run test:coverage
 
       - name: Upload coverage artifact
@@ -37,7 +38,7 @@ jobs:
           name: coverage-reports
           path: |
             **/coverage/**
-            
+
   integration-tests:
     needs: unit-tests
     runs-on: ubuntu-latest
@@ -48,15 +49,26 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
-          
+          node-version: "22"
+          cache: "npm"
+
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3.3.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build API image
+        uses: docker/build-push-action@v6.5.0
+        with:
+          context: .
+          file: ./apps/api/Dockerfile
+          tags: ghcr.io/blazingneutron/reverie-api:${{ github.sha }}
+          load: true
+          push: false
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:latest
+          cache-to: type=inline
 
       - name: Build migrator image
         uses: docker/build-push-action@v6.5.0
@@ -70,7 +82,7 @@ jobs:
           push: false
           cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:latest
           cache-to: type=inline
-          
+
       - name: Setup docker compose .env file
         working-directory: ./docker/
         run: |
@@ -78,11 +90,11 @@ jobs:
           echo "IMAGE_TAG=${{ github.sha }}" >> .env
       - name: Bring up test stack
         working-directory: ./docker/
-        run: docker compose -f docker-compose.dev-env.yml up db nginx reverie-web rest realtime auth mail -d --wait
+        run: docker compose -f docker-compose.dev-env.yml up db api reverie-web rest realtime auth mail kong -d --wait
       - name: Wait for migrations
         working-directory: ./docker/
         env:
-            WAIT_TIMEOUT: 120
+          WAIT_TIMEOUT: 120
         run: |
           timeout "${WAIT_TIMEOUT}" \
             docker compose -f docker-compose.dev-env.yml up \
@@ -96,15 +108,11 @@ jobs:
             exit $EXIT_CODE
           fi
 
-      - name: Setup integration .env file
-        working-directory: ./apps/web/
-        run: |
-          echo "VITE_SUPABASE_PUBLISHABLE_KEY=${{ secrets.SUPABASE_PUBLISHABLE_KEY }}" > .env.it
-          echo "VITE_SUPABASE_BASE_URL=http://localhost:8000" >> .env.it
-
       - name: Install dependencies
-        working-directory: ./apps/web/
         run: npm i
+
+      - name: Build workspace packages
+        run: npm run build
 
       - name: Run Integration tests
         working-directory: ./apps/web/

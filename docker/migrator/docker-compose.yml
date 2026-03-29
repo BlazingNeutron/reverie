@@ -4,7 +4,7 @@ services:
     build:
       context: ./
       additional_contexts:
-         migrations: ../../supabase/migrations
+        migrations: ../../supabase/migrations
       dockerfile: ./Dockerfile
     env_file:
       - ../.env

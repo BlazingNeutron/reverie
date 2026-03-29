@@ -1,29 +1,21 @@
-import { createClient } from "@supabase/supabase-js"
+import { createClient } from "@supabase/supabase-js";
+import logger from "../logger/logger";
+import { getPublishableKey } from "./keys";
 
-interface ImportMetaEnv {
-  VITE_SUPABASE_PUBLISHABLE_KEY: string;
-  VITE_SUPABASE_BASE_URL: string;
+const publishableKey = await getPublishableKey();
+
+const baseUrl =
+  process.env.SITE_URL ||
+  `${window.location.protocol}//${window.location.host}`;
+
+if (!publishableKey || publishableKey.trim() == "") {
+  logger.warn("Supabase publishable key not found at runtime or build-time.");
 }
-
-declare global {
-  interface ImportMeta {
-    env: ImportMetaEnv;
-  }
-}
-
-const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-let baseUrl = import.meta.env.VITE_SUPABASE_BASE_URL;
-
-if (!supabasePublishableKey || supabasePublishableKey.trim() == "") {
-  console.warn("Supabase publishable key not found at runtime or build-time.");
-}
-if (!baseUrl || baseUrl.trim() == "") {
-  baseUrl = `${window.location.protocol}//${window.location.host}`;
-}
-
-export let supabase = createClient(baseUrl, supabasePublishableKey);
-
-const { data: { session } } = await supabase.auth.getSession();
-if (session) {
-  supabase = createClient(baseUrl, session.access_token) 
-}
+logger.log("Creating client...", baseUrl, publishableKey);
+export const supabase = createClient(baseUrl, publishableKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: false,
+  },
+});

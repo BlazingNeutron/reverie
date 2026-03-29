@@ -1,11 +1,24 @@
+import logger from "../logger/logger";
 import { supabase } from "./client";
 
 export async function ensureSession() {
-    const {
-        data: { session },
-    } = await supabase.auth.getSession();
+  logger.debug("[ensureSession] Starting session check...");
 
-    if (!session) return null;
+  const { data, error } = await supabase.auth.getSession();
 
-    return session;
+  if (error || !data) {
+    logger.error("[ensureSession] Error:", error);
+    return null;
+  }
+
+  const session = data.session;
+
+  logger.debug("[ensureSession] Session check result:", {
+    hasSession: !!session,
+    userId: session?.user?.id,
+    error,
+    tokenPreview: session?.access_token?.substring(0, 20) + "...",
+  });
+
+  return session;
 }

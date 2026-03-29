@@ -1,65 +1,81 @@
+import logger from "../logger/logger";
 import { supabase } from "./client";
 
 export async function selectDocument(docId: string) {
-    return await supabase.from('documents')
-        .select('doc_id, title, content, user_id')
-        .eq('doc_id', docId);
+  return await supabase
+    .from("documents")
+    .select("doc_id, title, content, user_id")
+    .eq("doc_id", docId);
 }
 
-export async function updateDocumentSearch(docId: string, title: string, content: string, userId: string) {
-    const results = await selectDocument(docId);
-    if (results && results.data && results.data.length > 0){
-        if (hasNoUpdate(results.data[0], content)) {
-            return false;
-        }
+export async function updateDocumentSearch(
+  docId: string,
+  title: string,
+  content: string,
+  userId: string,
+) {
+  const results = await selectDocument(docId);
+  if (results && results.data && results.data.length > 0) {
+    if (hasNoUpdate(results.data[0], content)) {
+      return false;
     }
-    await supabase.from('documents').upsert({
-        doc_id: docId,
-        title: title,
-        content: content,
-        user_id: userId
-    });
-    return true;
+  }
+  await supabase.from("documents").upsert({
+    doc_id: docId,
+    title: title,
+    content: content,
+    user_id: userId,
+  });
+  return true;
 }
 
-function hasNoUpdate(document: { doc_id: string, title: string, content: string, user_id: string } | undefined, content: string): boolean {
-    if (!document || typeof document.content !== 'string') return false;
-    return document.content === content;
+function hasNoUpdate(
+  document:
+    | { doc_id: string; title: string; content: string; user_id: string }
+    | undefined,
+  content: string,
+): boolean {
+  if (!document || typeof document.content !== "string") return false;
+  return document.content === content;
 }
 
 export async function findUserDocs(userId: string) {
-    const { data: shared, error } = await supabase
-        .from('shared')
-        .select('doc_id')
-        .eq('user_id', userId);
-    if (!shared) return [];
-    const doc_ids = shared.map((sharedDoc) => sharedDoc.doc_id);
-    
-    const { data: docList, error: docError } = await supabase
-        .from('documents')
-        .select('doc_id, title, user_id')
-        .in('doc_id', doc_ids)
-        .order('title', { ascending: false });
+  const { data: shared, error } = await supabase
+    .from("shared")
+    .select("doc_id")
+    .eq("user_id", userId);
+  if (error) {
+    logger.error("[documents.findUserDocs] Error:", error);
+  }
+  if (!shared) return [];
+  const doc_ids = shared.map((sharedDoc) => sharedDoc.doc_id);
 
-    if (docError) {
-        console.error("Error fetching user docs:", error);
-        return [];
-    }
+  const { data: docList, error: docError } = await supabase
+    .from("documents")
+    .select("doc_id, title, user_id")
+    .in("doc_id", doc_ids)
+    .order("title", { ascending: false });
 
-    return docList || [];
+  if (docError) {
+    logger.error("[documents.findUserDocs] Error fetching user docs:", error);
+    return [];
+  }
+
+  return docList || [];
 }
 
 export async function createDocument(title: string, userId: string | any) {
-    if (!userId) return;
-    const { data } = await supabase
-        .from('documents')
-        .insert({
-            "title": title,
-            "user_id": userId
-        }).select();
+  if (!userId) return;
+  const { data } = await supabase
+    .from("documents")
+    .insert({
+      title: title,
+      user_id: userId,
+    })
+    .select();
 
-    if (data && data.length > 0 && data[0]) {
-        return data[0].doc_id;
-    }
-    return null;
+  if (data && data.length > 0 && data[0]) {
+    return data[0].doc_id;
+  }
+  return null;
 }

@@ -1,5 +1,5 @@
 import * as Tooltip from "@radix-ui/react-tooltip";
-import { useDocStore } from '../lib/stores/documentStore';
+import { useDocStore } from "../lib/stores/documentStore";
 
 export function DocumentItem({
   doc,
@@ -7,8 +7,8 @@ export function DocumentItem({
   isActive,
 }: {
   doc: {
-    doc_id: string,
-    title: string
+    doc_id: string;
+    title: string;
   };
   open: boolean;
   isActive: boolean;
@@ -17,7 +17,7 @@ export function DocumentItem({
 
   const handleDocChange = (docId?: string) => () => {
     setCurrentDocId(docId);
-  }
+  };
   const baseStyles = `
     group relative w-full rounded-md transition
     ${isActive ? "bg-gray-800" : "hover:bg-gray-800"}
@@ -27,7 +27,9 @@ export function DocumentItem({
     return (
       <Tooltip.Root>
         <Tooltip.Trigger asChild onClick={handleDocChange(doc.doc_id)}>
-          <button className={`${baseStyles} flex h-10 items-center justify-center`}>
+          <button
+            className={`${baseStyles} flex h-10 items-center justify-center`}
+          >
             📄
             <StatusDot isActive={isActive} />
           </button>
@@ -38,22 +40,21 @@ export function DocumentItem({
           className="rounded bg-gray-800 p-3 text-xs shadow"
         >
           <div className="font-medium">{doc.title}</div>
-          {isActive && <div className="text-gray-400">
-             editing
-          </div>}
+          {isActive && <div className="text-gray-400">editing</div>}
         </Tooltip.Content>
       </Tooltip.Root>
     );
   }
 
   return (
-    <button className={`${baseStyles} p-3 text-left`} onClick={handleDocChange(doc.doc_id)}>
+    <button
+      className={`${baseStyles} p-3 text-left`}
+      onClick={handleDocChange(doc.doc_id)}
+    >
       <div className="flex items-center justify-between">
         <span className="font-medium">{doc.title}</span>
         <span className="text-xs text-gray-400">
-          {isActive && <div className="text-gray-400">
-             editing
-          </div>}
+          {isActive && <div className="text-gray-400">editing</div>}
         </span>
       </div>
     </button>

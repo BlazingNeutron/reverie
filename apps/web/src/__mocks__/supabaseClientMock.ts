@@ -63,7 +63,7 @@ function supabaseMock() {
     }
 
     insert(rows: any) {
-      rows['doc_id'] = 'new_doc_id';
+      rows["doc_id"] = "new_doc_id";
       this.query.inserts = rows;
       return this;
     }
@@ -81,7 +81,7 @@ function supabaseMock() {
     then(resolve: any, reject: any) {
       if (this.results.length > 0) {
         if (this.results[0] instanceof Error) {
-          setTimeout(() => reject(this.results.pop()), 100);  
+          setTimeout(() => reject(this.results.pop()), 100);
         }
         setTimeout(() => resolve(this.results.pop()), 100);
       } else {
@@ -98,7 +98,7 @@ function supabaseMock() {
       return this.query;
     }
 
-    setResults(results:any[]) {
+    setResults(results: any[]) {
       this.results = results.reverse();
     }
   }
@@ -109,45 +109,75 @@ function supabaseMock() {
   }
   const mockSubscribe = vi.fn().mockReturnThis();
   const channelObj = {
-    on: (name: string, event : any, callback: Function) => { 
-      calls.on.push([ name, event, callback]);
+    on: (name: string, event: any, callback: Function) => {
+      calls.on.push([name, event, callback]);
       return { subscribe: mockSubscribe };
     },
     send: async (payload: any) => {
       calls.sends.push(payload);
       if (calls.on.length > 0) {
-        calls.on[0][2](payload)
+        calls.on[0][2](payload);
       }
       return { ok: true };
     },
     subscribe: mockSubscribe,
   };
 
+  interface getSessionReturnType {
+    data:
+      | unknown
+      | {
+          session:
+            | unknown
+            | {
+                user: {
+                  id: string;
+                };
+                access_token: string;
+              };
+        };
+    error:
+      | unknown
+      | {
+          message: string;
+        };
+  }
+
   const mockSupbase = {
     calls,
     removeChannel: () => removeChannel(),
-    results : [{}],
+    results: [{}],
     auth: {
-      getSession: async () => ({ data: { session: { user: { id: 'test-user' }, access_token: "test_access_token" } } }),
+      getSession: (): getSessionReturnType => ({
+        data: {
+          session: {
+            user: { id: "test-user" },
+            access_token: "test_access_token",
+          },
+        },
+        error: null,
+      }),
       signInWithPassword: vi.fn().mockReturnValue({ error: null }),
       signOut: vi.fn(),
       onAuthStateChange: (cb: any) => {
         return { data: { subscription: { unsubscribe: cb } } };
-      }
+      },
     },
     channel: (name: string) => {
       calls.channels.push(name);
       return channelObj;
     },
-    from: (table:string)=>{ table }
+    from: (table: string) => {
+      table;
+    },
   };
   mockSupbase.results = [];
   mockSupbase.from = (table: string) => {
     const fromObj = new SupabaseQueryBuilder(table);
-    calls.query = () => fromObj.getQuery()
+    calls.query = () => fromObj.getQuery();
     fromObj.setResults(mockSupbase.results || []);
     return fromObj;
-  }
+  };
   return mockSupbase;
 }
 

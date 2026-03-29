@@ -1,14 +1,18 @@
 import React, { useState, useLayoutEffect, type ReactElement } from "react";
-import { Theme } from '@radix-ui/themes';
+import { Theme } from "@radix-ui/themes";
 
 export const ThemeContext = React.createContext({
   dark: false,
-  toggle: () => {}
+  toggle: () => {},
 });
 
-export default function ThemeProvider({ children }:{children:ReactElement}) {
+export default function ThemeProvider({
+  children,
+}: {
+  children: ReactElement;
+}) {
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  
+
   const [dark, setDark] = useState(prefersDark);
 
   useLayoutEffect(() => {
@@ -16,7 +20,7 @@ export default function ThemeProvider({ children }:{children:ReactElement}) {
   }, [dark]);
 
   const applyTheme = () => {
-    const root : HTMLElement | any = document.getElementsByTagName("html")[0];
+    const root: HTMLElement | any = document.getElementsByTagName("html")[0];
     if (!root) return;
     root.classList.remove("dark");
     root.classList.remove("light");
@@ -28,10 +32,10 @@ export default function ThemeProvider({ children }:{children:ReactElement}) {
   };
 
   return (
-    <ThemeContext.Provider value={{dark, toggle : () => setDark(!dark) }}>
-        <Theme appearance={dark ? "dark" : "light"} panelBackground="solid">
-            {children}
-        </Theme>
+    <ThemeContext.Provider value={{ dark, toggle: () => setDark(!dark) }}>
+      <Theme appearance={dark ? "dark" : "light"} panelBackground="solid">
+        {children}
+      </Theme>
     </ThemeContext.Provider>
   );
 }
