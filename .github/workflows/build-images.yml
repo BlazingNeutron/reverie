@@ -48,12 +48,12 @@ jobs:
           push: true
           cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:latest
           cache-to: type=inline
-      - name: Build nginx image
+      - name: Build api image
         uses: docker/build-push-action@v6.5.0
         with:
-          context: ./docker/nginx
-          file: ./docker/nginx/Dockerfile
-          tags: ghcr.io/blazingneutron/reverie-nginx:${{ github.sha }},ghcr.io/blazingneutron/reverie-nginx:latest
+          context: .
+          file: ./apps/api/Dockerfile
+          tags: ghcr.io/blazingneutron/reverie-api:${{ github.sha }},ghcr.io/blazingneutron/reverie-api:latest
           push: true
           cache-from: type=registry,ref=ghcr.io/${{ github.repository }}:latest
           cache-to: type=inline
