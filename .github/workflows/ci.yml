@@ -87,10 +87,11 @@ jobs:
         working-directory: ./docker/
         run: |
           cp .env.it .env
+          echo "IMAGE_TAG=${{ github.sha }}" >> .env
           bash utils/generate-keys.sh --update-env
           bash utils/add-new-auth-keys.sh --update-env
           bash utils/rotate-new-api-keys.sh --update-env
-          echo "IMAGE_TAG=${{ github.sha }}" >> .env
+          cat .env
       - name: Bring up test stack
         working-directory: ./docker/
         run: docker compose -f docker-compose.it.yml up db api reverie-web rest realtime auth mail kong -d --wait
