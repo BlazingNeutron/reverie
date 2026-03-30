@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDocStore } from "../lib/stores/documentStore";
 import { Accordion } from "radix-ui";
 import { DocumentItem } from "./DocumentItem";

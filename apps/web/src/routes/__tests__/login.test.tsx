@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import ReactDOMClient from "react-dom/client";
 import { MemoryRouter } from "react-router";
 import Login from "../login";
-import { act } from "react";
+import React, { act } from "react";
 
 let signInMock = vi.fn().mockResolvedValue({ error: null });
 vi.mock("../../lib/auth/authContext", () => ({

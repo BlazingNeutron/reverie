@@ -1,7 +1,7 @@
 import { Link, useSearchParams } from "react-router";
 import { Button, Card, Grid, Text, TextField } from "@radix-ui/themes";
 import { Label } from "radix-ui";
-import { useState } from "react";
+import React, { useState } from "react";
 import { passwordCheck, isValidEmail } from "@repo/validators";
 
 export default function SignUp() {

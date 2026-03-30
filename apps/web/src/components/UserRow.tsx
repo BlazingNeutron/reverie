@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CheckIcon, Cross2Icon } from "@radix-ui/react-icons";
 import { Button } from "@radix-ui/themes";
 import { shareDocument, unshareDocument } from "../lib/supabase/sharing";

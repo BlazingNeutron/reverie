@@ -9,10 +9,10 @@ import {
 } from "react-router";
 import App from "./routes/index";
 import Login from "./routes/login";
-import AuthProvider, { useAuth } from "./lib/auth/authContext.tsx";
-import ThemeProvider from "./components/ThemeProvider.tsx";
-import SignUp from "./routes/signup.tsx";
-import logger from "./lib/logger/logger.ts";
+import AuthProvider, { useAuth } from "./lib/auth/authContext";
+import ThemeProvider from "./components/ThemeProvider";
+import SignUp from "./routes/signup";
+import logger from "./lib/logger/logger";
 
 logger.debug("[main.tsx] Starting the app");
 

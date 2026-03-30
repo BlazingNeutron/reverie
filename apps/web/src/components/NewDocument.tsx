@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, TextField } from "@radix-ui/themes";
 import { useDocStore } from "../lib/stores/documentStore";
 import { createDocument } from "../lib/supabase/documents";

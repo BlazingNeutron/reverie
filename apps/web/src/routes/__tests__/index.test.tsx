@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { MemoryRouter } from "react-router";
 import Index from "../index";
 import ThemeProvider from "../../components/ThemeProvider";
-import { act } from "react";
+import React, { act } from "react";
 import ReactDOMClient from "react-dom/client";
 
 vi.mock("../../lib/auth/authContext", () => ({

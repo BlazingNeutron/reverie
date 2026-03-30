@@ -24,7 +24,7 @@ vi.mock("react-router", () => {
 describe("main.tsx routing", () => {
   it("registers routes including /login or at least initializes app", async () => {
     // Importing main.tsx should call createBrowserRouter once (module side-effect)
-    await import("../../main.tsx");
+    await import("../../main");
     // Ensure createRoot was called during module initialization
     const rd = await import("react-dom/client");
     expect((rd as any).default.createRoot).toHaveBeenCalled();
@@ -37,7 +37,7 @@ describe("main.tsx routing", () => {
 
   it("the base url redirects to /login when no session", async () => {
     const rr = await import("react-router");
-    const ac = await import("../../lib/auth/authContext.tsx");
+    const ac = await import("../../lib/auth/authContext");
 
     // Mock useAuth to return no session and not loading
     vi.spyOn(ac, "useAuth").mockReturnValue({
@@ -49,7 +49,7 @@ describe("main.tsx routing", () => {
     });
 
     // protected route will be called when rendering the base route
-    const { ProtectedRoute } = await import("../../main.tsx");
+    const { ProtectedRoute } = await import("../../main");
 
     // Render the ProtectedRoute
     const result = ProtectedRoute();
@@ -65,7 +65,7 @@ describe("main.tsx routing", () => {
   });
 
   it("the ProtectedRoute shows nothing when loading", async () => {
-    const ac = await import("../../lib/auth/authContext.tsx");
+    const ac = await import("../../lib/auth/authContext");
 
     // Mock useAuth to return loading true
     vi.spyOn(ac, "useAuth").mockReturnValue({
@@ -76,7 +76,7 @@ describe("main.tsx routing", () => {
       signOut: vi.fn(),
     });
 
-    const { ProtectedRoute } = await import("../../main.tsx");
+    const { ProtectedRoute } = await import("../../main");
 
     // Render the ProtectedRoute
     const result = ProtectedRoute();
@@ -87,7 +87,7 @@ describe("main.tsx routing", () => {
 
   it("the base url returns outlet when session exists", async () => {
     const rr = await import("react-router");
-    const ac = await import("../../lib/auth/authContext.tsx");
+    const ac = await import("../../lib/auth/authContext");
 
     // Mock useAuth to return a session and not loading
     vi.spyOn(ac, "useAuth").mockReturnValue({
@@ -103,7 +103,7 @@ describe("main.tsx routing", () => {
     });
 
     // protected route will be called when rendering the base route
-    const { ProtectedRoute } = await import("../../main.tsx");
+    const { ProtectedRoute } = await import("../../main");
 
     // Render the ProtectedRoute
     const result = ProtectedRoute();

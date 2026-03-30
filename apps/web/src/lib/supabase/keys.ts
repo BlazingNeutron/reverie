@@ -1,7 +1,7 @@
 import logger from "../logger/logger";
 
 const baseUrl = process.env.SITE_URL || "";
-
+console.log(baseUrl);
 export async function getPublishableKey() {
   let publishableKey = "";
   try {

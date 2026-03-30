@@ -1,3 +1,4 @@
+import React from "react";
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { act, waitFor, cleanup, render } from "@testing-library/react";
 import { supabaseClientMock } from "../../../__mocks__/supabaseClientMock";

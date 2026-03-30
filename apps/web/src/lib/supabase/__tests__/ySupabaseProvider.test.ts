@@ -266,7 +266,7 @@ describe("SupabaseProvider (basic)", () => {
   });
 
   it("loadInitialUpdates no snapshots, loads updates and applies them", async () => {
-    mockSelectYJsSnapshots = vi.fn().mockReturnValue();
+    mockSelectYJsSnapshots = vi.fn().mockReturnValue(null);
     mockApplyUpdate = vi.fn();
     await provider.loadInitialUpdates();
 

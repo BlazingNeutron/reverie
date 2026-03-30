@@ -1,7 +1,7 @@
 import { Dialog } from "radix-ui";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { Button } from "@radix-ui/themes";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDocStore } from "../lib/stores/documentStore";
 import { UserRow } from "./UserRow";
 import { findCollaborators } from "../lib/supabase/sharing";

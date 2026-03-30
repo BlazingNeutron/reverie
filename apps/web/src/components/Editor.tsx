@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useRef } from "react";
+import React, { forwardRef, useEffect, useRef } from "react";
 import * as Y from "yjs";
 import { QuillBinding } from "y-quill";
 import Quill from "quill";
@@ -11,6 +11,7 @@ Quill.register("modules/cursors", QuillCursors);
 
 const Editor = forwardRef(({}, ref: any) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const toolbarRef = useRef<HTMLDivElement | null>(null);
   const quillRef = useRef<Quill | null>(null);
   const currentDocId: string | any = useDocStore((s) => s.currentDocId);
 
@@ -20,9 +21,6 @@ const Editor = forwardRef(({}, ref: any) => {
     const ydoc = new Y.Doc();
     const supaProvider = new SupabaseProvider(currentDocId, ydoc);
 
-    // @ts-ignore
-    let quill: Quill;
-
     supaProvider.init().then(() => {
       const ytext = ydoc.getText("quill");
 
@@ -31,12 +29,12 @@ const Editor = forwardRef(({}, ref: any) => {
       const quill = new Quill(containerRef.current!, {
         modules: {
           cursors: true,
-          toolbar: [
+          toolbar: toolbarRef.current /*[
             [{ header: [1, 2, false] }],
             ["bold", "italic", "underline"],
             ["image", "code-block"],
             [{ list: "check" }],
-          ],
+          ],*/,
           history: {
             userOnly: true,
           },
@@ -63,6 +61,30 @@ const Editor = forwardRef(({}, ref: any) => {
   return (
     <div className="max-sm:mr-3 max-sm:mt-2 md:m-10 max-sm:h-9/12 md:h-5/6 text-">
       <div className="hidden">{currentDocId}</div>
+      <div ref={toolbarRef}>
+        <span className="ql-formats">
+          <select className="ql-header">
+            <option value="1"></option>
+            <option value="2"></option>
+            <option selected></option>
+          </select>
+        </span>
+
+        <span className="ql-formats">
+          <button className="ql-bold" />
+          <button className="ql-italic" />
+          <button className="ql-underline" />
+        </span>
+
+        <span className="ql-formats">
+          <button className="ql-image" />
+          <button className="ql-code-block" />
+        </span>
+
+        <span className="ql-formats">
+          <button className="ql-list" value="check" />
+        </span>
+      </div>
       <div ref={containerRef} className="h-full"></div>
     </div>
   );

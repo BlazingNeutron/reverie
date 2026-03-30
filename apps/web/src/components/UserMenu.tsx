@@ -1,3 +1,4 @@
+import React from "react";
 import { DropdownMenu } from "@radix-ui/themes";
 import { useAuth } from "../lib/auth/authContext";
 

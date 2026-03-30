@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import type { ReactNode } from "react";
+import React, { type ReactNode } from "react";
 import { useAuthStore } from "../stores/authStore";
 import { useAuthListener } from "../hooks/useAuthListener";
 import { useAuthActions } from "../hooks/useAuthActions";

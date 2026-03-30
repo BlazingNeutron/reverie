@@ -1,3 +1,4 @@
+import React from "react";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { useDocStore } from "../lib/stores/documentStore";
 

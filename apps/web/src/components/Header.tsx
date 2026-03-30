@@ -1,3 +1,4 @@
+import React from "react";
 import { ShareDialog } from "./ShareDialog";
 import { UserMenu } from "./UserMenu";
 

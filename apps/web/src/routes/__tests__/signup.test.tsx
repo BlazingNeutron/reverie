@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import ReactDOMClient from "react-dom/client";
 import { MemoryRouter } from "react-router";
 import SignUp from "../signup";
+import React from "react";
 
 let mockInviteCode = "INVITE_CODE";
 vi.mock("react-router", async () => {
