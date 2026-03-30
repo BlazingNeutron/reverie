@@ -8,7 +8,7 @@ describe("supabase integration tests for auth", () => {
     //clean up
     users.forEach(async (userId) => {
       // TODO deleting from profiles doesn't remove from auth.users
-      // await supabase.from('profiles').delete().eq('user_id', userId);
+      await supabase.from("profiles").delete().eq("user_id", userId);
     });
   });
 
@@ -18,8 +18,14 @@ describe("supabase integration tests for auth", () => {
       email: "test4@integration.test",
       password: "test4Password",
     });
+
+    await supabase.auth.signInWithPassword({
+      email: "test4@integration.test",
+      password: "test4Password",
+    });
+
     // trigger should put the new user in the public.profiles table
-    const results = await supabase
+    const results: any = await supabase
       .from("profiles")
       .select()
       .eq("username", "test4@integration.test");
