@@ -87,7 +87,8 @@ jobs:
         working-directory: ./docker/
         run: |
           cp .env.it .env
-          echo "IMAGE_TAG=${{ github.sha }}" >> .env
+          echo -e "\nIMAGE_TAG=${{ github.sha }}\n" >> .env
+          echo "Added IMAGE_TAG=${{ github.sha }} to .env"
           bash utils/generate-keys.sh --update-env
           bash utils/add-new-auth-keys.sh --update-env
           bash utils/rotate-new-api-keys.sh --update-env
