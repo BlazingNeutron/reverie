@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "concurrently": "^9.2.1",
-    "supabase": "^2.83.0"
+    "supabase": "^2.84.5"
   },
   "workspaces": [
     "apps/*",
