@@ -3,6 +3,9 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
+  define: {
+    "process.env.SITE_URL": JSON.stringify(process.env.SITE_URL),
+  },
   server: {
     host: true,
     proxy: {

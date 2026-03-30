@@ -1,13 +1,13 @@
 import { type Request, type Response } from "express";
 
-const serviceKey = process.env.SUPABASE_PUBLISHABLE_KEY!;
+const anonKey = process.env.ANON_KEY!;
 
 export default async function register(_req: Request, res: Response) {
-  if (!serviceKey) {
+  if (!anonKey) {
     res.status(500).json({
       success: false,
       error: {
-        message: "SUPABASE_PUBLISHABLE_KEY in .env not set",
+        message: "ANON_KEY in .env not set",
       },
     });
     return;
@@ -16,7 +16,7 @@ export default async function register(_req: Request, res: Response) {
   res.status(200).json({
     success: true,
     keys: {
-      publishableKey: serviceKey,
+      publishableKey: anonKey,
     },
   });
 }
