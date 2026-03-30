@@ -3,31 +3,32 @@ import * as Y from "yjs";
 import { QuillBinding } from "y-quill";
 import Quill from "quill";
 import QuillCursors from "quill-cursors";
-import QuillResizeImage from "quill-resize-image";
 import { SupabaseProvider } from "../lib/supabase/ySupabaseProvider";
 import { useDocStore } from "../lib/stores/documentStore";
 import "quill/dist/quill.snow.css";
 
 Quill.register("modules/cursors", QuillCursors);
-Quill.register("modules/resize", QuillResizeImage);
 
 const Editor = forwardRef(({}, ref: any) => {
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const quillRef = useRef<Quill | null>(null);
   const currentDocId: string | any = useDocStore((s) => s.currentDocId);
+
   useEffect(() => {
+    if (!containerRef || !containerRef.current) return;
+
     const ydoc = new Y.Doc();
     const supaProvider = new SupabaseProvider(currentDocId, ydoc);
 
-    if (!containerRef || !containerRef.current) return;
-    const container: HTMLElement = containerRef.current;
+    // @ts-ignore
+    let quill: Quill;
 
     supaProvider.init().then(() => {
       const ytext = ydoc.getText("quill");
 
-      const editorContainer = container.appendChild(
-        container.ownerDocument.createElement("div"),
-      );
-      const quill = new Quill(editorContainer, {
+      containerRef.current!.innerHTML = "";
+
+      const quill = new Quill(containerRef.current!, {
         modules: {
           cursors: true,
           toolbar: [
@@ -39,21 +40,19 @@ const Editor = forwardRef(({}, ref: any) => {
           history: {
             userOnly: true,
           },
-          resize: {
-            locale: {},
-          },
         },
         placeholder: "Start collaborating...",
         theme: "snow",
-        formats: ["image"],
       });
       new QuillBinding(ytext, quill, supaProvider.awareness);
-      ref.current = quill;
+      quillRef.current = quill;
+      if (ref) ref.current = quill;
     });
 
     return () => {
-      ref.current = null;
-      container.innerHTML = "";
+      quillRef.current = null;
+      if (ref) ref.current = null;
+      if (containerRef.current) containerRef.current.innerHTML = "";
     };
   }, [ref, currentDocId]);
 
