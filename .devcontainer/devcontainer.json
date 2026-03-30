@@ -19,7 +19,9 @@
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
   },
   "containerEnv": {
-    "PGSSLMODE": "disable"
+    "PGSSLMODE": "disable",
+    "CODESPACES": "true",
+    "DEVCONTAINER": "true"
   },
   "postCreateCommand": "npm i turbo -g && npm i",
   "postStartCommand": "supabase start && docker network connect supabase_network_reverie $HOSTNAME",
