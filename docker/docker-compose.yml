@@ -12,13 +12,16 @@ services:
         # Disable this if you are using an external Postgres database
         condition: service_healthy
     environment:
+      - SERVICE_ROLE_KEY=${SERVICE_ROLE_KEY}
       - SUPABASE_BASE_URL=http://kong:8000
       - SUPABASE_SECRET_KEY=${SUPABASE_SECRET_KEY}
       - SUPABASE_PUBLISHABLE_KEY=${SUPABASE_PUBLISHABLE_KEY}
 
   reverie-web:
     image: ghcr.io/blazingneutron/reverie-web:latest
-    restart: unless-stopped
+    restart: always
+    environment:
+      - SITE_URL=${SITE_URL}
     depends_on:
       db:
         # Disable this if you are using an external Postgres database
@@ -29,8 +32,6 @@ services:
   db:
     image: supabase/postgres:15.8.1.085
     restart: unless-stopped
-    ports:
-      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - ./volumes/db/realtime.sql:/docker-entrypoint-initdb.d/migrations/99-realtime.sql:Z
       # Must be superuser to create event trigger
@@ -73,7 +74,7 @@ services:
       ]
 
   auth:
-    image: supabase/gotrue:v2.185.0
+    image: supabase/gotrue:v2.186.0
     restart: unless-stopped
     healthcheck:
       test:
@@ -113,11 +114,17 @@ services:
       GOTRUE_EXTERNAL_EMAIL_ENABLED: ${ENABLE_EMAIL_SIGNUP:-true}
       GOTRUE_EXTERNAL_ANONYMOUS_USERS_ENABLED: ${ENABLE_ANONYMOUS_USERS:-false}
       GOTRUE_MAILER_AUTOCONFIRM: ${ENABLE_EMAIL_AUTOCONFIRM:-true}
+      GOTRUE_SMTP_ADMIN_EMAIL: ${SMTP_ADMIN_EMAIL}
+      GOTRUE_SMTP_HOST: ${SMTP_HOST}
+      GOTRUE_SMTP_PORT: ${SMTP_PORT}
+      GOTRUE_SMTP_USER: ${SMTP_USER}
+      GOTRUE_SMTP_PASS: ${SMTP_PASS}
+      GOTRUE_SMTP_SENDER_NAME: ${SMTP_SENDER_NAME}
 
   realtime:
     container_name: realtime-reverie.supabase-realtime
     # This container name looks inconsistent but is correct because realtime constructs tenant id by parsing the subdomain
-    image: supabase/realtime:v2.72.0
+    image: supabase/realtime:v2.76.5
     restart: unless-stopped
     depends_on:
       db:
@@ -127,7 +134,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          'curl -sSfL --head -o /dev/null -H "Authorization: Bearer ${SUPABASE_PUBLISHABLE_KEY}" http://localhost:4000/api/tenants/realtime-reverie/health',
+          'curl -sSfL --head -o /dev/null -H "Authorization: Bearer ${ANON_KEY}" http://localhost:4000/api/tenants/realtime-reverie/health',
         ]
       timeout: 5s
       interval: 30s
@@ -144,6 +151,7 @@ services:
       DB_ENC_KEY: supabaserealtime
       API_JWT_SECRET: ${JWT_SECRET}
       SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      METRICS_JWT_SECRET: ${JWT_SECRET}
       ERL_AFLAGS: -proto_dist inet_tcp
       DNS_NODES: "''"
       RLIMIT_NOFILE: "10000"
@@ -154,7 +162,7 @@ services:
       DISABLE_HEALTHCHECK_LOGGING: "true"
 
   rest:
-    image: postgrest/postgrest:v14.3
+    image: postgrest/postgrest:v14.6
     restart: unless-stopped
     depends_on:
       db:
@@ -163,8 +171,10 @@ services:
     environment:
       PGRST_DB_URI: postgres://authenticator:${POSTGRES_PASSWORD}@db:5432/postgres
       PGRST_DB_SCHEMAS: public,storage,graphql_public
+      PGRST_DB_MAX_ROWS: ${PGRST_DB_MAX_ROWS:-1000}
+      PGRST_DB_EXTRA_SEARCH_PATH: ${PGRST_DB_EXTRA_SEARCH_PATH:-public}
       PGRST_DB_ANON_ROLE: anon
-      PGRST_JWT_SECRET: ${JWT_SECRET}
+      PGRST_JWT_SECRET: ${JWT_JWKS:-${JWT_SECRET}}
       PGRST_DB_USE_LEGACY_GUCS: "false"
       PGRST_APP_SETTINGS_JWT_SECRET: ${JWT_SECRET}
       PGRST_APP_SETTINGS_JWT_EXP: 3600
@@ -174,44 +184,36 @@ services:
     ports:
       - ${HTTP_PORT:-8000}:8000/tcp
       - ${HTTPS_PORT:-8443}:8443/tcp
-    image: kong:2.8.1
+    image: kong/kong:3.9.1
     restart: unless-stopped
     volumes:
       # https://github.com/supabase/supabase/issues/12661
       - ./volumes/api/kong.yml:/home/kong/temp.yml:ro,z
+      - ./volumes/api/kong-entrypoint.sh:/home/kong/kong-entrypoint.sh:ro,z
     environment:
       KONG_DATABASE: "off"
-      KONG_DECLARATIVE_CONFIG: /home/kong/kong.yml
+      KONG_DECLARATIVE_CONFIG: /usr/local/kong/kong.yml
       # https://github.com/supabase/cli/issues/14
       KONG_DNS_ORDER: LAST,A,CNAME
-      KONG_PLUGINS: request-transformer,cors,key-auth,acl,basic-auth,request-termination,ip-restriction
+      KONG_DNS_NOT_FOUND_TTL: 1
+      KONG_PLUGINS: request-transformer,cors,key-auth,acl,basic-auth,request-termination,ip-restriction,post-function
       KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
       KONG_NGINX_PROXY_PROXY_BUFFERS: 64 160k
-      SUPABASE_ANON_KEY: ${SUPABASE_PUBLISHABLE_KEY}
-      SUPABASE_SERVICE_KEY: ${SUPABASE_SECRET_KEY}
+      KONG_PROXY_ACCESS_LOG: /dev/stdout combined
+      #KONG_SSL_CERT: /home/kong/server.crt
+      #KONG_SSL_CERT_KEY: /home/kong/server.key
+      SUPABASE_ANON_KEY: ${ANON_KEY}
+      SUPABASE_SERVICE_KEY: ${SERVICE_ROLE_KEY}
+      SUPABASE_PUBLISHABLE_KEY: ${SUPABASE_PUBLISHABLE_KEY:-}
+      SUPABASE_SECRET_KEY: ${SUPABASE_SECRET_KEY:-}
+      ANON_KEY_ASYMMETRIC: ${ANON_KEY_ASYMMETRIC:-}
+      SERVICE_ROLE_KEY_ASYMMETRIC: ${SERVICE_ROLE_KEY_ASYMMETRIC:-}
     # https://unix.stackexchange.com/a/294837
-    entrypoint: bash -c 'eval "echo \"$$(cat ~/temp.yml)\"" > ~/kong.yml && /docker-entrypoint.sh kong docker-start'
+    entrypoint: /home/kong/kong-entrypoint.sh
     depends_on:
       db:
         # Disable this if you are using an external Postgres database
         condition: service_healthy
-
-  meta:
-    container_name: supabase-meta
-    image: supabase/postgres-meta:v0.95.2
-    restart: unless-stopped
-    depends_on:
-      db:
-        # Disable this if you are using an external Postgres database
-        condition: service_healthy
-    environment:
-      PG_META_PORT: 8080
-      PG_META_DB_HOST: ${POSTGRES_HOST:-db}
-      PG_META_DB_PORT: ${POSTGRES_PORT:-5432}
-      PG_META_DB_NAME: ${POSTGRES_DB:-postgres}
-      PG_META_DB_USER: supabase_admin
-      PG_META_DB_PASSWORD: ${POSTGRES_PASSWORD}
-      CRYPTO_KEY: your-encryption-key-32-chars-min
 
   # mail:
   #   container_name: supabase-mail

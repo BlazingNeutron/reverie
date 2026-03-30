@@ -41,8 +41,8 @@ describe("User Signup API", () => {
   let userRouter: express.Router;
   beforeEach(async () => {
     vi.resetModules();
-    vi.stubEnv("SUPABASE_URL", "http://supabaseBaseUrl");
-    vi.stubEnv("SUPABASE_SECRET_KEY", "specialKey");
+    vi.stubEnv("SUPABASE_BASE_URL", "http://supabaseBaseUrl");
+    vi.stubEnv("SERVICE_ROLE_KEY", "testServiceRoleKey");
     const userRouterDefault = await import("../routes");
     userRouter = userRouterDefault.default;
     mockSupabaseRPC = vi.fn(() => ({
@@ -55,10 +55,10 @@ describe("User Signup API", () => {
     }));
   });
 
-  it("POST /signup - SUPABASE_URL is not set", async () => {
+  it("POST /signup - SUPABASE_BASE_URL is not set", async () => {
     vi.resetModules();
     vi.unstubAllEnvs();
-    vi.stubEnv("SUPABASE_URL", "http://supabaseBaseUrl");
+    vi.stubEnv("SUPABASE_BASE_URL", "http://supabaseBaseUrl");
 
     const userRouterDefault = await import("../routes");
     userRouter = userRouterDefault.default;
@@ -69,14 +69,14 @@ describe("User Signup API", () => {
     expect(response.body).toEqual({
       success: false,
       error: {
-        message: "SUPABASE_SECRET_KEY in .env not set",
+        message: "SERVICE_ROLE_KEY in .env not set",
       },
     });
     expect(response.status).toBe(500);
     expect(mockSignUp).not.toHaveBeenCalled();
   });
 
-  it("POST /signup - SUPABASE_URL is not set", async () => {
+  it("POST /signup - SUPABASE_BASE_URL is not set", async () => {
     vi.resetModules();
     vi.unstubAllEnvs();
 
@@ -89,7 +89,7 @@ describe("User Signup API", () => {
     expect(response.body).toEqual({
       success: false,
       error: {
-        message: "Missing SUPABASE_URL in .env",
+        message: "Missing SUPABASE_BASE_URL in .env",
       },
     });
     expect(response.status).toBe(500);

@@ -2,24 +2,24 @@ import { createClient } from "@supabase/supabase-js";
 import { type Request, type Response } from "express";
 import { passwordCheck, isValidEmail } from "@repo/validators";
 
-const supabaseUrl = process.env.SUPABASE_URL!;
-const secretKey = process.env.SUPABASE_SECRET_KEY!;
+const supabaseUrl = process.env.SUPABASE_BASE_URL!;
+const serviceRoleKey = process.env.SERVICE_ROLE_KEY!;
 
 export default async function register(req: Request, res: Response) {
   if (!supabaseUrl) {
     res.status(500).json({
       success: false,
       error: {
-        message: "Missing SUPABASE_URL in .env",
+        message: "Missing SUPABASE_BASE_URL in .env",
       },
     });
     return;
   }
-  if (!secretKey) {
+  if (!serviceRoleKey) {
     res.status(500).json({
       success: false,
       error: {
-        message: "SUPABASE_SECRET_KEY in .env not set",
+        message: "SERVICE_ROLE_KEY in .env not set",
       },
     });
     return;
@@ -37,7 +37,7 @@ export default async function register(req: Request, res: Response) {
     return;
   }
 
-  const supabase = createClient(supabaseUrl, secretKey);
+  const supabase = createClient(supabaseUrl, serviceRoleKey);
   const { data: checkInviteData, error: checkInviteError } = await supabase.rpc(
     "check_invite_code",
     {

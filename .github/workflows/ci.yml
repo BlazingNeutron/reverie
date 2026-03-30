@@ -86,25 +86,28 @@ jobs:
       - name: Setup docker compose .env file
         working-directory: ./docker/
         run: |
-          cp .env.dev-env .env
+          cp .env.it .env
+          bash utils/generate-keys.sh --update-env
+          bash utils/add-new-auth-keys.sh --update-env
+          bash utils/rotate-new-api-keys.sh --update-env
           echo "IMAGE_TAG=${{ github.sha }}" >> .env
       - name: Bring up test stack
         working-directory: ./docker/
-        run: docker compose -f docker-compose.dev-env.yml up db api reverie-web rest realtime auth mail kong -d --wait
+        run: docker compose -f docker-compose.it.yml up db api reverie-web rest realtime auth mail kong -d --wait
       - name: Wait for migrations
         working-directory: ./docker/
         env:
           WAIT_TIMEOUT: 120
         run: |
           timeout "${WAIT_TIMEOUT}" \
-            docker compose -f docker-compose.dev-env.yml up \
+            docker compose -f docker-compose.it.yml up \
               --exit-code-from migrator \
               migrator
 
           EXIT_CODE=$?
           if [ $EXIT_CODE -ne 0 ]; then
             echo "❌ Migration failed or timed out (exit code $EXIT_CODE)"
-            docker compose -f docker-compose.dev-env.yml logs migrator
+            docker compose -f docker-compose.it.yml logs migrator
             exit $EXIT_CODE
           fi
 
@@ -121,4 +124,4 @@ jobs:
       - name: Shut down test stack
         working-directory: ./docker/
         if: always()
-        run: docker compose -f docker-compose.dev-env.yml down
+        run: docker compose -f docker-compose.it.yml down

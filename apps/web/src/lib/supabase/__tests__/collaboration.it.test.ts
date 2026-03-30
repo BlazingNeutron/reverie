@@ -78,7 +78,7 @@ describe("supabase integration tests for collaboration", () => {
 
     await upsertYJsSnapshot(docId, "Snapshot");
     await upsertYJsSnapshot(docId, "Snapshot2");
-    const results = await selectYJsSnapshot(docId);
+    const results: any = await selectYJsSnapshot(docId);
 
     expect(results.data[0]).toEqual({
       snapshot: "Snapshot2",
