@@ -10,7 +10,8 @@
         "github.vscode-github-actions",
         "bradlc.vscode-tailwindcss",
         "ms-ossdata.vscode-pgsql",
-        "EditorConfig.EditorConfig"
+        "EditorConfig.EditorConfig",
+        "fwcd.kotlin"
       ]
     }
   },
