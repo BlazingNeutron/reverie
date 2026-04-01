@@ -1,6 +1,6 @@
 {
   "name": "Reverie Notes",
-  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node",
   "customizations": {
     "vscode": {
       "extensions": [
@@ -16,14 +16,25 @@
   },
   "features": {
     "ghcr.io/devcontainers-extra/features/supabase-cli": "latest",
-    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+    "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
+      "moby": false
+    }
   },
+  "runArgs": [
+    "--env-file",
+    "${localWorkspaceFolder}/.env",
+    "--privileged",
+    "-v",
+    "/dev/bus/usb:/dev/bus/usb"
+  ],
   "containerEnv": {
     "PGSSLMODE": "disable",
-    "CODESPACES": "true",
-    "DEVCONTAINER": "true"
+    "DEVCONTAINER": "true" // this let's scripts know that we are inside a devcontainer
   },
-  "postCreateCommand": "npm i turbo -g && npm i",
-  "postStartCommand": "supabase start && docker network connect supabase_network_reverie $HOSTNAME",
-  "initializeCommand": "npx supabase start"
+  // Execute these on the docker host so that supabase is started for the dev environment
+  "initializeCommand": "npm i supabase && npx supabase start",
+  // Ensure turbo and other dependencies are installed
+  "postCreateCommand": "sudo apt update && sudo apt upgrade -y && npm install -g npm@11.12.1 && npm i turbo -g && npm i",
+  // Start supabase within the devcontainer and connec the devcontainer to the supabase network
+  "postStartCommand": "supabase start && docker network connect supabase_network_reverie $HOSTNAME"
 }
