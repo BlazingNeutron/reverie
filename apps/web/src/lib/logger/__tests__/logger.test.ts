@@ -99,7 +99,7 @@ describe("Logger Tests", () => {
 
   function expectParameters(level: string, message: string) {
     return [
-      "/api/v1/logger",
+      "http://localhost:3000/api/v1/logger",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -108,7 +108,7 @@ describe("Logger Tests", () => {
           level +
           '","message":"' +
           message +
-          '","metadata":{"userAgent":"Mozilla/5.0 (linux) AppleWebKit/537.36 (KHTML, like Gecko) jsdom/28.0.0","url":"http://localhost:3000/"}}',
+          '","metadata":{"userAgent":"Mozilla/5.0 (linux) AppleWebKit/537.36 (KHTML, like Gecko) jsdom/28.1.0","url":"http://localhost:3000/"}}',
       },
     ];
   }

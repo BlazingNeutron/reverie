@@ -37,7 +37,6 @@ const defaultRequestBody = {
 };
 
 describe("User Signup API", () => {
-  // let consoleSpy: Mock<(...data: unknown[]) => void>;
   let userRouter: express.Router;
   beforeEach(async () => {
     vi.resetModules();
@@ -55,10 +54,10 @@ describe("User Signup API", () => {
     }));
   });
 
-  it("POST /signup - SUPABASE_BASE_URL is not set", async () => {
+  it("POST /signup - SERVICE_ROLE_KEY is not set", async () => {
     vi.resetModules();
-    vi.unstubAllEnvs();
     vi.stubEnv("SUPABASE_BASE_URL", "http://supabaseBaseUrl");
+    vi.stubEnv("SERVICE_ROLE_KEY", undefined);
 
     const userRouterDefault = await import("../routes");
     userRouter = userRouterDefault.default;
@@ -78,7 +77,7 @@ describe("User Signup API", () => {
 
   it("POST /signup - SUPABASE_BASE_URL is not set", async () => {
     vi.resetModules();
-    vi.unstubAllEnvs();
+    vi.stubEnv("SUPABASE_BASE_URL", undefined);
 
     const userRouterDefault = await import("../routes");
     userRouter = userRouterDefault.default;

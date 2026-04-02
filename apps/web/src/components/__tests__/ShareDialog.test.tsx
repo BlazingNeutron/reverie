@@ -2,6 +2,7 @@ import { describe, expect, it, beforeEach, afterEach, vi } from "vitest";
 import { ShareDialog } from "../ShareDialog";
 import { act, cleanup, render } from "@testing-library/react";
 import ReactDOMClient from "react-dom/client";
+import React from "react";
 
 interface collaboratorType {
   user_id: string;

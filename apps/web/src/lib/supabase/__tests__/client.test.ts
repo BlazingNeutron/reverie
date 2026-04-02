@@ -21,12 +21,15 @@ vi.mock("../keys", () => ({
 }));
 
 describe("supabase client", () => {
+  const originalSiteUrl = process.env.SITE_URL;
+
   beforeEach(() => {
     vi.resetModules();
   });
 
   afterEach(() => {
     vi.clearAllMocks();
+    process.env.SITE_URL = originalSiteUrl;
   });
 
   it("supabase is returned", async () => {
@@ -35,6 +38,7 @@ describe("supabase client", () => {
   });
 
   it("supabase called with baseUrl and key", async () => {
+    delete process.env.SITE_URL;
     await setImportClient("averyspecialtestkey2");
     expect(mockCreateClient).toHaveBeenCalledOnce();
     expect(mockCreateClient).toHaveBeenCalledWith([

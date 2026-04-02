@@ -3,6 +3,9 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   test: {
     environment: "node",
+    env: {
+      SITE_URL: "http://localhost:3000",
+    },
     globals: true,
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
     exclude: ["src/**/*.it.{test,spec}.{ts,tsx}"],
