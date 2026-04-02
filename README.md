@@ -4,7 +4,7 @@ Note taking app for all of your dreamy, thoughtful, deep thinking and shared ide
 
 # Development
 
-It is recommended to use the devcontainers.
+It is recommended to use the devcontainer.
 
 Start the frontend and backend servers with
 `turbo dev`
