@@ -31,12 +31,12 @@
   "devDependencies": {
     "@repo/eslint-config": "0.0.0",
     "@repo/typescript-config": "0.0.0",
-    "@types/node": "^25.2.3",
-    "@vitest/coverage-v8": "^4.0.18",
-    "bunchee": "^6.9.4",
+    "@types/node": "^25.6.0",
+    "@vitest/coverage-v8": "^4.1.4",
+    "bunchee": "^6.10.0",
     "eslint": "^9.0.0",
     "istanbul-reporter-html-dark": "^1.0.1",
-    "typescript": "^5.9.3",
-    "vitest": "^4.0.18"
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.4"
   }
 }
