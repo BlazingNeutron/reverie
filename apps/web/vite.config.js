@@ -1,8 +1,8 @@
 import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import { rnw } from "vite-plugin-rnw";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [rnw()],
   define: {
     "process.env.SITE_URL": JSON.stringify(process.env.SITE_URL),
   },

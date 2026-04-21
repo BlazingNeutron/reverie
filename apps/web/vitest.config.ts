@@ -2,6 +2,9 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
+    alias: {
+      "react-native": "react-native-web",
+    },
     environment: "jsdom",
     env: {
       SITE_URL: "http://localhost:3000",

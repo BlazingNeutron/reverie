@@ -108,7 +108,7 @@ describe("Logger Tests", () => {
           level +
           '","message":"' +
           message +
-          '","metadata":{"userAgent":"Mozilla/5.0 (linux) AppleWebKit/537.36 (KHTML, like Gecko) jsdom/28.1.0","url":"http://localhost:3000/"}}',
+          '","metadata":{"userAgent":"Mozilla/5.0 (linux) AppleWebKit/537.36 (KHTML, like Gecko) jsdom/29.0.2","url":"http://localhost:3000/"}}',
       },
     ];
   }

@@ -5,6 +5,7 @@
  * @format
  */
 
+import { PasswordStrength } from '@repo/ui';
 import {
   StatusBar,
   StyleSheet,
@@ -29,6 +30,7 @@ function AppContent() {
   return (
     <View style={styles.container}>
       <Text>A text with a primary background color</Text>
+      <PasswordStrength />
     </View>
   );
 }

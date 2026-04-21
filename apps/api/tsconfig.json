@@ -3,14 +3,14 @@
     "target": "es2022",
     "useDefineForClassFields": true,
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "module": "commonjs",
+    "module": "es2022",
     "skipLibCheck": true,
     "allowJs": true,
     "verbatimModuleSyntax": false,
 
     /* Bundler mode */
     "moduleDetection": "force",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "allowImportingTsExtensions": null,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,

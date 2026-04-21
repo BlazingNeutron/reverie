@@ -1,0 +1,31 @@
+{
+  "name": "@repo/ui",
+  "version": "0.0.0",
+  "description": "Shared UI Components for Reverie Notes",
+  "license": "MIT",
+  "private": "true",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "bunchee",
+    "dev": "bunchee --watch",
+    "watch": "tsc --watch",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "react-native": "^0.85.2",
+    "react-native-web": "^0.21.2"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "0.0.0",
+    "@repo/typescript-config": "0.0.0",
+    "@types/node": "^25.6.0",
+    "@vitest/coverage-v8": "^4.1.4",
+    "bunchee": "^6.10.0",
+    "eslint": "^9.0.0",
+    "istanbul-reporter-html-dark": "^1.0.1",
+    "tsc": "^2.0.4",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.4"
+  }
+}
