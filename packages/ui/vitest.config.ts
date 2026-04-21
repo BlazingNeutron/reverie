@@ -2,10 +2,11 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    environment: "node",
-    env: {
-      SITE_URL: "http://localhost:3000",
+    alias: {
+      "react-native": "react-native-web",
     },
+    environment: "jsdom",
+    setupFiles: "src/setupTests.ts",
     globals: true,
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
     exclude: ["src/**/*.it.{test,spec}.{ts,tsx}"],
@@ -13,6 +14,7 @@ export default defineConfig({
       include: ["src/**/*.{ts,tsx}"],
       exclude: [
         "src/**/*.test.{ts,tsx}",
+        "src/setupTests*.ts",
         "src/**/*.spec.{ts,tsx}",
         "node_modules/**",
         "__mocks__/**",

@@ -14,7 +14,6 @@ export default defineConfig({
     include: ["src/**/*.{test,spec}.{ts,tsx}"],
     exclude: ["src/**/*.it.{test,spec}.{ts,tsx}"],
     coverage: {
-      // Include all source files so untested files are counted in the report
       include: ["src/**/*.{ts,tsx}"],
       exclude: [
         "src/**/*.test.{ts,tsx}",
@@ -24,7 +23,6 @@ export default defineConfig({
         "__mocks__/**",
       ],
       reporter: ["text", "lcov", "istanbul-reporter-html-dark"],
-      // Keep thresholds optional; adjust as desired
       thresholds: {
         functions: 80,
         lines: 60,
