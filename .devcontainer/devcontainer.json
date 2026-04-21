@@ -35,7 +35,7 @@
   // Execute these on the docker host so that supabase is started for the dev environment
   "initializeCommand": "npm i supabase && npx supabase start",
   // Ensure turbo and other dependencies are installed
-  "postCreateCommand": "sudo apt update && sudo apt upgrade -y && npm install -g npm@11.12.1 && npm i turbo -g && npm i",
+  "postCreateCommand": "sudo apt update && sudo apt upgrade -y && npm install -g npm@11.12.1 && npm i turbo -g && npm i && bash -c ./scripts/install-android-sdk.sh",
   // Start supabase within the devcontainer and connec the devcontainer to the supabase network
   "postStartCommand": "supabase start && docker network connect supabase_network_reverie $HOSTNAME"
 }
