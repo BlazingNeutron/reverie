@@ -10,9 +10,13 @@
     "build": "bunchee",
     "dev": "bunchee --watch",
     "watch": "tsc --watch",
-    "test": "vitest"
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@repo/validators": "^0.0.0",
     "react-native": "^0.85.2",
     "react-native-web": "^0.21.2"
   },

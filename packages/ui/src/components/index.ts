@@ -1,1 +1,2 @@
-export * from "./PasswordStrength";
+export * from "./PasswordStrengthIndicator";
+export * from "./PasswordStrengthIndicator.types";
