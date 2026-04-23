@@ -22,24 +22,52 @@ export function passwordCheck(password: string) {
 }
 
 export function passwordStrength(password: string) {
-  let score = 0;
+  const result = passwordStrengthEval(password);
+  return result.score;
+}
 
-  if (!password) return 0;
+export type PasswordStrengthEvaluation = {
+  score: number;
+  hasUpperCase: boolean;
+  hasLowerCase: boolean;
+  hasNumber: boolean;
+  hasSymbol: boolean;
+  isLongEnough: boolean;
+};
+
+export function passwordStrengthEval(
+  password: string,
+): PasswordStrengthEvaluation {
+  const result = {
+    hasUpperCase: false,
+    hasLowerCase: false,
+    hasNumber: false,
+    hasSymbol: false,
+    isLongEnough: false,
+    score: 0,
+  };
+
+  if (!password) return result;
 
   if (password.length >= MIN_LENGTH) {
-    score += 1;
+    result.isLongEnough = true;
+    result.score += 1;
   }
   if (new RegExp(LOWERCASE).test(password)) {
-    score += 1;
+    result.hasLowerCase = true;
+    result.score += 1;
   }
   if (new RegExp(UPPERCASE).test(password)) {
-    score += 1;
+    result.hasUpperCase = true;
+    result.score += 1;
   }
   if (new RegExp(NUMBERS).test(password)) {
-    score += 1;
+    result.hasNumber = true;
+    result.score += 1;
   }
   if (new RegExp(SYMBOLS).test(password)) {
-    score += 1;
+    result.hasSymbol = true;
+    result.score += 1;
   }
-  return score;
+  return result;
 }

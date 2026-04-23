@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { passwordCheck, passwordStrength } from "../password-validation";
+import {
+  passwordCheck,
+  passwordStrength,
+  passwordStrengthEval,
+} from "../password-validation";
 
 describe("Password validation", () => {
   it(" - too short", () => {
@@ -54,43 +58,117 @@ describe("Password Strength", () => {
     expect(score).toBe(1);
   });
 
+  it(" - Good password", () => {
+    const score = passwordStrength("Test1234$");
+    expect(score).toBe(5);
+  });
+
+  it(" - Greater than", () => {
+    const score = passwordStrength("Test1234$");
+    expect(score >= 3).toBe(true);
+  });
+});
+
+describe("Password Strength Evaluation", () => {
+  it(" - blank password", () => {
+    const result = passwordStrengthEval("");
+    expect(result).toEqual({
+      hasUpperCase: false,
+      hasLowerCase: false,
+      hasNumber: false,
+      hasSymbol: false,
+      isLongEnough: false,
+      score: 0,
+    });
+  });
+
+  it(" - long password", () => {
+    const result = passwordStrengthEval("         ");
+    expect(result.score).toBe(1);
+    expect(result.isLongEnough).toBe(true);
+    expect(result.hasUpperCase).toBe(false);
+    expect(result.hasLowerCase).toBe(false);
+    expect(result.hasNumber).toBe(false);
+    expect(result.hasSymbol).toBe(false);
+  });
+
   it(" - has upper case characters", () => {
-    const score = passwordStrength("T");
-    expect(score).toBe(1);
+    const result = passwordStrengthEval("T");
+    expect(result.score).toBe(1);
+    expect(result.isLongEnough).toBe(false);
+    expect(result.hasUpperCase).toBe(true);
+    expect(result.hasLowerCase).toBe(false);
+    expect(result.hasNumber).toBe(false);
+    expect(result.hasSymbol).toBe(false);
   });
 
   it(" - has lower case characters", () => {
-    const score = passwordStrength("t");
-    expect(score).toBe(1);
+    const result = passwordStrengthEval("t");
+    expect(result.score).toBe(1);
+    expect(result.isLongEnough).toBe(false);
+    expect(result.hasUpperCase).toBe(false);
+    expect(result.hasLowerCase).toBe(true);
+    expect(result.hasNumber).toBe(false);
+    expect(result.hasSymbol).toBe(false);
   });
 
   it(" - has numbers", () => {
-    const score = passwordStrength("1");
-    expect(score).toBe(1);
+    const result = passwordStrengthEval("1");
+    expect(result.score).toBe(1);
+    expect(result.isLongEnough).toBe(false);
+    expect(result.hasUpperCase).toBe(false);
+    expect(result.hasLowerCase).toBe(false);
+    expect(result.hasNumber).toBe(true);
+    expect(result.hasSymbol).toBe(false);
   });
 
   it(" - has symbols", () => {
-    const score = passwordStrength("$");
-    expect(score).toBe(1);
+    const result = passwordStrengthEval("$");
+    expect(result.score).toBe(1);
+    expect(result.isLongEnough).toBe(false);
+    expect(result.hasUpperCase).toBe(false);
+    expect(result.hasLowerCase).toBe(false);
+    expect(result.hasNumber).toBe(false);
+    expect(result.hasSymbol).toBe(true);
   });
 
   it(" - has two conditions met", () => {
-    const score = passwordStrength("1$");
-    expect(score).toBe(2);
+    const result = passwordStrengthEval("1$");
+    expect(result.score).toBe(2);
+    expect(result.isLongEnough).toBe(false);
+    expect(result.hasUpperCase).toBe(false);
+    expect(result.hasLowerCase).toBe(false);
+    expect(result.hasNumber).toBe(true);
+    expect(result.hasSymbol).toBe(true);
   });
 
   it(" - has three conditions met", () => {
-    const score = passwordStrength("1$T");
-    expect(score).toBe(3);
+    const result = passwordStrengthEval("1$T");
+    expect(result.score).toBe(3);
+    expect(result.isLongEnough).toBe(false);
+    expect(result.hasUpperCase).toBe(true);
+    expect(result.hasLowerCase).toBe(false);
+    expect(result.hasNumber).toBe(true);
+    expect(result.hasSymbol).toBe(true);
   });
 
   it(" - has four conditions met", () => {
-    const score = passwordStrength("t1$T");
-    expect(score).toBe(4);
+    const result = passwordStrengthEval("t1$T");
+    expect(result.score).toBe(4);
+    expect(result.isLongEnough).toBe(false);
+    expect(result.hasUpperCase).toBe(true);
+    expect(result.hasLowerCase).toBe(true);
+    expect(result.hasNumber).toBe(true);
+    expect(result.hasSymbol).toBe(true);
   });
 
   it(" - has five conditions met", () => {
-    const score = passwordStrength("t1$T1234");
-    expect(score).toBe(5);
+    const result = passwordStrengthEval("t1$T1234");
+    expect(result.score).toBe(5);
+    expect(result.isLongEnough).toBe(true);
+    expect(result.hasUpperCase).toBe(true);
+    expect(result.hasLowerCase).toBe(true);
+    expect(result.hasNumber).toBe(true);
+    expect(result.hasSymbol).toBe(true);
   });
 });

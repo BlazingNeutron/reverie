@@ -1,4 +1,15 @@
-import { passwordCheck, passwordStrength } from "./password-validation";
+import {
+  passwordCheck,
+  passwordStrength,
+  passwordStrengthEval,
+} from "./password-validation";
+import type { PasswordStrengthEvaluation } from "./password-validation";
 import { isValidEmail } from "./email-validation";
 
-export { passwordCheck, passwordStrength, isValidEmail };
+export {
+  passwordCheck,
+  passwordStrength,
+  isValidEmail,
+  passwordStrengthEval,
+  PasswordStrengthEvaluation,
+};
