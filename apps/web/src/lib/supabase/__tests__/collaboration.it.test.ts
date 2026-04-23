@@ -160,6 +160,7 @@ describe("supabase integration tests for collaboration", () => {
       error: null,
       status: 200,
       statusText: "OK",
+      success: true,
     });
   });
 });
