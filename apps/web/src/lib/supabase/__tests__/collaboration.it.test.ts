@@ -54,6 +54,7 @@ describe("supabase integration tests for collaboration", () => {
       error: null,
       status: 201,
       statusText: "Created",
+      success: true,
     });
   });
 
@@ -111,6 +112,7 @@ describe("supabase integration tests for collaboration", () => {
       error: null,
       status: 200,
       statusText: "OK",
+      success: true,
     });
 
     const selectUpdatesSince = await selectYJsUpdatesSince(
@@ -131,6 +133,7 @@ describe("supabase integration tests for collaboration", () => {
       error: null,
       status: 200,
       statusText: "OK",
+      success: true,
     });
   });
 
