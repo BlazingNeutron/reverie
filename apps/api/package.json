@@ -3,10 +3,24 @@
   "version": "0.0.0",
   "description": "Reverie Notes API server",
   "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
   "scripts": {
-    "build": "tsc ",
+    "build": "bunchee",
     "start": "node --env-file=.env dist/app.js",
-    "dev": "tsx watch --env-file=.env src/app.ts",
+    "dev": "tsx watch --env-file=.env src/index.ts",
     "test": "vitest",
     "test:coverage": "vitest --coverage"
   },
@@ -21,6 +35,7 @@
     "@types/node": "^25.5.0",
     "@types/supertest": "^7.2.0",
     "@vitest/coverage-v8": "^4.1.5",
+    "bunchee": "^6.10.0",
     "eslint": "^9.31.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-only-warn": "^1.1.0",

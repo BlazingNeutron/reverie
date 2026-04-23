@@ -6,6 +6,19 @@ export default defineConfig({
   define: {
     "process.env.SITE_URL": JSON.stringify(process.env.SITE_URL),
   },
+  output: {
+    codeSplitting: {
+      groups: [
+        {
+          name: "large-libs",
+          test: /node_modules/,
+          minSize: 100000, // 100KB
+          maxSize: 250000, // 250KB
+          priority: 10,
+        },
+      ],
+    },
+  },
   server: {
     host: true,
     proxy: {

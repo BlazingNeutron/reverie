@@ -31,13 +31,13 @@ describe("API Express", () => {
 
   it("PORT set via env value", async () => {
     vi.stubEnv("REVERIE_API_PORT", "12345");
-    await import("../app");
+    await import("../index");
 
     expect(mockListen).toHaveBeenCalledWith("12345", expect.any(Function));
   });
 
   it("PORT not set - using default 3000", async () => {
-    await import("../app");
+    await import("../index");
 
     expect(mockListen).toHaveBeenCalledWith(3000, expect.any(Function));
   });
