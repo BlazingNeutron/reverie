@@ -7,5 +7,12 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
+    include: ['__tests__/**/*.test.tsx'],
+
+    coverage: {
+      include: ['**/*.tsx'],
+      exclude: ['node_modules/**', '__mocks__/**', '__tests__/**'],
+      reporter: ['text', 'lcov', 'istanbul-reporter-html-dark'],
+    },
   },
 });
